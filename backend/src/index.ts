@@ -326,10 +326,10 @@ app.put("/addmeal", async (req: Request, res: Response) => {
   }
 })
 
-app.use(express.static(path.join(__dirname, "../../client/build/")));
+app.use(express.static(path.join(__dirname, "../../../client/build/")));
 
 app.get("/*", (req, res) => {
- res.sendFile(path.join(__dirname, "../../client/build/", "index.html"));
+ res.sendFile(path.join(__dirname, "../../../client/build/", "index.html"));
 });
 
 app.listen(process.env.PORT || 4000, () => {
