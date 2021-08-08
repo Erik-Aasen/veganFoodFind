@@ -9,7 +9,7 @@ export default function NavBar() {
     const ctx = useContext(myContext);
 
     const logout = () => {
-        Axios.get("https://vegan-food-find.herokuapp.com/logout", {
+        Axios.get("http://localhost:4000/logout", {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             console.log(res.data);

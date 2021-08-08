@@ -10,7 +10,7 @@ export default function Homepage() {
     const [posts, setPosts] = useState<any>("");
 
     const postMeals = (e, city, meal) => {
-        Axios.post('https://vegan-food-find.herokuapp.com/getmeals', {
+        Axios.post('http://localhost:4000/getmeals', {
             city, meal
         }, {
             withCredentials: true

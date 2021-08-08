@@ -7,7 +7,7 @@ export default function Login() {
 
     const login = async (e) => {
         e.preventDefault();
-        await axios.post('https://vegan-food-find.herokuapp.com/login', {
+        await axios.post('http://localhost:4000/login', {
             username,
             password
         }, {
@@ -23,7 +23,7 @@ export default function Login() {
     }
 
     // const getUser = () => {
-    //     axios.get("https://vegan-food-find.herokuapp.com/user", {
+    //     axios.get("http://localhost:4000/user", {
     //         withCredentials: true
     //     }).then(res => {
     //         console.log(res.data);

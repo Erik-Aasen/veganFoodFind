@@ -96,7 +96,7 @@ export default function EditMeal(props) {
     const submitMeal = (e) => {
 
         e.preventDefault();
-        axios.put('https://vegan-food-find.herokuapp.com/addmeal', {
+        axios.put('http://localhost:4000/addmeal', {
             _id, restaurant, city, meal, description, picture
         }, {
             withCredentials: true

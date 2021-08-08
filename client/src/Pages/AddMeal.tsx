@@ -95,7 +95,7 @@ export default function AddMeal() {
     const submitMeal = (e) => {
 
         e.preventDefault();
-        axios.post('https://vegan-food-find.herokuapp.com/addmeal', {
+        axios.post('http://localhost:4000/addmeal', {
             restaurant, city, meal, description, picture
         }, {
             withCredentials: true

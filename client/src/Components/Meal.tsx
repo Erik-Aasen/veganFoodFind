@@ -17,7 +17,7 @@ export default function Meal(props) {
 
     const deleteMeal = () => {
 
-        axios.post('https://vegan-food-find.herokuapp.com/deletemeal', {
+        axios.post('http://localhost:4000/deletemeal', {
             _id
         }, { withCredentials: true }
         ).then((res: AxiosResponse) => {

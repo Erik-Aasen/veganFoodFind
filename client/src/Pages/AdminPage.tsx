@@ -12,7 +12,7 @@ export default function AdminPage() {
 
     useEffect(() => {
         
-        Axios.get("https://vegan-food-find.herokuapp.com/getallusers", {
+        Axios.get("http://localhost:4000/getallusers", {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             setData(res.data.filter((item: any) => {
@@ -42,7 +42,7 @@ export default function AdminPage() {
         })
         // console.log(userid);
 
-        Axios.post("https://vegan-food-find.herokuapp.com/deleteuser", {
+        Axios.post("http://localhost:4000/deleteuser", {
             id: userid!  //! tells react that we know there will be a userid as a string since it will be defined in the if statement. React worries that it might not get defined and then not have the chance to be a string
         }, {
             withCredentials: true

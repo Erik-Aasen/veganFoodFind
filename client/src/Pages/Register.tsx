@@ -12,7 +12,7 @@ export default function Register() {
     
     const register = (e) => {
         e.preventDefault();
-        axios.post('https://vegan-food-find.herokuapp.com/register', {
+        axios.post('http://localhost:4000/register', {
             username,
             password
         }, {

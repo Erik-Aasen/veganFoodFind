@@ -12,7 +12,7 @@ export default function MyMeals() {
 
     useEffect(() => {
 
-        Axios.get("https://vegan-food-find.herokuapp.com/usermeals", {
+        Axios.get("http://localhost:4000/usermeals", {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             setPosts(display(res.data));
