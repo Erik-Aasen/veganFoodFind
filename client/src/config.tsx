@@ -1,4 +1,4 @@
-let API="http://localhost:4000";
+let API="/";
 
 if (process.env.NODE_ENV === "development") {
     // eslint-disable-next-line
