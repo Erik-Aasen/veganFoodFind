@@ -1,4 +1,4 @@
-let API="/";
+let API="https://vegan-food-find.herokuapp.com";
 
 if (process.env.NODE_ENV === "development") {
     // eslint-disable-next-line
