@@ -24,7 +24,7 @@ export default function HomePageSearch(props) {
     useEffect(() => {
 
         async function getMeals() {
-            await Axios.get("http://localhost:4000/getmeals", {
+            await Axios.get("https://vegan-food-find.herokuapp.com/getmeals", {
                 withCredentials: true
             }).then((res: AxiosResponse) => {
                 setData(res.data)
