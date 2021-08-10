@@ -7,8 +7,8 @@ if (process.env.NODE_ENV === "development") {
 
 } else {
     // eslint-disable-next-line
-    var API = "https://vegan-food-find.herokuapp.com"
-    // const API = "/"
+    // var API = "https://vegan-food-find.herokuapp.com"
+    var API = ""
 }
 
 export default API;
