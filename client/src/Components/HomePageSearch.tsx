@@ -1,5 +1,6 @@
 import Axios, { AxiosResponse } from "axios"
 import { useEffect, useState } from "react"
+import API from '../config'
 
 export default function HomePageSearch(props) {
 
@@ -24,7 +25,7 @@ export default function HomePageSearch(props) {
     useEffect(() => {
 
         async function getMeals() {
-            await Axios.get("https://vegan-food-find.herokuapp.com/getmeals", {
+            await Axios.get(API + "/getmeals", {
                 withCredentials: true
             }).then((res: AxiosResponse) => {
                 setData(res.data)

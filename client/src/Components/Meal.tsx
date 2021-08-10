@@ -1,6 +1,7 @@
 
 import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
+import API from '../config'
 
 export default function Meal(props) {
     const { _id, meal, restaurant, city, picture, description, myMeal } = props;
@@ -17,7 +18,7 @@ export default function Meal(props) {
 
     const deleteMeal = () => {
 
-        axios.post('https://vegan-food-find.herokuapp.com/deletemeal', {
+        axios.post(API + '/deletemeal', {
             _id
         }, { withCredentials: true }
         ).then((res: AxiosResponse) => {

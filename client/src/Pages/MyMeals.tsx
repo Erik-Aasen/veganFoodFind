@@ -4,6 +4,7 @@ import Meal from '../Components/Meal';
 // import { UserInterface } from '../Interfaces/Interfaces'
 import { useContext } from 'react';
 import { myContext } from './Context';
+import API from '../config'
 
 export default function MyMeals() {
     const ctx = useContext(myContext);
@@ -12,7 +13,7 @@ export default function MyMeals() {
 
     useEffect(() => {
 
-        Axios.get("https://vegan-food-find.herokuapp.com/usermeals", {
+        Axios.get(API + "/usermeals", {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             setPosts(display(res.data));

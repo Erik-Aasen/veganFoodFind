@@ -3,14 +3,14 @@ import { useState } from 'react';
 import HomePageSearch from '../Components/HomePageSearch'
 import Axios, { AxiosResponse } from 'axios';
 import Meal from '../Components/Meal';
-
+import API from '../config'
 
 export default function Homepage() {
 
     const [posts, setPosts] = useState<any>("");
 
     const postMeals = (e, city, meal) => {
-        Axios.post('https://vegan-food-find.herokuapp.com/getmeals', {
+        Axios.post(API + '/getmeals', {
             city, meal
         }, {
             withCredentials: true

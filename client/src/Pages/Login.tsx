@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
+import API from '../config'
 
 export default function Login() {
     const [username, setUsername] = useState<string>("");
@@ -7,7 +8,7 @@ export default function Login() {
 
     const login = async (e) => {
         e.preventDefault();
-        await axios.post('https://vegan-food-find.herokuapp.com/login', {
+        await axios.post(API + '/login', {
             username,
             password
         }, {
@@ -23,7 +24,7 @@ export default function Login() {
     }
 
     // const getUser = () => {
-    //     axios.get("https://vegan-food-find.herokuapp.com/user", {
+    //     axios.get(API + "/user", {
     //         withCredentials: true
     //     }).then(res => {
     //         console.log(res.data);

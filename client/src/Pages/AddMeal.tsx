@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 // import {compress, compressAccurately} from 'image-conversion';
 // import * as imageConversion from 'image-conversion';
 import piexif from 'piexifjs';
+import API from '../config'
 
 export default function AddMeal() {
 
@@ -95,7 +96,7 @@ export default function AddMeal() {
     const submitMeal = (e) => {
 
         e.preventDefault();
-        axios.post('https://vegan-food-find.herokuapp.com/addmeal', {
+        axios.post(API + '/addmeal', {
             restaurant, city, meal, description, picture
         }, {
             withCredentials: true

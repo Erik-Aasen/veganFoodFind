@@ -3,13 +3,13 @@ import React, { useContext } from 'react';
 import { myContext } from '../Pages/Context';
 import Axios, { AxiosResponse } from "axios";
 import { Navbar, Nav, Button } from 'react-bootstrap'
-
+import API from '../config'
 
 export default function NavBar() {
     const ctx = useContext(myContext);
 
     const logout = () => {
-        Axios.get("https://vegan-food-find.herokuapp.com/logout", {
+        Axios.get(API + "/logout", {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             console.log(res.data);

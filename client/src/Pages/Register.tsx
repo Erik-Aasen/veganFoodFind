@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import { useHistory } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
-
-
+import API from '../config'
 
 export default function Register() {
     const [username, setUsername] = useState<string>("");
@@ -12,7 +11,7 @@ export default function Register() {
     
     const register = (e) => {
         e.preventDefault();
-        axios.post('https://vegan-food-find.herokuapp.com/register', {
+        axios.post(API + '/register', {
             username,
             password
         }, {
