@@ -8,7 +8,7 @@
     color: white;
     font-size: 240%;
     font-weight: bold;
-    -webkit-text-stroke: 1px black;
+    -webkit-text-stroke: .02em black;
 }
 
 .myMeals h1 {
