@@ -8,9 +8,6 @@
     color: white;
     font-size: 240%;
     font-weight: bold;
-    /* -webkit-text-stroke: .002em black; */
-    /* text-shadow: 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black, 0 0 4px black; */
-    /* text-shadow: 0 0 4px black 0 0 4px black 0 0 4px black 0 0 4px black 0 0 4px black 0 0 4px black; */
     text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black;
 }
 
@@ -89,7 +86,7 @@ p {
 }
 
 .nav {
-    padding: 12px;
+    padding: 8px 12px 8px;
 }
 
 .card {
