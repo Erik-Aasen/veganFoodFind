@@ -110,8 +110,6 @@ app.get("/logout", (req, res) => {
 
 app.get("/user", (req, res) => {
   res.send(req.user);
-  // console.log(req.user);
-
 })
 
 app.get("/usermeals", async (req, res) => {
@@ -178,9 +176,15 @@ app.post("/deleteuser", isAdministratorMiddleware, async (req, res) => {
 });
 
 app.post("/addmeal", async (req: Request, res: Response) => {
-  const { user }: any = req;
-  const { restaurant, city, meal, description, picture } = req.body;
-  // console.log(user, restaurant, city, meal, description, picture);
+  const { user, body }: any = req;
+  const { restaurant, city, meal, description, picture } = body;
+
+  const post: any = { restaurant, city, meal, description };
+  Object.keys(post).map(k => post[k] = capitalizeFirstLetter(post[k].trim()));
+  
+  function capitalizeFirstLetter(string: any) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   if (user) {
     await User.updateOne(
@@ -188,10 +192,10 @@ app.post("/addmeal", async (req: Request, res: Response) => {
       {
         $push: {
           posts: {
-            "restaurant": restaurant,
-            "city": city,
-            "meal": meal,
-            "description": description,
+            "restaurant": post.restaurant,
+            "city": post.city,
+            "meal": post.meal,
+            "description": post.description,
             "picture": picture
           }
         }
@@ -292,7 +296,7 @@ app.post("/deletemeal", async (req, res) => {
     await User.updateOne({
       'posts._id': _id
     }, {
-      '$pull': { posts: { _id: _id}}
+      '$pull': { posts: { _id: _id } }
     }).exec(err => { if (err) throw err })
     res.send('meal deleted')
   }
@@ -329,7 +333,7 @@ app.put("/addmeal", async (req: Request, res: Response) => {
 app.use(express.static(path.join(__dirname, "../../../client/build/")));
 
 app.get("/*", (req, res) => {
- res.sendFile(path.join(__dirname, "../../../client/build/", "index.html"));
+  res.sendFile(path.join(__dirname, "../../../client/build/", "index.html"));
 });
 
 app.listen(process.env.PORT || 4000, () => {
