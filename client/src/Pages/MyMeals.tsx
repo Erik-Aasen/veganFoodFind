@@ -13,14 +13,16 @@ export default function MyMeals() {
     const [posts, setPosts] = useState<any>();
     const [addMealPrompt, setMealPrompt] = useState<any>();
 
-    const addMealButton = (
-        <>
-            <div className='add-meal-prompt'>
-                <h5>You haven't added any meals yet!</h5>
-                <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
-            </div>
-        </>
-    )
+    function addMealButton() {
+        return (
+            <>
+                <div className='add-meal-prompt'>
+                    <h5>You haven't added any meals yet!</h5>
+                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
+                </div>
+            </>
+        )
+    }
 
     useEffect(() => {
 
@@ -29,7 +31,7 @@ export default function MyMeals() {
         }).then((res: AxiosResponse) => {
             setPosts(display(res.data));
             if (display(res.data).props.children.length === 0) {
-                setMealPrompt(addMealButton)
+                setMealPrompt(addMealButton())
             }
         })
     });
