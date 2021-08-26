@@ -11,18 +11,6 @@ export default function MyMeals() {
     const ctx = useContext(myContext);
 
     const [posts, setPosts] = useState<any>();
-    const [addMealPrompt, setMealPrompt] = useState<any>();
-
-    function addMealButton() {
-        return (
-            <>
-                <div className='add-meal-prompt'>
-                    <h5>You haven't added any meals yet!</h5>
-                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
-                </div>
-            </>
-        )
-    }
 
     useEffect(() => {
 
@@ -30,9 +18,6 @@ export default function MyMeals() {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             setPosts(display(res.data));
-            if (display(res.data).props.children.length === 0) {
-                setMealPrompt(addMealButton())
-            }
         })
     });
 
@@ -64,12 +49,24 @@ export default function MyMeals() {
         )
     }
 
+    let addMeal
+    if (posts.props.children.length === 0) {
+        addMeal = (
+            <>
+                <div className='add-meal-prompt'>
+                    <h5>You haven't added any meals yet!</h5>
+                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
+                </div>
+            </>
+        )
+    }
+
     return (
         <>
             <div className='myMeals'>
                 <h1>{ctx.username}'s Meals</h1>
             </div>
-            <div>{addMealPrompt}</div>
+            {addMeal}
             <div className='container'>
                 <div className="row justify-content-center">
                     {posts}
