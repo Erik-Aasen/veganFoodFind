@@ -135,3 +135,7 @@ form {
 .btn-login {
     width: 300px;
 }
+
+.add-meal-prompt {
+    text-align: center;
+}
