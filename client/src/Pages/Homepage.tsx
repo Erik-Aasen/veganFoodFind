@@ -3,7 +3,7 @@ import { useState } from 'react';
 import HomePageSearch from '../Components/HomePageSearch'
 import Axios, { AxiosResponse } from 'axios';
 import Meal from '../Components/Meal';
-import API from '../config'
+import API from '../config';
 
 export default function Homepage() {
 

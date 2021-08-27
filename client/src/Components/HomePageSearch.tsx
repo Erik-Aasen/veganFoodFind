@@ -14,12 +14,16 @@ export default function HomePageSearch(props) {
 
     const filterMeals = (useEffectData) => {
         let unfilteredMeals = useEffectData.map((item: any) => item.meal)
-        return ([...new Set(unfilteredMeals)])
+        let filteredMeals = [...new Set(unfilteredMeals)];
+        filteredMeals.sort()
+        return (filteredMeals)
     }
 
     const filterCities = (useEffectData) => {
         let unfilteredCities = useEffectData.map((item: any) => item.city)
-        return ([...new Set(unfilteredCities)])
+        let filteredCities = [...new Set(unfilteredCities)];
+        filteredCities.sort();
+        return (filteredCities)
     }
 
     useEffect(() => {
@@ -43,7 +47,7 @@ export default function HomePageSearch(props) {
 
     const selectCity = (e: any) => {
         setCity(e.target.value);
-        console.log('city: ' + city + ', evt: ' + e.target.value);
+        // console.log('city: ' + city + ', evt: ' + e.target.value);
 
         let cityForFiltering = e.target.value;
         // console.log(city); // returns null
@@ -59,7 +63,7 @@ export default function HomePageSearch(props) {
             })
             setMeals(filterMeals(updatedMeals))
             setMeal("All meals")
-            console.log('meals filtered');
+            // console.log('meals filtered');
 
 
         }
@@ -67,7 +71,7 @@ export default function HomePageSearch(props) {
 
     const selectMeal = (e: any) => {
         setMeal(e.target.value)
-        console.log(e.target.value);
+        // console.log(e.target.value);
     }
 
     return (

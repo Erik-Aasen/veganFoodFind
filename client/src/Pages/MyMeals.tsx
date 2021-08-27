@@ -19,12 +19,12 @@ export default function MyMeals() {
         }).then((res: AxiosResponse) => {
             setPosts(display(res.data));
         })
-    });
+    }, []);
 
     if (!posts) {
         return null
     }
-
+    
     function display(posts) {
         return (
             <>
