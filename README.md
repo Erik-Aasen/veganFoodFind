@@ -31,4 +31,4 @@ Continuous Deployment with Heroku.
 
 Homepage
 
-![image info](./pictures/homepage1.png)
+<img src="./pictures/homepage1.png" alt="homepage1" width="200"/>
