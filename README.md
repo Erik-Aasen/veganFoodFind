@@ -31,3 +31,4 @@ Continuous Deployment with Heroku.
 
 Homepage
 
+![image info](./pictures/homepage1.png)
