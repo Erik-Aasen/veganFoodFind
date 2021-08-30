@@ -33,7 +33,7 @@ Continuous Deployment with Heroku.
 
 <img src="./pictures/meals.png" alt="meals" width="100%" />
 
-### Add/View/Edit
+### Add/View/Edit User Meals
 
 <p float="left">
 	<img src="./pictures/entermeal.png" alt="entermeal" width="32%"/>
