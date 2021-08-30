@@ -10,7 +10,7 @@ Site hosted on Heroku: https://vegan-food-find.herokuapp.com
 
 - Mobile responsive design utilizing Bootstrap.
 
-## Technologies Used:
+## Technologies used
 
 - React
 - Bootstrap
@@ -22,12 +22,12 @@ Site hosted on Heroku: https://vegan-food-find.herokuapp.com
 - Piexifjs
 - Heroku CI/CD
 
-## Deployment:
+## Deployment
 
 Continuous Deployment with Heroku.
 - Project root package.json instructs Heroku to build out the front and back end.
 
-## Views:
+## Views
 
 ### Homepage
 
