@@ -29,17 +29,16 @@ Continuous Deployment with Heroku.
 
 ## Views:
 
-Homepage
-
-<p float="left">
-	<img src="./pictures/homepage1.png" alt="homepage1" width="49%"/>
-	<img src="./pictures/homepage2.png" alt="homepage2" width="49%"/>
-</p>
-
-<p float="left">
-	<img src="./pictures/addmeal.png" alt="addmeal" width="33%"/>
-	<img src="./pictures/mymeals.png" alt="mymeals" width="33%"/>
-    <img src="./pictures/editmeal.png" alt="editmeal" width="33%"/>
-</p>
+### Homepage
 
 <img src="./pictures/meals.png" alt="meals" width="100%" />
+
+### Add/View/Edit
+
+<p float="left">
+	<img src="./pictures/entermeal.png" alt="entermeal" width="32%"/>
+	<img src="./pictures/mymeals.png" alt="mymeals" width="32%"/>
+    <img src="./pictures/editmeal.png" alt="editmeal" width="32%"/>
+</p>
+
+
