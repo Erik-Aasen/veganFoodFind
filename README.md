@@ -40,5 +40,3 @@ Continuous Deployment with Heroku.
 	<img src="./pictures/mymeals.png" alt="mymeals" width="32%"/>
     <img src="./pictures/editmeal.png" alt="editmeal" width="32%"/>
 </p>
-
-
