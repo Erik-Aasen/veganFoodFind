@@ -1,6 +1,6 @@
 # Vegan Food Finder
 
-Site hosted on Heroku: https://vegan-food-find.herokuapp.com
+App hosted on Heroku: https://vegan-food-find.herokuapp.com
 
 - A fullstack application that allows users to upload meals with images and provides an interactive search selector for finding meals by city.
 
