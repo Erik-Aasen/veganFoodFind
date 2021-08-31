@@ -2,17 +2,19 @@
 
 App hosted on Heroku: https://vegan-food-find.herokuapp.com
 
-- A fullstack application that allows users to upload meals with images and provides an interactive search selector for finding meals by city.
+- A MERN full stack application that allows users to upload meals with images and provides an interactive search selector for finding meals by city
 
-- Image EXIF data stripped upon upload and users can choose image orientation, edit, and delete their posts.
+- Implemented authorization with session based authentication using passport.js and stored with React Context
 
-- Registration and login implemented with session based authentication using passport.js
+- MongoDB Atlas management and integration
 
-- Mobile responsive design utilizing Bootstrap.
+- Image EXIF data stripped upon upload and users can choose image orientation, edit and delete their posts
+
+- Mobile responsive design utilizing Bootstrap
 
 ## Technologies used
 
-- React
+- React w/ Context
 - Bootstrap
 - NodeJS
 - Express
@@ -40,3 +42,9 @@ Continuous Deployment with Heroku.
 	<img src="./pictures/mymeals.png" alt="mymeals" width="32%"/>
     <img src="./pictures/editmeal.png" alt="editmeal" width="32%"/>
 </p>
+
+## App File Structure
+
+
+Mongo info
+Future improvements
