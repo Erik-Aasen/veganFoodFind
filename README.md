@@ -45,6 +45,13 @@ Continuous Deployment with Heroku.
 
 ## App File Structure
 
+project
++-- backend
+	+-- src
+		+-- Interfaces
+			UserInterfaces.ts
+
+
 
 Mongo info
 Future improvements
