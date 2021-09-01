@@ -4,7 +4,7 @@ App hosted on Heroku: https://vegan-food-find.herokuapp.com
 
 - A MERN full stack application that allows users to upload meals with images and provides an interactive search selector for finding meals by city
 
-- Implemented authorization with session based authentication using passport.js and stored with React Context
+- Session based authentication using passport.js and stored with React Context
 
 - MongoDB Atlas management and integration
 
@@ -45,31 +45,33 @@ Continuous Deployment with Heroku.
 
 ## App File Structure
 
-```
-|-- backend
-|   |-- src
-|   |   |-- Interfaces
-|   |   |-- index.ts
-|   |   |-- User.ts
-|   |-- package.json
-|   |-- tsconfig.json
-|-- client
-|   |-- public
-|   |   |-- index.html
-|   |-- src
-|   |   |-- Components
-|   |   |-- Interfaces
-|   |   |-- Pages
-|   |   |-- App.tsx
-|   |   |-- config.tsx
-|   |   |-- index.tsx
-|   |   |-- main.css
-|   |-- package.json
-|   |-- tsconfig.json
-|-- pictures
-|-- .gitignore
-|-- package.json
-```
+- backend
+	- src
+		- [Interfaces](backend/src/Interfaces)
+		-		Contains a typescript file that defines object structures and key types
+		- [index.ts](backend/src/index.ts)
+		- 		Server file. Contains RESTful API and serves react build
+		- [User.ts](backend/src/User.ts)
+		- 		Mongoose schema definitions
+- client
+	- public
+		- [index.html](client/public/index.html)
+		- 		Root HTML file. Importantly, body div has id="root"
+	- src
+		- [Components](client/src/Components)
+		- 		Reusable react components
+		- [Interfaces](client/src/Interfaces)
+		- 		Contains a typescript file that defines object structures and key types
+		- [Pages](client/src/Pages)
+		- 		Page level react components. Routed to with React BrowserRouter
+		- [App.tsx](client/src/App.tsx)
+		- 		Conditionally routes to components with BrowserRouter depending on global authentication state provided by Context
+		- [index.tsx](client/src/index.tsx)
+		- 		Uses ReactDOM to render App.tsx, wrapped in Context, to the "root" element in index.html
+		- [main.css](client/src/main.css)
+		- 		CSS file for front end styling. 
+- [package.json](package.json)
+- 		Provides instructions for Heroku to install npm modules, build out the front and back end, and start the app
 
 ## MongoDB Atlas DB Structure
 ```
@@ -96,6 +98,4 @@ Continuous Deployment with Heroku.
 
 - Images should be compressed to save space and improve loading time
 
-- Project is written in Typescript but most types need to be further defined instead of 'any'
-	
-- SEO, etc. Let me know what you think should be improved!
+- Project is written in Typescript but most types need to be defined
