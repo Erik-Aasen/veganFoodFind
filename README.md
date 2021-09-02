@@ -45,33 +45,33 @@ Continuous Deployment with Heroku.
 
 ## App File Structure
 
-- backend
-	- src
+- [backend](backend)
+	- [src](src)
 		- [Interfaces](backend/src/Interfaces)
-		-		Contains a typescript file that defines object structures and key types
+			- Contains a typescript file that defines object structures and key types
 		- [index.ts](backend/src/index.ts)
-		- 		Server file. Contains RESTful API and serves react build
+		 	- Server file. Contains RESTful API and serves react build
 		- [User.ts](backend/src/User.ts)
-		- 		Mongoose schema definitions
-- client
-	- public
+		 	- Mongoose schema definitions
+- [client](client)
+	- [public](client/public)
 		- [index.html](client/public/index.html)
-		- 		Root HTML file. Importantly, body div has id="root"
-	- src
+			- Root HTML file. Importantly, body div has id="root"
+	- [src](client/src)
 		- [Components](client/src/Components)
-		- 		Reusable react components
+			- Reusable react components
 		- [Interfaces](client/src/Interfaces)
-		- 		Contains a typescript file that defines object structures and key types
+			- Contains a typescript file that defines object structures and key types
 		- [Pages](client/src/Pages)
-		- 		Page level react components. Routed to with React BrowserRouter
+			- Page level react components. Routed to with React BrowserRouter
 		- [App.tsx](client/src/App.tsx)
-		- 		Conditionally routes to components with BrowserRouter depending on global authentication state provided by Context
+			- Conditionally routes to components with BrowserRouter depending on global authentication state provided by Context
 		- [index.tsx](client/src/index.tsx)
-		- 		Uses ReactDOM to render App.tsx, wrapped in Context, to the "root" element in index.html
+			- Uses ReactDOM to render App.tsx, wrapped in Context, to the "root" element in index.html
 		- [main.css](client/src/main.css)
-		- 		CSS file for front end styling. 
+			- CSS file for front end styling. 
 - [package.json](package.json)
-- 		Provides instructions for Heroku to install npm modules, build out the front and back end, and start the app
+	- Provides instructions for Heroku to install npm modules, build out the front and back end, and start the app
 
 ## MongoDB Atlas DB Structure
 ```
