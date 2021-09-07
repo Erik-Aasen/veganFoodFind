@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import { DatabaseUserInterface, UserInterface } from "./Interfaces/UserInterface";
 
 const post = new mongoose.Schema({
     restaurant: {
         type: String
-    }, 
+    },
     city: {
         type: String
     },
@@ -18,6 +19,7 @@ const post = new mongoose.Schema({
     }
 })
 
+// const user = new mongoose.Schema<UserInterface>({
 const user = new mongoose.Schema({
     username: {
         type: String,
@@ -31,4 +33,5 @@ const user = new mongoose.Schema({
     posts: [post]
 });
 
-export default mongoose.model("User", user);
+// export default mongoose.model<UserInterface>("User", user);
+export default mongoose.model<DatabaseUserInterface>("User", user);

@@ -1,16 +1,28 @@
 export interface UserInterface {
+    _id: object;
     username: string;
     isAdmin: boolean;
-    id: string;
 }
 
 export interface DatabaseUserInterface {
+    isAdmin: boolean;
+    _id: object;
     username: string;
     password: string;
-    isAdmin: boolean;
-    _id: string;
+    posts: PostInterface[];
   }
 
 export interface UserPostsInterface {
-    // posts: ;
+    _id: object;
+    username: string;
+    posts: PostInterface[]
+}
+
+export interface PostInterface {
+    _id: object;
+    restaurant: string;
+    city: string;
+    meal: string;
+    description: string;
+    picture: string;
 }

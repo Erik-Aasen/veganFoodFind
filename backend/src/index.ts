@@ -8,8 +8,9 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import User from './User';
 import dotenv from 'dotenv';
-import { UserInterface, DatabaseUserInterface } from './Interfaces/UserInterface';
+import { UserInterface, DatabaseUserInterface, UserPostsInterface } from './Interfaces/UserInterface';
 import path from "path";
+import { AuthRequest } from './definitionfile';
 
 const LocalStrategy = passportLocal.Strategy;
 dotenv.config();
@@ -73,10 +74,10 @@ passport.serializeUser((user: DatabaseUserInterface, cb) => {
   cb(null, user._id);
 });
 
-passport.deserializeUser((id: string, cb) => {
-  User.findOne({ _id: id }, (err: Error, user: DatabaseUserInterface) => {
+passport.deserializeUser((_id: object, cb) => {
+  User.findOne({ _id: _id }, (err: Error, user: DatabaseUserInterface) => {
     const userInformation: UserInterface = {
-      id: user._id,
+      _id: user._id,
       username: user.username,
       isAdmin: user.isAdmin
     };
@@ -85,12 +86,12 @@ passport.deserializeUser((id: string, cb) => {
 });
 
 // MIDDLEWARE
-const isAdministratorMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const { user }: any = req;
+const isAdministratorMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+  const { user } = req;
   if (user) {
     User.findOne({ username: user.username }, (err: Error, user: DatabaseUserInterface) => {
       if (err) throw err;
-      if (user?.isAdmin) {
+      if (user.isAdmin) {
         next()
       } else {
         res.send("Sorry, only admins can perform this")
@@ -104,7 +105,6 @@ const isAdministratorMiddleware = (req: Request, res: Response, next: NextFuncti
 // GET ROUTES
 app.get("/logout", (req, res) => {
   req.logout();
-  // console.log("logging out");
   res.send("logged out");
 })
 
@@ -112,12 +112,13 @@ app.get("/user", (req, res) => {
   res.send(req.user);
 })
 
-app.get("/usermeals", async (req, res) => {
-  const { user }: any = req;
-  await User.find({ _id: user.id }, (err: Error, data: any) => {
+app.get("/usermeals", async (req: AuthRequest, res: Response) => {
+  const { user } = req;
+  const { _id } = user;
+
+  await User.find({ _id: _id }, '_id username posts').exec(function (err, data: DatabaseUserInterface[]) {
     if (err) throw err;
     const posts = data[0].posts;
-    // console.log(posts[0]);
     res.send(posts)
   })
 })
@@ -149,10 +150,10 @@ app.post('/register', async (req: Request, res: Response) => {
     return;
   }
 
-  User.findOne({ username }, async (err: Error, doc: DatabaseUserInterface) => {
+  User.findOne({ username }, async (err: Error, data: DatabaseUserInterface) => {
     if (err) throw err;
-    if (doc) res.send("User already exists");
-    if (!doc) {
+    if (data) res.send("User already exists");
+    if (!data) {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       const newUser = new User({
         username,
@@ -181,7 +182,7 @@ app.post("/addmeal", async (req: Request, res: Response) => {
 
   const post: any = { restaurant, city, meal, description };
   Object.keys(post).map(k => post[k] = capitalizeFirstLetter(post[k].trim()));
-  
+
   function capitalizeFirstLetter(string: any) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
