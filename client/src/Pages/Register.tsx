@@ -17,7 +17,6 @@ export default function Register() {
         }, {
             withCredentials: true
         }).then((res: AxiosResponse) => {
-            // console.log(res.data);
             if (res.data === "registered") {
                 setUsername("");
                 setPassword("");

@@ -14,7 +14,6 @@ export default function Login() {
         }, {
             withCredentials: true
         }).then((res: AxiosResponse) => {
-            // console.log(res.data);
             if (res.data === "logged in") {
                 window.location.href = "/"
             }
@@ -27,7 +26,6 @@ export default function Login() {
     //     axios.get(API + "/user", {
     //         withCredentials: true
     //     }).then(res => {
-    //         console.log(res.data);
     //     })
     // }
 

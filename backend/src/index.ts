@@ -125,7 +125,7 @@ app.get("/usermeals", async (req: AuthRequest, res: Response) => {
 
 app.get("/getallusers", isAdministratorMiddleware, async (req, res) => {
   await User.find({}, '_id username isAdmin').exec(function (err, data) {
-    // console.log(data);
+    // data);
     res.send(data)
   })
 })
@@ -213,7 +213,7 @@ function returnAllPosts(userPosts: any) {
   userPosts.forEach((user: any) => {
     postArray.push(...user.posts)
   })
-  // console.log(postArray);
+  
   return postArray;
 }
 
@@ -226,7 +226,6 @@ function returnMealSpecified(userPosts: any, meal: any) {
       }
     })
   })
-  // console.log(postArray);
   return postArray;
 }
 
@@ -239,7 +238,7 @@ function returnCitySpecified(userPosts: any, city: any) {
       }
     })
   })
-  // console.log(postArray);
+  
   return postArray;
 }
 
@@ -254,7 +253,7 @@ function returnCityMealSpecified(userPosts: any, city: any, meal: any) {
       }
     })
   })
-  // console.log(postArray);
+  
   return postArray;
 }
 
@@ -306,11 +305,8 @@ app.post("/deletemeal", async (req, res) => {
 // PUT ROUTES
 app.put("/addmeal", async (req: Request, res: Response) => {
 
-  // var ObjectId = mongoose.Types.ObjectId;
   const { user }: any = req;
   const { _id, restaurant, city, meal, description, picture } = req.body;
-  // const id = new ObjectId(_id);
-  // console.log(user, _id, restaurant, city, meal, description, picture);
 
   if (user) {
 

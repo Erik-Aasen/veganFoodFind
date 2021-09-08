@@ -28,13 +28,11 @@ export default function EditMeal(props) {
     //         setPicture(reader.result)
     //     };
     //     reader.onerror = function (error) {
-    //         console.log('Error: ', error);
     //     };
     // }
 
     const rotateMinus = (e) => {
         e.preventDefault();
-        // console.log(orientation);
         if (orientation > 1) {
             setOrientation(orientation - 1)
             var zeroth = {};
@@ -56,7 +54,6 @@ export default function EditMeal(props) {
 
     const rotatePlus = (e) => {
         e.preventDefault();
-        // console.log(orientation);
         if (orientation < 8) {
             setOrientation(orientation + 1)
             var zeroth = {};
@@ -90,7 +87,6 @@ export default function EditMeal(props) {
             setPicture(newJpeg)
         };
         reader.onerror = function (error) {
-            console.log('Error: ', error);
         };
     }
 
@@ -102,13 +98,7 @@ export default function EditMeal(props) {
         }, {
             withCredentials: true
         }).then((res: AxiosResponse) => {
-            // console.log(res.data);
             if (res.data === "meal updated") {
-                // setRestaurant("");
-                // setCity("");
-                // setMeal("");
-                // setDescription("");
-
                 history.push('/mymeals');
             }
         })

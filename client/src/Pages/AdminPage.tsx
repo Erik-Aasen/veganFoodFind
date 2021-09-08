@@ -12,25 +12,18 @@ export default function AdminPage() {
     const [selectedUser, setSelectedUser] = useState<any>();
 
     useEffect(() => {
-        
+
         Axios.get(API + "/getallusers", {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             setData(res.data.filter((item: any) => {
                 return (item.username !== ctx.username)
             }))
-            // setData(res.data)
-            // console.log(data);
-            
-            
         })
-    }, [ctx.username]); //ADDED CALLBACK TO CLEAR A MEMORY LEAK ERROR UPON HITTING HOME FROM ADMIN PAGE, MIGHT NEED TO DELETE FOR PRODUCTION?
+    }, [ctx.username]);
 
     if (!data) {
         return null;
-        
-    } else {
-        console.log(data);
     }
 
     const deleteUser = () => {
@@ -41,7 +34,6 @@ export default function AdminPage() {
                 userid = item._id;
             }
         })
-        // console.log(userid);
 
         Axios.post(API + "/deleteuser", {
             id: userid!  //! tells react that we know there will be a userid as a string since it will be defined in the if statement. React worries that it might not get defined and then not have the chance to be a string
@@ -57,7 +49,7 @@ export default function AdminPage() {
                 //   });
                 // history.go(0);
             }
-        })       
+        })
     }
 
 
@@ -69,7 +61,7 @@ export default function AdminPage() {
                 {
                     data.map((item: any) => {
                         return (
-                            <option key={item._id}id={item.username}>{item.username}</option>
+                            <option key={item._id} id={item.username}>{item.username}</option>
                         )
                     })
                 }

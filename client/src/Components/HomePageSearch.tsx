@@ -47,15 +47,11 @@ export default function HomePageSearch(props) {
 
     const selectCity = (e: any) => {
         setCity(e.target.value);
-        // console.log('city: ' + city + ', evt: ' + e.target.value);
 
         let cityForFiltering = e.target.value;
-        // console.log(city); // returns null
-        // console.log(cityForFiltering); // returns value
 
         if (cityForFiltering === "All cities") {
             setMeals(filterMeals(data))
-            // setMeal("All meals")
 
         } else {
             let updatedMeals = data.filter(item => {
@@ -63,15 +59,12 @@ export default function HomePageSearch(props) {
             })
             setMeals(filterMeals(updatedMeals))
             setMeal("All meals")
-            // console.log('meals filtered');
-
 
         }
     }
 
     const selectMeal = (e: any) => {
         setMeal(e.target.value)
-        // console.log(e.target.value);
     }
 
     return (
@@ -103,7 +96,7 @@ export default function HomePageSearch(props) {
                 </div>
                 <button type="button" className="btn btn-success" onClick={e => props.postMeals(e, city, meal)}>Search</button>
             </form>
-            
+
         </div>
     )
 }
