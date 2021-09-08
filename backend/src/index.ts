@@ -8,7 +8,7 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import User from './User';
 import dotenv from 'dotenv';
-import { UserInterface, DatabaseUserInterface, UserPostsInterface } from './Interfaces/UserInterface';
+import { UserInterface } from './Interfaces/UserInterface';
 import path from "path";
 import { AuthRequest } from './definitionfile';
 
@@ -55,7 +55,8 @@ app.use(passport.session());
 
 //Passport
 passport.use(new LocalStrategy((username: string, password: string, done) => {
-  User.findOne({ username: username }, (err: Error, user: DatabaseUserInterface) => {
+  // User.findOne({ username: username }, (err: Error, user: UserInterface) => {
+  User.findOne({ username: username }, '_id username password').exec(function (err, user: UserInterface) {
     if (err) throw err;
     if (!user) return done(null, false);
     bcrypt.compare(password, user.password, (err: Error, result: boolean) => {
@@ -65,17 +66,16 @@ passport.use(new LocalStrategy((username: string, password: string, done) => {
       } else {
         return done(null, false);
       }
-    });
-  });
-})
-);
+    })
+  })
+}));
 
-passport.serializeUser((user: DatabaseUserInterface, cb) => {
+passport.serializeUser((user: UserInterface, cb) => {
   cb(null, user._id);
 });
 
 passport.deserializeUser((_id: object, cb) => {
-  User.findOne({ _id: _id }, (err: Error, user: DatabaseUserInterface) => {
+  User.findOne({ _id: _id }, (err: Error, user: UserInterface) => {
     const userInformation: UserInterface = {
       _id: user._id,
       username: user.username,
@@ -89,7 +89,7 @@ passport.deserializeUser((_id: object, cb) => {
 const isAdministratorMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const { user } = req;
   if (user) {
-    User.findOne({ username: user.username }, (err: Error, user: DatabaseUserInterface) => {
+    User.findOne({ username: user.username }, (err: Error, user: UserInterface) => {
       if (err) throw err;
       if (user.isAdmin) {
         next()
@@ -116,7 +116,7 @@ app.get("/usermeals", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { _id } = user;
 
-  await User.find({ _id: _id }, '_id username posts').exec(function (err, data: DatabaseUserInterface[]) {
+  await User.find({ _id: _id }, '_id username posts').exec(function (err, data: UserInterface[]) {
     if (err) throw err;
     const posts = data[0].posts;
     res.send(posts)
@@ -150,7 +150,7 @@ app.post('/register', async (req: Request, res: Response) => {
     return;
   }
 
-  User.findOne({ username }, async (err: Error, data: DatabaseUserInterface) => {
+  User.findOne({ username }, async (err: Error, data: UserInterface) => {
     if (err) throw err;
     if (data) res.send("User already exists");
     if (!data) {

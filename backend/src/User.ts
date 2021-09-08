@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DatabaseUserInterface, UserInterface } from "./Interfaces/UserInterface";
+import { UserInterface } from "./Interfaces/UserInterface";
 
 const post = new mongoose.Schema({
     restaurant: {
@@ -34,4 +34,4 @@ const user = new mongoose.Schema({
 });
 
 // export default mongoose.model<UserInterface>("User", user);
-export default mongoose.model<DatabaseUserInterface>("User", user);
+export default mongoose.model<UserInterface>("User", user);
