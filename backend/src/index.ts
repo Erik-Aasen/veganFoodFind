@@ -8,7 +8,7 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import User from './User';
 import dotenv from 'dotenv';
-import { UserInterface } from './Interfaces/UserInterface';
+import { MongoInterface, UserSerialize, UserDeserialize } from './Interfaces/UserInterface';
 import path from "path";
 import { AuthRequest } from './definitionfile';
 
@@ -55,13 +55,15 @@ app.use(passport.session());
 
 //Passport
 passport.use(new LocalStrategy((username: string, password: string, done) => {
-  // User.findOne({ username: username }, (err: Error, user: UserInterface) => {
-  User.findOne({ username: username }, '_id username password').exec(function (err, user: UserInterface) {
+  // User.findOne({ username: username }, (err: Error, user: MongoInterface) => {
+  User.findOne({ username: username }, '_id username password').exec(function (err, user) {
     if (err) throw err;
     if (!user) return done(null, false);
     bcrypt.compare(password, user.password, (err: Error, result: boolean) => {
       if (err) throw err;
       if (result === true) {
+        console.log(user);
+
         return done(null, user);
       } else {
         return done(null, false);
@@ -70,13 +72,14 @@ passport.use(new LocalStrategy((username: string, password: string, done) => {
   })
 }));
 
-passport.serializeUser((user: UserInterface, cb) => {
+passport.serializeUser((user: UserSerialize, cb) => {
   cb(null, user._id);
 });
 
-passport.deserializeUser((_id: object, cb) => {
-  User.findOne({ _id: _id }, (err: Error, user: UserInterface) => {
-    const userInformation: UserInterface = {
+passport.deserializeUser((_id, cb) => {
+  // User.findOne({ _id: _id }, (err: Error, user: MongoInterface) => {
+  User.findOne({ _id: _id }, '_id username isAdmin').exec(function (err, user) {
+    const userInformation: UserDeserialize = {
       _id: user._id,
       username: user.username,
       isAdmin: user.isAdmin
@@ -89,7 +92,7 @@ passport.deserializeUser((_id: object, cb) => {
 const isAdministratorMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const { user } = req;
   if (user) {
-    User.findOne({ username: user.username }, (err: Error, user: UserInterface) => {
+    User.findOne({ username: user.username }, (err: Error, user: MongoInterface) => {
       if (err) throw err;
       if (user.isAdmin) {
         next()
@@ -108,7 +111,7 @@ app.get("/logout", (req, res) => {
   res.send("logged out");
 })
 
-app.get("/user", (req, res) => {
+app.get("/user", (req: AuthRequest, res) => {
   res.send(req.user);
 })
 
@@ -116,7 +119,7 @@ app.get("/usermeals", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { _id } = user;
 
-  await User.find({ _id: _id }, '_id username posts').exec(function (err, data: UserInterface[]) {
+  await User.find({ _id: _id }, '_id username posts').exec(function (err, data: MongoInterface[]) {
     if (err) throw err;
     const posts = data[0].posts;
     res.send(posts)
@@ -150,7 +153,7 @@ app.post('/register', async (req: Request, res: Response) => {
     return;
   }
 
-  User.findOne({ username }, async (err: Error, data: UserInterface) => {
+  User.findOne({ username }, async (err: Error, data: MongoInterface) => {
     if (err) throw err;
     if (data) res.send("User already exists");
     if (!data) {
@@ -176,8 +179,8 @@ app.post("/deleteuser", isAdministratorMiddleware, async (req, res) => {
   res.send("user deleted")
 });
 
-app.post("/addmeal", async (req: Request, res: Response) => {
-  const { user, body }: any = req;
+app.post("/addmeal", async (req: AuthRequest, res: Response) => {
+  const { user, body } = req;
   const { restaurant, city, meal, description, picture } = body;
 
   const post: any = { restaurant, city, meal, description };
@@ -189,7 +192,7 @@ app.post("/addmeal", async (req: Request, res: Response) => {
 
   if (user) {
     await User.updateOne(
-      { _id: user.id },
+      { _id: user._id },
       {
         $push: {
           posts: {
@@ -213,7 +216,7 @@ function returnAllPosts(userPosts: any) {
   userPosts.forEach((user: any) => {
     postArray.push(...user.posts)
   })
-  
+
   return postArray;
 }
 
@@ -238,7 +241,7 @@ function returnCitySpecified(userPosts: any, city: any) {
       }
     })
   })
-  
+
   return postArray;
 }
 
@@ -253,7 +256,7 @@ function returnCityMealSpecified(userPosts: any, city: any, meal: any) {
       }
     })
   })
-  
+
   return postArray;
 }
 
