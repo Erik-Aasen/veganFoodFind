@@ -14,8 +14,8 @@ export interface MongoInterface {
   isAdmin: boolean;
   _id: object;
   username: string;
-  password?: string;
-  posts?: PostInterface[];
+  password: string;
+  posts: PostInterface[];
 }
 
 export interface PostInterface {
@@ -26,3 +26,8 @@ export interface PostInterface {
   description: string;
   picture: string;
 }
+
+export interface CapitalizeAndTrim {
+  [key: string]: string;
+}
+

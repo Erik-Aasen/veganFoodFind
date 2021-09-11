@@ -8,7 +8,7 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import User from './User';
 import dotenv from 'dotenv';
-import { MongoInterface, UserSerialize, UserDeserialize } from './Interfaces/UserInterface';
+import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim } from './Interfaces/UserInterface';
 import path from "path";
 import { AuthRequest } from './definitionfile';
 
@@ -62,8 +62,6 @@ passport.use(new LocalStrategy((username: string, password: string, done) => {
     bcrypt.compare(password, user.password, (err: Error, result: boolean) => {
       if (err) throw err;
       if (result === true) {
-        console.log(user);
-
         return done(null, user);
       } else {
         return done(null, false);
@@ -106,12 +104,12 @@ const isAdministratorMiddleware = (req: AuthRequest, res: Response, next: NextFu
 }
 
 // GET ROUTES
-app.get("/logout", (req, res) => {
+app.get("/logout", (req: AuthRequest, res: Response) => {
   req.logout();
   res.send("logged out");
 })
 
-app.get("/user", (req: AuthRequest, res) => {
+app.get("/user", (req: AuthRequest, res: Response) => {
   res.send(req.user);
 })
 
@@ -119,27 +117,23 @@ app.get("/usermeals", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { _id } = user;
 
-  await User.find({ _id: _id }, '_id username posts').exec(function (err, data: MongoInterface[]) {
+  await User.findOne({ _id: _id }, '_id username posts').exec(function (err, data: MongoInterface) {
     if (err) throw err;
-    const posts = data[0].posts;
+    const posts = data.posts;
     res.send(posts)
   })
 })
 
 app.get("/getallusers", isAdministratorMiddleware, async (req, res) => {
   await User.find({}, '_id username isAdmin').exec(function (err, data) {
-    // data);
     res.send(data)
   })
 })
 
-app.get("/getmeals", async (req, res) => {
-  await User.find({}, (err: Error, data: any) => {
+app.get("/getmeals", async (req: AuthRequest, res: Response) => {
+  await User.find({}, (err: Error, data) => {
     if (err) throw err;
-    let posts: any = []
-    data.forEach((user: any) => {
-      posts.push(...user.posts)
-    })
+    const posts = returnAllPosts(data)
     res.send(posts)
   })
 })
@@ -168,25 +162,26 @@ app.post('/register', async (req: Request, res: Response) => {
   })
 })
 
-app.post("/login", passport.authenticate("local"), (req, res) => {
+app.post("/login", passport.authenticate("local"), (req: AuthRequest, res: Response) => {
   res.send("logged in");
 })
 
-app.post("/deleteuser", isAdministratorMiddleware, async (req, res) => {
-  const { id } = req?.body
-  await User.findByIdAndDelete(id)
+app.post("/deleteuser", isAdministratorMiddleware, async (req: AuthRequest, res: Response) => {
+  const { _id } = req.body
+  await User.findByIdAndDelete(_id)
     .catch((err: Error) => { throw err });
   res.send("user deleted")
 });
 
 app.post("/addmeal", async (req: AuthRequest, res: Response) => {
-  const { user, body } = req;
+  const { user } = req;
+  const { body } = req;
   const { restaurant, city, meal, description, picture } = body;
 
-  const post: any = { restaurant, city, meal, description };
-  Object.keys(post).map(k => post[k] = capitalizeFirstLetter(post[k].trim()));
+  let post: CapitalizeAndTrim = { restaurant, city, meal, description };
+  Object.keys(post).map(entry => post[entry] = capitalizeFirstLetter(post[entry].trim()))
 
-  function capitalizeFirstLetter(string: any) {
+  function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
@@ -211,31 +206,37 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
   }
 })
 
-function returnAllPosts(userPosts: any) {
-  let postArray: any = [];
-  userPosts.forEach((user: any) => {
+function returnAllPosts(userPosts: MongoInterface[]) {
+  
+  let postArray: PostInterface[] = [];
+  userPosts.forEach((user) => {
     postArray.push(...user.posts)
   })
-
+  
   return postArray;
+
 }
 
-function returnMealSpecified(userPosts: any, meal: any) {
-  let postArray: any = [];
-  userPosts.forEach((user: any) => {
-    user.posts.forEach((post: any) => {
+function returnMealSpecified(userPosts: MongoInterface[], meal: string) {
+  
+  let postArray: PostInterface[] = [];
+  userPosts.forEach((user) => {
+    user.posts.forEach((post) => {
       if (post.meal === meal) {
         postArray.push(post)
       }
     })
   })
+  
   return postArray;
+
 }
 
-function returnCitySpecified(userPosts: any, city: any) {
-  let postArray: any = [];
-  userPosts.forEach((user: any) => {
-    user.posts.forEach((post: any) => {
+function returnCitySpecified(userPosts: MongoInterface[], city: string) {
+  
+  let postArray: PostInterface[] = [];
+  userPosts.forEach((user) => {
+    user.posts.forEach((post) => {
       if (post.city === city) {
         postArray.push(post)
       }
@@ -243,12 +244,13 @@ function returnCitySpecified(userPosts: any, city: any) {
   })
 
   return postArray;
+
 }
 
-function returnCityMealSpecified(userPosts: any, city: any, meal: any) {
-  let postArray: any = [];
-  userPosts.forEach((user: any) => {
-    user.posts.forEach((post: any) => {
+function returnCityMealSpecified(userPosts: MongoInterface[], city: string, meal: string) {
+  let postArray: PostInterface[] = [];
+  userPosts.forEach((user) => {
+    user.posts.forEach((post) => {
       if (post.city === city) {
         if (post.meal === meal) {
           postArray.push(post)
@@ -258,10 +260,11 @@ function returnCityMealSpecified(userPosts: any, city: any, meal: any) {
   })
 
   return postArray;
+
 }
 
-app.post("/getmeals", async (req, res) => {
-  const { city, meal } = req?.body;
+app.post("/getmeals", async (req: AuthRequest, res) => {
+  const { city, meal } = req.body;
   if (city === "All cities") {
     if (meal === "All meals") {
       await User.find({}, 'posts').exec(function (err, userPosts) {
@@ -269,14 +272,18 @@ app.post("/getmeals", async (req, res) => {
         res.send(postArray)
       })
     } else {
-      await User.find({ posts: { $elemMatch: { meal: meal } } }, 'posts').exec(function (err, userPosts) {
+      await User.find({
+        posts: { $elemMatch: { meal: meal } }
+      }, 'posts').exec(function (err, userPosts) {
         const postArray = returnMealSpecified(userPosts, meal)
         res.send(postArray)
       })
     }
   } else {
     if (meal === "All meals") {
-      await User.find({ posts: { $elemMatch: { city: city } } }, 'posts').exec(function (err, userPosts) {
+      await User.find({
+        posts: { $elemMatch: { city: city } }
+      }, 'posts').exec(function (err, userPosts) {
         const postArray = returnCitySpecified(userPosts, city)
         res.send(postArray)
       })
@@ -291,9 +298,9 @@ app.post("/getmeals", async (req, res) => {
   }
 })
 
-app.post("/deletemeal", async (req, res) => {
-  const { user }: any = req;
-  const { _id, restaurant, city, meal, description, picture } = req.body;
+app.post("/deletemeal", async (req: AuthRequest, res) => {
+  const { user } = req;
+  const { _id } = req.body;
 
   if (user) {
     await User.updateOne({
@@ -306,9 +313,9 @@ app.post("/deletemeal", async (req, res) => {
 })
 
 // PUT ROUTES
-app.put("/addmeal", async (req: Request, res: Response) => {
+app.put("/addmeal", async (req: AuthRequest, res: Response) => {
 
-  const { user }: any = req;
+  const { user } = req;
   const { _id, restaurant, city, meal, description, picture } = req.body;
 
   if (user) {
