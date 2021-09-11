@@ -1,5 +1,5 @@
 import { Request } from "express"
-import { UserDeserialize, PostInterface } from "src/Interfaces/UserInterface"
+import { UserDeserialize, PostInterface } from "./Interfaces/Interfaces"
 
 export interface AuthRequest extends Request {
   user: UserDeserialize

@@ -1,26 +1,28 @@
 import Axios, { AxiosResponse } from "axios"
 import { useEffect, useState } from "react"
 import API from '../config'
+import { PostResponse } from "../definitionfile"
+import { PostInterface } from "../Interfaces/Interfaces"
 
 export default function HomePageSearch(props) {
 
     const [city, setCity] = useState("All cities")
     const [meal, setMeal] = useState("All meals")
 
-    const [meals, setMeals] = useState<any>("")
-    const [cities, setCities] = useState<any>("")
+    const [meals, setMeals] = useState<string[]>([])
+    const [cities, setCities] = useState<string[]>([])
 
-    const [data, setData] = useState<any>("")
+    const [data, setData] = useState<PostInterface[]>([])
 
-    const filterMeals = (useEffectData) => {
-        let unfilteredMeals = useEffectData.map((item: any) => item.meal)
+    const filterMeals = (useEffectData: PostInterface[]) => {
+        let unfilteredMeals = useEffectData.map((item) => item.meal)
         let filteredMeals = [...new Set(unfilteredMeals)];
         filteredMeals.sort()
         return (filteredMeals)
     }
 
-    const filterCities = (useEffectData) => {
-        let unfilteredCities = useEffectData.map((item: any) => item.city)
+    const filterCities = (useEffectData: PostInterface[]) => {
+        let unfilteredCities = useEffectData.map((item) => item.city)
         let filteredCities = [...new Set(unfilteredCities)];
         filteredCities.sort();
         return (filteredCities)
@@ -31,7 +33,7 @@ export default function HomePageSearch(props) {
         async function getMeals() {
             await Axios.get(API + "/getmeals", {
                 withCredentials: true
-            }).then((res: AxiosResponse) => {
+            }).then((res: PostResponse) => {
                 setData(res.data)
                 setMeals(filterMeals(res.data))
                 setCities(filterCities(res.data))
@@ -45,7 +47,7 @@ export default function HomePageSearch(props) {
         return null;
     }
 
-    const selectCity = (e: any) => {
+    const selectCity = (e) => {
         setCity(e.target.value);
 
         let cityForFiltering = e.target.value;
@@ -63,7 +65,7 @@ export default function HomePageSearch(props) {
         }
     }
 
-    const selectMeal = (e: any) => {
+    const selectMeal = (e) => {
         setMeal(e.target.value)
     }
 

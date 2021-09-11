@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MongoInterface } from "./Interfaces/UserInterface";
+import { MongoInterface } from "./Interfaces/Interfaces";
 
 const post = new mongoose.Schema({
     restaurant: {

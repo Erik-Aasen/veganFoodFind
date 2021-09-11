@@ -8,7 +8,7 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import User from './User';
 import dotenv from 'dotenv';
-import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim } from './Interfaces/UserInterface';
+import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim } from './Interfaces/Interfaces';
 import path from "path";
 import { AuthRequest } from './definitionfile';
 

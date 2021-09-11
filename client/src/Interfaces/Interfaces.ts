@@ -3,3 +3,12 @@ export interface UserInterface {
     username: string;
     isAdmin: boolean;
 }
+
+export interface PostInterface {
+    _id: object;
+    restaurant: string;
+    city: string;
+    meal: string;
+    description: string;
+    picture: string;
+  }
