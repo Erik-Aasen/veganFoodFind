@@ -9,10 +9,10 @@ export default function HomePageSearch(props) {
     const [city, setCity] = useState("All cities")
     const [meal, setMeal] = useState("All meals")
 
-    const [meals, setMeals] = useState<string[]>([])
-    const [cities, setCities] = useState<string[]>([])
+    const [meals, setMeals] = useState<string[]>()
+    const [cities, setCities] = useState<string[]>()
 
-    const [data, setData] = useState<PostInterface[]>([])
+    const [data, setData] = useState<PostInterface[]>()
 
     const filterMeals = (useEffectData: PostInterface[]) => {
         let unfilteredMeals = useEffectData.map((item) => item.meal)
@@ -69,7 +69,7 @@ export default function HomePageSearch(props) {
         setMeal(e.target.value)
     }
 
-    function listCities(cities) {
+    function listCities(cities: string[]) {
         return (
             <>
                 <option>All cities</option>
@@ -84,7 +84,7 @@ export default function HomePageSearch(props) {
         )
     }
 
-    function listMeals(cities) {
+    function listMeals(meals: string[]) {
         return (
             <>
                 <option>All meals</option>
