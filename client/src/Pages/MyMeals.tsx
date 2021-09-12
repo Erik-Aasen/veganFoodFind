@@ -1,4 +1,4 @@
-import Axios, { AxiosResponse } from 'axios';
+import Axios from 'axios';
 import { useState, useEffect } from 'react';
 import Meal from '../Components/Meal';
 // import { UserInterface } from '../Interfaces/Interfaces'
@@ -6,18 +6,19 @@ import { useContext } from 'react';
 import { myContext } from './Context';
 import API from '../config'
 import { Button } from 'react-bootstrap'
+import { PostInterface } from '../Interfaces/Interfaces';
 
 export default function MyMeals() {
     const ctx = useContext(myContext);
 
-    const [posts, setPosts] = useState<any>();
+    const [posts, setPosts] = useState<PostInterface[]>();
 
     useEffect(() => {
 
         Axios.get(API + "/usermeals", {
             withCredentials: true
-        }).then((res: AxiosResponse) => {
-            setPosts(display(res.data));
+        }).then((res) => {
+            setPosts(res.data);
         })
     }, []);
 
@@ -50,7 +51,7 @@ export default function MyMeals() {
     }
 
     let addMeal
-    if (posts.props.children.length === 0) {
+    if (display(posts).props.children.length === 0) {
         addMeal = (
             <>
                 <div className='add-meal-prompt'>
@@ -69,7 +70,7 @@ export default function MyMeals() {
             {addMeal}
             <div className='container'>
                 <div className="row justify-content-center">
-                    {posts}
+                    {display(posts)}
                 </div>
             </div>
         </>
