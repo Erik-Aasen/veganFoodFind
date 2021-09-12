@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useHistory } from 'react-router-dom';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import API from '../config'
 
 export default function Register() {
@@ -16,7 +16,7 @@ export default function Register() {
             password
         }, {
             withCredentials: true
-        }).then((res: AxiosResponse) => {
+        }).then((res) => {
             if (res.data === "registered") {
                 setUsername("");
                 setPassword("");

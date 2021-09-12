@@ -1,7 +1,6 @@
 import Axios from 'axios';
 import { useState, useEffect } from 'react';
 import Meal from '../Components/Meal';
-// import { UserInterface } from '../Interfaces/Interfaces'
 import { useContext } from 'react';
 import { myContext } from './Context';
 import API from '../config'
@@ -14,7 +13,6 @@ export default function MyMeals() {
     const [posts, setPosts] = useState<PostInterface[]>();
 
     useEffect(() => {
-
         Axios.get(API + "/usermeals", {
             withCredentials: true
         }).then((res) => {
@@ -29,9 +27,9 @@ export default function MyMeals() {
     function display(posts) {
         return (
             <>
-                {posts.map((post: any) => {
-                    let city, description, meal, restaurant, _id, picture;
-                    ({ city, description, meal, restaurant, _id, picture } = post);
+                {posts.map((post: PostInterface) => {
+
+                    const { city, description, meal, restaurant, _id, picture } = post;
 
                     return (
                         <Meal
@@ -50,7 +48,7 @@ export default function MyMeals() {
         )
     }
 
-    let addMeal
+    let addMeal;
     if (display(posts).props.children.length === 0) {
         addMeal = (
             <>
