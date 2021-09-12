@@ -69,31 +69,47 @@ export default function HomePageSearch(props) {
         setMeal(e.target.value)
     }
 
+    function listCities(cities) {
+        return (
+            <>
+                <option>All cities</option>
+                {
+                    cities.map((item) => {
+                        return (
+                            <option key={item} id={item}>{item}</option>
+                        )
+                    })
+                }
+            </>
+        )
+    }
+
+    function listMeals(cities) {
+        return (
+            <>
+                <option>All meals</option>
+                {
+                    meals.map((item) => {
+                        return (
+                            <option key={item} id={item}>{item}</option>
+                        )
+                    })
+                }
+            </>
+        )
+    }
+
     return (
         <div>
             <form>
                 <div className="form-group">
                     <select value={city} onChange={selectCity} className="form-control" id="exampleFormControlSelect1">
-                        <option>All cities</option>
-                        {
-                            cities.map((item) => {
-                                return (
-                                    <option key={item} id={item}>{item}</option>
-                                )
-                            })
-                        }
+                        {listCities(cities)}
                     </select>
                 </div>
                 <div className="form-group">
                     <select value={meal} onChange={selectMeal} className="form-control" id="exampleFormControlSelect1">
-                        <option>All meals</option>
-                        {
-                            meals.map((item) => {
-                                return (
-                                    <option key={item} id={item}>{item}</option>
-                                )
-                            })
-                        }
+                        {listMeals(meals)}
                     </select>
                 </div>
                 <button type="button" className="btn btn-success" onClick={e => props.postMeals(e, city, meal)}>Search</button>
