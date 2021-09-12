@@ -20,7 +20,7 @@ function App() {
     routes = (
       <>
         <Route path='/' exact component={Homepage}></Route>
-        {ctx.isAdmin ? (<Route path='/getallusers' exact component={AdminPage}></Route>) : ''}
+        {ctx.isAdmin ? (<Route path='/adminpage' exact component={AdminPage}></Route>) : ''}
         <Route path='/profile' exact component={Profile}></Route>
         <Route path='/addmeal' exact component={AddMeal}></Route>
         <Route path='/mymeals' exact component={MyMeals}></Route>

@@ -27,6 +27,7 @@ export default function NavBar() {
     if (ctx) {
         loginlogout = (
             <>
+                <Nav.Link href="/adminpage">Admin</Nav.Link>
                 <Nav.Link onClick={logout}>Logout</Nav.Link>
                 <Nav.Link href="/mymeals">My Meals</Nav.Link>
                 {/* <Nav.Link href="/getallusers">Get All Users</Nav.Link> */}

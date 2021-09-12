@@ -142,14 +142,24 @@ app.get("/getmeals", async (req: AuthRequest, res: Response) => {
 app.post('/register', async (req: Request, res: Response) => {
 
   const { username, password } = req.body;
-  if (!username || !password || typeof username !== "string" || typeof password !== "string") {
+  if (
+    !username || 
+    !password || 
+    typeof username !== "string" || 
+    typeof password !== "string" ||
+    password.length < 8 ||
+    password.length > 20 ||
+    username.length >= 20
+    ) {
     res.send("Improper values")
     return;
   }
 
   User.findOne({ username }, async (err: Error, data: MongoInterface) => {
     if (err) throw err;
-    if (data) res.send("User already exists");
+    if (data) {
+      res.send('User already exists');
+    }
     if (!data) {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       const newUser = new User({

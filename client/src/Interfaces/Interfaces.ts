@@ -1,5 +1,5 @@
 export interface UserInterface {
-    id: string;
+    _id: object;
     username: string;
     isAdmin: boolean;
 }
@@ -12,3 +12,8 @@ export interface PostInterface {
     description: string;
     picture: string;
   }
+
+export interface Error {
+    error1?: string;
+    error2?: string;
+}

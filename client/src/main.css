@@ -139,3 +139,13 @@ form {
 .add-meal-prompt {
     text-align: center;
 }
+
+.form-feedback {
+    font-size: 80%;
+    color: red;   
+}
+
+.registered {
+    font-size: 80%;
+    color: green;
+}

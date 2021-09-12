@@ -27,8 +27,8 @@ export default function AdminPage() {
     }
 
     const deleteUser = () => {
-        let userid: string;
-        data.forEach((item: any) => {
+        let userid: object;
+        data.forEach((item) => {
 
             if (item.username === selectedUser) {
                 userid = item._id;
@@ -36,12 +36,12 @@ export default function AdminPage() {
         })
 
         Axios.post(API + "/deleteuser", {
-            id: userid!  //! tells react that we know there will be a userid as a string since it will be defined in the if statement. React worries that it might not get defined and then not have the chance to be a string
+            _id: userid!  //! tells react that we know there will be a userid as a string since it will be defined in the if statement. React worries that it might not get defined and then not have the chance to be a string
         }, {
             withCredentials: true
         }).then((res: AxiosResponse) => {
             if (res.data === "user deleted") {
-                window.location.href = "/getallusers"
+                window.location.href = "/adminpage"
                 setSelectedUser('');
                 // window.location.href = window.location.href;
                 // setTimeout(function(){
