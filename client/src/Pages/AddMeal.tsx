@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 // import ImageUploader from 'react-images-upload';
 // import {compress, compressAccurately} from 'image-conversion';
@@ -13,9 +13,9 @@ export default function AddMeal() {
     const [city, setCity] = useState<string>("");
     const [meal, setMeal] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [picture, setPicture] = useState<any>();
+    const [picture, setPicture] = useState<string>();
 
-    const [orientation, setOrientation] = useState<any>(8);
+    const [orientation, setOrientation] = useState<number>(8);
 
     let history = useHistory();
 
@@ -96,7 +96,7 @@ export default function AddMeal() {
             restaurant, city, meal, description, picture
         }, {
             withCredentials: true
-        }).then((res: AxiosResponse) => {
+        }).then((res) => {
             if (res.data === "meal added") {
                 history.push('/mymeals');
             }

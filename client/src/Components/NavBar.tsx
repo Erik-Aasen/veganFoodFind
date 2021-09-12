@@ -11,7 +11,7 @@ export default function NavBar() {
     const logout = () => {
         Axios.get(API + "/logout", {
             withCredentials: true
-        }).then((res: AxiosResponse) => {
+        }).then((res) => {
             
             if (res.data === "logged out") {
                 window.location.href = "/"

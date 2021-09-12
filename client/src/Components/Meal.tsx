@@ -21,7 +21,7 @@ export default function Meal(props) {
         axios.post(API + '/deletemeal', {
             _id
         }, { withCredentials: true }
-        ).then((res: AxiosResponse) => {
+        ).then((res) => {
             if (res.data === "meal deleted") {
                 // history.push('/mymeals')
                 window.location.reload();

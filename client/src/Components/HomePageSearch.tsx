@@ -50,7 +50,7 @@ export default function HomePageSearch(props) {
     const selectCity = (e) => {
         setCity(e.target.value);
 
-        let cityForFiltering = e.target.value;
+        let cityForFiltering: string = e.target.value;
 
         if (cityForFiltering === "All cities") {
             setMeals(filterMeals(data))
@@ -76,7 +76,7 @@ export default function HomePageSearch(props) {
                     <select value={city} onChange={selectCity} className="form-control" id="exampleFormControlSelect1">
                         <option>All cities</option>
                         {
-                            cities.map((item: any) => {
+                            cities.map((item) => {
                                 return (
                                     <option key={item} id={item}>{item}</option>
                                 )
@@ -88,7 +88,7 @@ export default function HomePageSearch(props) {
                     <select value={meal} onChange={selectMeal} className="form-control" id="exampleFormControlSelect1">
                         <option>All meals</option>
                         {
-                            meals.map((item: any) => {
+                            meals.map((item) => {
                                 return (
                                     <option key={item} id={item}>{item}</option>
                                 )

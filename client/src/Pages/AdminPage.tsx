@@ -9,14 +9,14 @@ export default function AdminPage() {
     const ctx = useContext(myContext);
 
     const [data, setData] = useState<UserInterface[]>();
-    const [selectedUser, setSelectedUser] = useState<any>();
+    const [selectedUser, setSelectedUser] = useState<string>();
 
     useEffect(() => {
 
         Axios.get(API + "/getallusers", {
             withCredentials: true
-        }).then((res: AxiosResponse) => {
-            setData(res.data.filter((item: any) => {
+        }).then((res) => {
+            setData(res.data.filter((item) => {
                 return (item.username !== ctx.username)
             }))
         })
