@@ -7,7 +7,6 @@ import { Error } from '../Interfaces/Interfaces';
 export default function Register() {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [success, setSuccess] = useState<boolean>(false);
 
     const [usernameError, setUsernameError] = useState<Error>({
         error1: 'Set username',
@@ -32,15 +31,13 @@ export default function Register() {
             if (res.data === "registered") {
                 setUsername("");
                 setPassword("");
-                setSuccess(true);
-                // history.push('/login');
+                login(e)
             } else if (res.data === 'User already exists') {
                 setUsernameError(prev => ({
                     ...prev,
                     error2: 'Username already exists'
                 }))
             }
-
         })
     }
 
@@ -105,22 +102,6 @@ export default function Register() {
         })
     }
 
-    let button;
-    if (success) {
-        button = (
-            <>
-                <p className='registered'>Successfully registered.</p>
-                <button className="btn btn-login btn-primary" onClick={e => { login(e) }}>Proceed to Login</button>
-            </>
-        )
-    } else if (!success) {
-        button = (
-            <>
-                <button className="btn btn-login btn-primary" onClick={e => { register(e) }}>Register</button>
-            </>
-        )
-    }
-
     return (
         <div className="login">
             <form className='form-signin'>
@@ -141,7 +122,7 @@ export default function Register() {
                         passwordFn(e)
                     } />
                 <br />
-                {button}
+                <button className="btn btn-login btn-primary" onClick={e => { register(e) }}>Register</button>
             </form>
         </div>
     )

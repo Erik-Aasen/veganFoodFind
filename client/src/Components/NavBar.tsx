@@ -25,16 +25,27 @@ export default function NavBar() {
 
     let loginlogout;
     if (ctx) {
-        loginlogout = (
-            <>
-                <Nav.Link href="/adminpage">Admin</Nav.Link>
-                <Nav.Link onClick={logout}>Logout</Nav.Link>
-                <Nav.Link href="/mymeals">My Meals</Nav.Link>
-                {/* <Nav.Link href="/getallusers">Get All Users</Nav.Link> */}
-                <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
-            </>
-        )
-    } else {
+        if (ctx.isAdmin) {
+            loginlogout = (
+                <>
+                    <Nav.Link href="/adminpage">Admin</Nav.Link>
+                    <Nav.Link onClick={logout}>Logout</Nav.Link>
+                    <Nav.Link href="/mymeals">My Meals</Nav.Link>
+                    {/* <Nav.Link href="/getallusers">Get All Users</Nav.Link> */}
+                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
+                </>
+            )
+        } else if (!ctx.isAdmin) {
+            loginlogout = (
+                <>
+                    <Nav.Link onClick={logout}>Logout</Nav.Link>
+                    <Nav.Link href="/mymeals">My Meals</Nav.Link>
+                    {/* <Nav.Link href="/getallusers">Get All Users</Nav.Link> */}
+                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
+                </>
+            )
+        }
+    } else if (!ctx) {
         loginlogout = (
             <>
                 <Nav.Link href="/login">Login</Nav.Link>
