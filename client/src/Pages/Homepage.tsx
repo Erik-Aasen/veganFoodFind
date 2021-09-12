@@ -9,7 +9,7 @@ import { PostInterface } from '../Interfaces/Interfaces';
 
 export default function Homepage() {
 
-    const [posts, setPosts] = useState([]) as any;
+    const [posts, setPosts] = useState<PostInterface[]>([]);
 
     const postMeals = (e, city, meal) => {
         Axios.post(API + '/getmeals', {
@@ -17,7 +17,7 @@ export default function Homepage() {
         }, {
             withCredentials: true
         }).then((res: PostResponse) => {
-            setPosts(display(res.data))
+            setPosts(res.data)
         })
         e.preventDefault();
     }
@@ -51,7 +51,7 @@ export default function Homepage() {
             </div>
             <div className="container">
                 <div className="row justify-content-center">
-                    {posts}
+                    {display(posts)}
                 </div>
             </div>
         </>

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 // import { Link } from 'react-router-dom';
 import { myContext } from '../Pages/Context';
-import Axios, { AxiosResponse } from "axios";
+import Axios from "axios";
 import { Navbar, Nav, Button } from 'react-bootstrap'
 import API from '../config'
 

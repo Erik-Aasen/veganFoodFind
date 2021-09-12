@@ -1,4 +1,4 @@
-import Axios, { AxiosResponse } from "axios"
+import Axios from "axios"
 import { useEffect, useState } from "react"
 import API from '../config'
 import { PostResponse } from "../definitionfile"

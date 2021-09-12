@@ -1,5 +1,5 @@
 
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import API from '../config'
 
