@@ -6,16 +6,25 @@ export default function Login(props) {
 
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [loginFail, setLoginFail] = useState<boolean>();
 
     let status;
     if (props.location.state) {
         status = (
-        <p className='registered'>
-            {props.location.state.registrationStatus}
-        </p>
+            <p className='registered'>
+                {props.location.state.registrationStatus}
+            </p>
         )
-    } else {
-        status = undefined;
+    }
+
+    if (loginFail) {
+        status = (
+            <p className='login-fail'>
+                Either username or password is incorrect.
+                <br />
+                Please try again.
+            </p>
+        )
     }
 
     const login = async (e) => {
@@ -30,7 +39,7 @@ export default function Login(props) {
                 window.location.href = "/"
             }
         }, () => {
-            console.log("Failure");
+            setLoginFail(true);
         })
     }
 

@@ -148,5 +148,11 @@ form {
 .registered {
     font-size: 80%;
     color: green;
-    margin-bottom: 10px
+    margin-bottom: 10px;
+}
+
+.login-fail {
+    font-size: 80%;
+    color: red;
+    margin-bottom: 10px;
 }
