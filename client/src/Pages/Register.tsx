@@ -101,7 +101,7 @@ export default function Register() {
     const login = (e) => {
         history.push({
             pathname: '/login',
-            state: { registrationStatus: 'success' }
+            state: { registrationStatus: 'Successfully registered. Please log in.' }
         })
     }
 

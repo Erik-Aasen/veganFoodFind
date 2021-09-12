@@ -3,8 +3,20 @@ import axios, { AxiosResponse } from 'axios';
 import API from '../config'
 
 export default function Login(props) {
+
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+
+    let status;
+    if (props.location.state) {
+        status = (
+        <p className='registered'>
+            {props.location.state.registrationStatus}
+        </p>
+        )
+    } else {
+        status = undefined;
+    }
 
     const login = async (e) => {
         e.preventDefault();
@@ -33,7 +45,7 @@ export default function Login(props) {
         <div className="login">
             <form className='form-signin'>
                 <h1>Login</h1>
-                <p>{props.registrationStatus}</p>
+                {status}
                 <input className="form-control" type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
                 <br />
                 <input className="form-control" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
