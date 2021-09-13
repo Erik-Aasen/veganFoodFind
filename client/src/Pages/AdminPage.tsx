@@ -2,33 +2,43 @@ import React, { useContext } from 'react'
 import { myContext } from '../Pages/Context';
 import Axios, { AxiosResponse } from 'axios';
 import { useState, useEffect } from 'react';
-import { UserInterface } from '../Interfaces/Interfaces';
+import { PostInterface, UserInterface } from '../Interfaces/Interfaces';
 import API from '../config'
+import { PostResponse, UserResponse } from '../definitionfile';
+import { display } from '../Components/DisplayPosts';
 
 export default function AdminPage() {
     const ctx = useContext(myContext);
 
-    const [data, setData] = useState<UserInterface[]>();
+    const [users, setUsers] = useState<UserInterface[]>();
     const [selectedUser, setSelectedUser] = useState<string>();
+    const [posts, setPosts] = useState<PostInterface[]>();
 
     useEffect(() => {
 
         Axios.get(API + "/getallusers", {
             withCredentials: true
-        }).then((res) => {
-            setData(res.data.filter((item) => {
+        }).then((res: UserResponse) => {
+            setUsers(res.data.filter((item) => {
                 return (item.username !== ctx.username)
             }))
         })
+
+        Axios.get(API + "/adminmeals", {
+            withCredentials: true
+        }).then((res: PostResponse) => {
+            setPosts(res.data);
+        })        
+
     }, [ctx.username]);
 
-    if (!data) {
+    if (!users || !posts) {
         return null;
     }
 
     const deleteUser = () => {
         let userid: object;
-        data.forEach((item) => {
+        users.forEach((item) => {
 
             if (item.username === selectedUser) {
                 userid = item._id;
@@ -43,30 +53,40 @@ export default function AdminPage() {
             if (res.data === "user deleted") {
                 window.location.href = "/adminpage"
                 setSelectedUser('');
-                // window.location.href = window.location.href;
-                // setTimeout(function(){
-                //     window.location.reload();
-                //   });
-                // history.go(0);
             }
         })
+    }
+
+    const displayUsers = (users) => {
+        return (
+            <>
+                <select onChange={e => setSelectedUser(e.target.value)} name="deleteuser" id="deleteuser">
+                    <option id="Select a user">Select a user</option>
+                    {
+                        users.map((item: any) => {
+                            return (
+                                <option key={item._id} id={item.username}>{item.username}</option>
+                            )
+                        })
+                    }
+                </select>
+            </>
+        )
     }
 
 
     return (
         <div>
-            <h1>Admin page, only admins can see this.</h1>
-            <select onChange={e => setSelectedUser(e.target.value)} name="deleteuser" id="deleteuser">
-                <option id="Select a user">Select a user</option>
-                {
-                    data.map((item: any) => {
-                        return (
-                            <option key={item._id} id={item.username}>{item.username}</option>
-                        )
-                    })
-                }
-            </select>
-            <button value={selectedUser} onClick={deleteUser}>Delete</button>
+            <h1>Admin page</h1>
+            <div className='myMeals'>
+                {displayUsers(users)}
+                <button value={selectedUser} onClick={deleteUser}>Delete</button>
+            </div>
+            <div className='container'>
+                <div className="row justify-content-center">
+                    {display(posts, false, true)}
+                </div>
+            </div>
         </div>
     )
 }

@@ -1,11 +1,13 @@
 import Axios from 'axios';
 import { useState, useEffect } from 'react';
-import Meal from '../Components/Meal';
+// import Meal from '../Components/Meal';
 import { useContext } from 'react';
 import { myContext } from './Context';
 import API from '../config'
 import { Button } from 'react-bootstrap'
 import { PostInterface } from '../Interfaces/Interfaces';
+import { PostResponse } from '../definitionfile';
+import { display } from '../Components/DisplayPosts';
 
 export default function MyMeals() {
     const ctx = useContext(myContext);
@@ -15,7 +17,7 @@ export default function MyMeals() {
     useEffect(() => {
         Axios.get(API + "/usermeals", {
             withCredentials: true
-        }).then((res) => {
+        }).then((res: PostResponse) => {
             setPosts(res.data);
         })
     }, []);
@@ -23,33 +25,9 @@ export default function MyMeals() {
     if (!posts) {
         return null
     }
-    
-    function display(posts) {
-        return (
-            <>
-                {posts.map((post: PostInterface) => {
-
-                    const { city, description, meal, restaurant, _id, picture } = post;
-
-                    return (
-                        <Meal
-                            key={_id}
-                            _id={_id}
-                            city={city}
-                            description={description}
-                            meal={meal}
-                            restaurant={restaurant}
-                            picture={picture}
-                            myMeal={true}
-                        />
-                    )
-                })}
-            </>
-        )
-    }
 
     let addMeal;
-    if (display(posts).props.children.length === 0) {
+    if (display(posts, true, false).props.children.length === 0) {
         addMeal = (
             <>
                 <div className='add-meal-prompt'>
@@ -68,7 +46,7 @@ export default function MyMeals() {
             {addMeal}
             <div className='container'>
                 <div className="row justify-content-center">
-                    {display(posts)}
+                    {display(posts, true, false)}
                 </div>
             </div>
         </>

@@ -2,10 +2,11 @@ import { useState } from 'react';
 // import MealCarousel from '../Components/Carousel'
 import HomePageSearch from '../Components/HomePageSearch'
 import Axios from 'axios';
-import Meal from '../Components/Meal';
+// import Meal from '../Components/Meal';
 import API from '../config';
 import { PostResponse } from '../definitionfile';
 import { PostInterface } from '../Interfaces/Interfaces';
+import { display } from '../Components/DisplayPosts';
 
 export default function Homepage() {
 
@@ -22,26 +23,27 @@ export default function Homepage() {
         e.preventDefault();
     }
 
-    function display(posts: PostInterface[]) {
-        return (
-            <>
-                {posts.map((post) => {
-                    const { city, description, meal, restaurant, _id, picture } = post;
+    // function display(posts: PostInterface[]) {
+    //     return (
+    //         <>
+    //             {posts.map((post) => {
+    //                 const { city, description, meal, restaurant, _id, picture } = post;
 
-                    return (
-                        <Meal
-                            key={_id}
-                            city={city}
-                            description={description}
-                            meal={meal}
-                            restaurant={restaurant}
-                            picture={picture}
-                        />
-                    )
-                })}
-            </>
-        )
-    }
+    //                 return (
+    //                     <Meal
+    //                         key={_id}
+    //                         city={city}
+    //                         description={description}
+    //                         meal={meal}
+    //                         restaurant={restaurant}
+    //                         picture={picture}
+    //                         myMeal={false}
+    //                     />
+    //                 )
+    //             })}
+    //         </>
+    //     )
+    // }
 
     return (
         <>
@@ -51,7 +53,7 @@ export default function Homepage() {
             </div>
             <div className="container">
                 <div className="row justify-content-center">
-                    {display(posts)}
+                    {display(posts, false, false)}
                 </div>
             </div>
         </>

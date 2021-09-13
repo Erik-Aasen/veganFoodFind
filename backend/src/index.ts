@@ -131,9 +131,21 @@ app.get("/getallusers", isAdministratorMiddleware, async (req, res) => {
 })
 
 app.get("/getmeals", async (req: AuthRequest, res: Response) => {
-  await User.find({}, (err: Error, data) => {
+  await User.find({
+    posts: { $elemMatch: { isApproved: true } }
+  }, (err: Error, data) => {
     if (err) throw err;
     const posts = returnAllPosts(data)
+    res.send(posts)
+  })
+})
+
+app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: Response) => {
+  await User.find({
+    posts: { $elemMatch: { isApproved: false} }
+  }, (err: Error, data) => {
+    if (err) throw err;
+    const posts = returnUnapprovedPosts(data)
     res.send(posts)
   })
 })
@@ -216,12 +228,27 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
   }
 })
 
+function returnUnapprovedPosts(userPosts: MongoInterface[]) {
+
+  let postArray: PostInterface[] = [];
+  userPosts.forEach((user) => {
+    user.posts.forEach((post) => {
+      if (post.isApproved === false) {
+        postArray.push(post)
+      }
+    })
+  })
+
+  return postArray;
+
+}
+
 function returnAllPosts(userPosts: MongoInterface[]) {
 
   let postArray: PostInterface[] = [];
   userPosts.forEach((user) => {
     user.posts.forEach((post) => {
-      if (post.isApproved) {
+      if (post.isApproved === true) {
         postArray.push(post)
       }
     })
@@ -281,7 +308,9 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
   const { city, meal } = req.body;
   if (city === "All cities") {
     if (meal === "All meals") {
-      await User.find({}, 'posts').exec(function (err, userPosts) {
+      await User.find({
+        posts: { $elemMatch: { isApproved: true } }
+      }, 'posts').exec(function (err, userPosts) {
         const postArray = returnAllPosts(userPosts);
         res.send(postArray)
       })
@@ -296,33 +325,19 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
   } else {
     if (meal === "All meals") {
       await User.find({
-        posts: { $elemMatch: { city: city } }
+        posts: { $elemMatch: { city: city, isApproved: true } }
       }, 'posts').exec(function (err, userPosts) {
         const postArray = returnCitySpecified(userPosts, city)
         res.send(postArray)
       })
     } else {
       await User.find({
-        posts: { $elemMatch: { city: city, meal: meal } }
+        posts: { $elemMatch: { city: city, meal: meal, isApproved: true } }
       }, 'posts').exec(function (err, userPosts) {
         const postArray = returnCityMealSpecified(userPosts, city, meal)
         res.send(postArray)
       })
     }
-  }
-})
-
-app.post("/deletemeal", async (req: AuthRequest, res) => {
-  const { user } = req;
-  const { _id } = req.body;
-
-  if (user) {
-    await User.updateOne({
-      'posts._id': _id
-    }, {
-      '$pull': { posts: { _id: _id } }
-    }).exec(err => { if (err) throw err })
-    res.send('meal deleted')
   }
 })
 
@@ -348,6 +363,38 @@ app.put("/addmeal", async (req: AuthRequest, res: Response) => {
       if (err) throw err;
     })
     res.send('meal updated')
+  }
+})
+
+app.put("/deletemeal", async (req: AuthRequest, res) => {
+  const { user } = req;
+  const { _id } = req.body;
+
+  if (user) {
+    await User.updateOne({
+      'posts._id': _id
+    }, {
+      '$pull': { posts: { _id: _id } }
+    }).exec(err => { if (err) throw err })
+    res.send('meal deleted')
+  }
+})
+
+app.put("/adminmeals", async (req: AuthRequest, res) => {
+  const { user } = req;
+  const { _id, isApproved } = req.body;
+
+  if (user.isAdmin) {
+    await User.updateOne({
+      'posts._id': _id
+    }, {
+      '$set': {
+        'posts.$.isApproved': isApproved
+      }
+    }).exec(function (err) {
+      if (err) throw err;
+    })
+    res.send('meal approved')
   }
 })
 

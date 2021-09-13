@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import API from '../config'
 
 export default function Meal(props) {
-    const { _id, meal, restaurant, city, picture, description, myMeal } = props;
+    const { _id, meal, restaurant, city, picture, description, myMeal, adminMeal } = props;
 
     const editmeal = {
         pathname: "/editmeal",
@@ -17,17 +17,28 @@ export default function Meal(props) {
     }
 
     const deleteMeal = () => {
-
-        axios.post(API + '/deletemeal', {
+        axios.put(API + '/deletemeal', {
             _id
         }, { withCredentials: true }
         ).then((res) => {
             if (res.data === "meal deleted") {
-                // history.push('/mymeals')
                 window.location.reload();
             }
         })
+    }
 
+    const isApproved = true;
+
+    const approveMeal = () => {
+        axios.put(API + '/adminmeals', {
+            _id, isApproved
+        }, {
+            withCredentials: true
+        }).then((res) => {
+            if (res.data === "meal approved") {
+                window.location.reload()
+            }
+        })
     }
 
     let editDelete
@@ -40,11 +51,22 @@ export default function Meal(props) {
         )
     }
 
+    let approveDelete
+    if (adminMeal) {
+        approveDelete = (
+            <>
+            <Link className='btn btn-success btn-sm align-left' to="/adminpage" onClick={approveMeal}>Approve</Link>
+            <Link className='btn btn-danger btn-sm align-right' to="/adminpage" onClick={deleteMeal}>Delete</Link>
+            </>
+        )
+    }
+
     return (
         <div className="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-3">
             <div className="card text-center">
                 <div className="card-body">
                     {editDelete}
+                    {approveDelete}
                     <img className='card-img-top' alt='' src={picture} />
                     <h5 className='card-title'>{meal}</h5>
                     <p className='card-text'>{restaurant}</p>
