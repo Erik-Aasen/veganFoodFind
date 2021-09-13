@@ -10,11 +10,14 @@ App hosted on Heroku: https://vegan-food-find.herokuapp.com
 
 - Image EXIF data stripped upon upload and users can choose image orientation, edit and delete their posts
 
+- Types defined with Typescript in front and back end
+
 - Mobile responsive design utilizing Bootstrap
 
 ## Technologies used
 
 - React w/ Context
+- Typescript
 - Bootstrap
 - NodeJS
 - Express
