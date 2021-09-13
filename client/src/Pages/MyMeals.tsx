@@ -18,7 +18,7 @@ export default function MyMeals() {
         Axios.get(API + "/usermeals", {
             withCredentials: true
         }).then((res: PostResponse) => {
-            setPosts(res.data);
+            setPosts(res.data);            
         })
     }, []);
 

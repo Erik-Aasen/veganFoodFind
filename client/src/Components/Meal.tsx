@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import API from '../config'
 
 export default function Meal(props) {
-    const { _id, meal, restaurant, city, picture, description, myMeal, adminMeal } = props;
+    const { _id, meal, restaurant, city, picture, description, myMeal, adminMeal, isApproved } = props;
 
     const editmeal = {
         pathname: "/editmeal",
@@ -27,11 +27,9 @@ export default function Meal(props) {
         })
     }
 
-    const isApproved = true;
-
     const approveMeal = () => {
         axios.put(API + '/adminmeals', {
-            _id, isApproved
+            _id, isApproved: true
         }, {
             withCredentials: true
         }).then((res) => {
@@ -51,12 +49,23 @@ export default function Meal(props) {
         )
     }
 
+    let approvalNotice;
+    if (!isApproved) {
+        approvalNotice = (
+            <>
+                <h5 className="card-subtitle mb-2 text-muted">
+                    This meal is waiting to be approved by a moderator.
+                </h5>
+            </>
+        )
+    }
+
     let approveDelete
     if (adminMeal) {
         approveDelete = (
             <>
-            <Link className='btn btn-success btn-sm align-left' to="/adminpage" onClick={approveMeal}>Approve</Link>
-            <Link className='btn btn-danger btn-sm align-right' to="/adminpage" onClick={deleteMeal}>Delete</Link>
+                <Link className='btn btn-success btn-sm align-left' to="/adminpage" onClick={approveMeal}>Approve</Link>
+                <Link className='btn btn-danger btn-sm align-right' to="/adminpage" onClick={deleteMeal}>Delete</Link>
             </>
         )
     }
@@ -65,6 +74,7 @@ export default function Meal(props) {
         <div className="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-3">
             <div className="card text-center">
                 <div className="card-body">
+                    {approvalNotice}
                     {editDelete}
                     {approveDelete}
                     <img className='card-img-top' alt='' src={picture} />
