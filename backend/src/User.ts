@@ -16,10 +16,13 @@ const post = new mongoose.Schema({
     },
     picture: {
         type: String
+    },
+    isApproved: {
+        type: Boolean,
+        default: false
     }
 })
 
-// const user = new mongoose.Schema<UserInterface>({
 const user = new mongoose.Schema({
     username: {
         type: String,
@@ -34,4 +37,3 @@ const user = new mongoose.Schema({
 });
 
 export default mongoose.model<MongoInterface>("User", user);
-// export default mongoose.model("User", user);

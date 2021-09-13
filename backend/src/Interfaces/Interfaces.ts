@@ -20,6 +20,7 @@ export interface MongoInterface {
 
 export interface PostInterface {
   _id: object;
+  isApproved: boolean;
   restaurant: string;
   city: string;
   meal: string;

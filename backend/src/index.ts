@@ -143,14 +143,14 @@ app.post('/register', async (req: Request, res: Response) => {
 
   const { username, password } = req.body;
   if (
-    !username || 
-    !password || 
-    typeof username !== "string" || 
+    !username ||
+    !password ||
+    typeof username !== "string" ||
     typeof password !== "string" ||
     password.length < 8 ||
     password.length > 20 ||
     username.length >= 20
-    ) {
+  ) {
     res.send("Improper values")
     return;
   }
@@ -217,18 +217,22 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
 })
 
 function returnAllPosts(userPosts: MongoInterface[]) {
-  
+
   let postArray: PostInterface[] = [];
   userPosts.forEach((user) => {
-    postArray.push(...user.posts)
+    user.posts.forEach((post) => {
+      if (post.isApproved) {
+        postArray.push(post)
+      }
+    })
   })
-  
+
   return postArray;
 
 }
 
 function returnMealSpecified(userPosts: MongoInterface[], meal: string) {
-  
+
   let postArray: PostInterface[] = [];
   userPosts.forEach((user) => {
     user.posts.forEach((post) => {
@@ -237,13 +241,13 @@ function returnMealSpecified(userPosts: MongoInterface[], meal: string) {
       }
     })
   })
-  
+
   return postArray;
 
 }
 
 function returnCitySpecified(userPosts: MongoInterface[], city: string) {
-  
+
   let postArray: PostInterface[] = [];
   userPosts.forEach((user) => {
     user.posts.forEach((post) => {
@@ -283,7 +287,7 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
       })
     } else {
       await User.find({
-        posts: { $elemMatch: { meal: meal } }
+        posts: { $elemMatch: { meal: meal, isApproved: true } }
       }, 'posts').exec(function (err, userPosts) {
         const postArray = returnMealSpecified(userPosts, meal)
         res.send(postArray)
