@@ -6,49 +6,8 @@ import { FormError } from '../Interfaces/Interfaces';
 import { Form, Button } from 'react-bootstrap';
 
 export default function Register() {
-	// const [username, setUsername] = useState<string>("");
-	// const [password, setPassword] = useState<string>("");
-
-	// const [usernameError, setUsernameError] = useState<Error>({
-	// 	// error1: 'Set username',
-	// 	error1: undefined,
-	// 	error2: undefined
-	// });
-
-	// const [passwordError, setPasswordError] = useState<Error>({
-	// 	// error1: 'Password must be greater than 8 characters',
-	// 	error1: undefined,
-	// 	error2: undefined
-	// });
-
-
-
 
 	let history = useHistory();
-
-	// const register = (e) => {
-
-	// 	e.preventDefault();
-
-		// axios.post(API + '/register', {
-		// 	username,
-		// 	password
-		// }, {
-		// 	withCredentials: true
-		// }).then((res) => {
-		// 	if (res.data === "registered") {
-		// 		setUsername("");
-		// 		setPassword("");
-		// 		login(e)
-		// 	} else if (res.data === 'User already exists') {
-		// 		setUsernameError(prev => ({
-		// 			...prev,
-		// 			error2: 'Username already exists'
-		// 		}))
-		// 	}
-		// })
-	// }
-
 
 	const login = (e) => {
 		history.push({
@@ -57,27 +16,11 @@ export default function Register() {
 		})
 	}
 
-	// const [form, setForm] = useState({
-	// 	username: undefined,
-	// 	password: undefined
-	// })
-	// const [errors, setErrors] = useState({
-	// 	// username: undefined,
-	// 	// password: undefined
-	// })
-
 	const [username, setUsername] = useState<string>();
 	const [password, setPassword] = useState<string>();
 
 	const [usernameError, setUsernameError] = useState<string>();
 	const [passwordError, setPasswordError] = useState<string>();
-
-	// const setField = (field, value) => {
-	// 	setForm({
-	// 		...form,
-	// 		[field]: value
-	// 	})
-	// }
 
 	const usernameFn = (e) => {
 		setUsername(e);
@@ -98,10 +41,10 @@ export default function Register() {
 				errors.username = 'Username cannot be greater than 20 characters'
 			}
 		}
-		if (!password) { errors.password = 'Please enter a password'}
+		if (!password) { errors.password = 'Please enter a password' }
 		if (password) {
-			if (password!.length < 8) { errors.password = 'Password must be greater than 8 characters'}
-			if (password!.length > 16) { errors.password = 'Password must be less than 16 characters'}
+			if (password!.length < 8) { errors.password = 'Password must be greater than 8 characters' }
+			if (password!.length > 16) { errors.password = 'Password must be less than 16 characters' }
 		}
 
 		return errors;
@@ -125,11 +68,7 @@ export default function Register() {
 					setPassword("");
 					login(e)
 				} else if (res.data === 'User already exists') {
-					// setUsernameError(prev => ({
-					// 	...prev,
-					// 	error2: 'Username already exists'
-					// }))
-					setUsernameError('User already exists');
+					setUsernameError('Please choose a different username');
 				}
 			})
 		}
@@ -140,9 +79,9 @@ export default function Register() {
 			<h1>Register</h1>
 			<Form>
 				<Form.Group>
-					<Form.Label>Username</Form.Label>
 					<Form.Control
 						type='text'
+						placeholder='Username'
 						onChange={e => usernameFn(e.target.value)}
 						isInvalid={!!usernameError}
 					/>
@@ -151,9 +90,9 @@ export default function Register() {
 					</Form.Control.Feedback>
 				</Form.Group>
 				<Form.Group>
-					<Form.Label>Password</Form.Label>
 					<Form.Control
-						type='text'
+						type='password'
+						placeholder='Password'
 						onChange={e => passwordFn(e.target.value)}
 						isInvalid={!!passwordError}
 					/>
@@ -161,7 +100,7 @@ export default function Register() {
 						{passwordError}
 					</Form.Control.Feedback>
 				</Form.Group>
-				<Button onClick={e => { register(e)}}>Submit</Button>
+				<Button onClick={e => { register(e) }}>Submit</Button>
 			</Form>
 		</div>
 	)

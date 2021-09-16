@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import API from '../config'
+import { Form, Button } from 'react-bootstrap';
 
 export default function Login(props) {
 
@@ -27,6 +28,17 @@ export default function Login(props) {
         )
     }
 
+    const usernameFn = (e) => {
+		setUsername(e);
+		setLoginFail(false);
+	}
+
+    const passwordFn = (e) => {
+		setPassword(e);
+		setLoginFail(false);
+	}
+
+
     const login = async (e) => {
         e.preventDefault();
         await axios.post(API + '/login', {
@@ -43,25 +55,29 @@ export default function Login(props) {
         })
     }
 
-    // const getUser = () => {
-    //     axios.get(API + "/user", {
-    //         withCredentials: true
-    //     }).then(res => {
-    //     })
-    // }
-
     return (
-        <div className="login">
-            <form className='form-signin'>
-                <h1>Login</h1>
-                {status}
-                <input className="form-control" type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-                <br />
-                <input className="form-control" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-                <br />
-                <button className="btn btn-login btn-primary" onClick={e => { login(e) }}>Login</button>
-                {/* <button onClick={getUser}>Get User that's logged in</button> */}
-            </form>
+        <div className='login'>
+            <h1>Login</h1>
+            {status}
+            <Form>
+                <Form.Group>
+                    <Form.Control
+                        type='text'
+                        placeholder='Username'
+                        onChange={e => usernameFn(e.target.value)}
+                        isInvalid={!!loginFail}
+                    />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Control
+                        type='password'
+                        placeholder='Password'
+                        onChange={e => passwordFn(e.target.value)}
+                        isInvalid={!!loginFail}
+                    />
+                </Form.Group>
+                <Button onClick={e => { login(e) }}>Submit</Button>
+            </Form>
         </div>
     )
 }
