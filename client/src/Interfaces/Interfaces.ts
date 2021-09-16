@@ -14,7 +14,7 @@ export interface PostInterface {
     isApproved: boolean;
   }
 
-export interface Error {
-    error1?: string;
-    error2?: string;
+export interface FormError {
+    username?: string;
+    password?: string;
 }
