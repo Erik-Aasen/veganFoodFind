@@ -15,6 +15,13 @@ export interface PostInterface {
   }
 
 export interface FormError {
-    username?: string;
-    password?: string;
+    username: string;
+    password: string;
+}
+
+export interface RegisterInterface {
+    username: string,
+    password: string,
+    usernameError: string,
+    passwordError: string
 }

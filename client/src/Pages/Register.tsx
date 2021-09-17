@@ -4,47 +4,53 @@ import axios from 'axios';
 import API from '../config'
 import { FormError } from '../Interfaces/Interfaces';
 import { Form, Button } from 'react-bootstrap';
+import { RegisterInterface } from '../Interfaces/Interfaces';
 
 export default function Register() {
 
 	let history = useHistory();
 
-	const login = (e) => {
-		history.push({
-			pathname: '/login',
-			state: { registrationStatus: 'Successfully registered. Please log in.' }
-		})
-	}
-
-	const [username, setUsername] = useState<string>();
-	const [password, setPassword] = useState<string>();
-
-	const [usernameError, setUsernameError] = useState<string>();
-	const [passwordError, setPasswordError] = useState<string>();
+	const [state, setState] = useState<RegisterInterface>(
+		{
+			username: '',
+			password: '',
+			usernameError: '',
+			passwordError: ''
+		}
+	);
 
 	const usernameFn = (e) => {
-		setUsername(e);
-		setUsernameError(undefined);
+		setState(prev => ({
+			...prev,
+			username: e,
+			usernameError: ''
+		}))
 	}
 
 	const passwordFn = (e) => {
-		setPassword(e);
-		setPasswordError(undefined);
+		setState(prev => ({
+			...prev,
+			password: e,
+			passwordError: ''
+		}))
 	}
 
 	const validate = () => {
-		const errors: FormError = {};
+		const errors: FormError = {
+			username: '',
+			password: ''
+		};
 
-		if (!username) { errors.username = 'Please enter a username' }
-		if (username) {
-			if (username.length > 20) {
+		if (!state.username) { errors.username = 'Please enter a username' }
+		if (state.username) {
+			if (state.username.length > 20) {
 				errors.username = 'Username cannot be greater than 20 characters'
 			}
 		}
-		if (!password) { errors.password = 'Please enter a password' }
-		if (password) {
-			if (password!.length < 8) { errors.password = 'Password must be greater than 8 characters' }
-			if (password!.length > 16) { errors.password = 'Password must be less than 16 characters' }
+		if (!state.password) { errors.password = 'Please enter a password' }
+		if (state.password) {
+			if (state.password.length < 8) { errors.password = 'Password must be greater than 8 characters' }
+			if (state.password.length > 16) { errors.password = 'Password must be less than 16 characters' }
 		}
 
 		return errors;
@@ -53,25 +59,42 @@ export default function Register() {
 	const register = (e) => {
 		e.preventDefault()
 		const errors = validate();
-		if (Object.keys(errors).length > 0) {
-			setUsernameError(errors.username);
-			setPasswordError(errors.password);
-		} else {
+			if (errors.username.length > 0 || errors.password.length > 0) {
+			setState(prev => ({
+				...prev,
+				usernameError: errors.username,
+				passwordError: errors.password
+			}))			
+		} else {			
 			axios.post(API + '/register', {
-				username,
-				password
+				username: state.username,
+				password: state.password
 			}, {
 				withCredentials: true
 			}).then((res) => {
+				console.log(res.data);
+				
 				if (res.data === "registered") {
-					setUsername("");
-					setPassword("");
+					setState(prev => ({
+						...prev,
+						username: '',
+						password: ''
+					}))
 					login(e)
 				} else if (res.data === 'User already exists') {
-					setUsernameError('Please choose a different username');
+					setState(prev => ({
+						...prev, usernameError: 'Please choose a different username '
+					}))
 				}
 			})
 		}
+	}
+
+	const login = (e) => {
+		history.push({
+			pathname: '/login',
+			state: { registrationStatus: 'Successfully registered. Please log in.' }
+		})
 	}
 
 	return (
@@ -83,10 +106,10 @@ export default function Register() {
 						type='text'
 						placeholder='Username'
 						onChange={e => usernameFn(e.target.value)}
-						isInvalid={!!usernameError}
+						isInvalid={!!state.usernameError}
 					/>
 					<Form.Control.Feedback type='invalid'>
-						{usernameError}
+						{state.usernameError}
 					</Form.Control.Feedback>
 				</Form.Group>
 				<Form.Group>
@@ -94,10 +117,10 @@ export default function Register() {
 						type='password'
 						placeholder='Password'
 						onChange={e => passwordFn(e.target.value)}
-						isInvalid={!!passwordError}
+						isInvalid={!!state.passwordError}
 					/>
 					<Form.Control.Feedback type='invalid'>
-						{passwordError}
+						{state.passwordError}
 					</Form.Control.Feedback>
 				</Form.Group>
 				<Button onClick={e => { register(e) }}>Submit</Button>
