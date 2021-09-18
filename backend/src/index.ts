@@ -358,6 +358,7 @@ app.put("/addmeal", async (req: AuthRequest, res: Response) => {
         'posts.$.meal': meal,
         'posts.$.description': description,
         'posts.$.picture': picture,
+        'posts.$.isApproved': false
       }
     }).exec(function (err) {
       if (err) throw err;

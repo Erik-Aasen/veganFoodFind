@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-// import ImageUploader from 'react-images-upload';
-// import {compress, compressAccurately} from 'image-conversion';
-// import * as imageConversion from 'image-conversion';
 import piexif from 'piexifjs';
 import API from '../config'
+import { Form } from 'react-bootstrap';
 
 export default function AddMeal() {
 
@@ -14,21 +12,38 @@ export default function AddMeal() {
     const [meal, setMeal] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [picture, setPicture] = useState<string>();
-
     const [orientation, setOrientation] = useState<number>(8);
 
-    let history = useHistory();
+    const [errorState, setErrorState] = useState(
+        {
+            restaurantError: '',
+            cityError: '',
+            mealError: '',
+            descriptionError: '',
+            pictureError: ''
+        }
+    )
 
-    // THIS WORKS
-    // const onDrop = async (e) => {
-    //     var reader = new FileReader();
-    //     await reader.readAsDataURL(e.target.files[0]);
-    //     reader.onload = function () {
-    //         setPicture(reader.result)
-    //     };
-    //     reader.onerror = function (error) {
-    //     };
-    // }
+    const validate = () => {
+        const errors = {
+            restaurant: '',
+            city: '',
+            meal: '',
+            description: '',
+            picture: ''
+        }
+
+        if (!restaurant) { errors.restaurant = 'Please enter a restaurant' }
+        if (!city) { errors.city = 'Please enter a city' }
+        if (!meal) { errors.meal = 'Please enter a meal' }
+        if (!description) { errors.description = 'Please enter a description' }
+        if (!picture) { errors.picture = 'Please upload a picture' }
+
+
+        return errors
+    }
+
+    let history = useHistory();
 
     const rotateMinus = (e) => {
         e.preventDefault();
@@ -84,6 +99,10 @@ export default function AddMeal() {
             var exifbytes = piexif.dump(exifObj);
             var newJpeg = piexif.insert(exifbytes, strippedJpeg)
             setPicture(newJpeg)
+            setErrorState(prev => ({
+                ...prev,
+                pictureError: ''
+            }))
         };
         reader.onerror = function (error) {
         };
@@ -92,68 +111,127 @@ export default function AddMeal() {
     const submitMeal = (e) => {
 
         e.preventDefault();
-        axios.post(API + '/addmeal', {
-            restaurant, city, meal, description, picture
-        }, {
-            withCredentials: true
-        }).then((res) => {
-            if (res.data === "meal added") {
-                history.push('/mymeals');
-            }
-        })
+
+        const errors = validate();
+
+        if (
+            errors.restaurant.length > 0 ||
+            errors.city.length > 0 ||
+            errors.meal.length > 0 ||
+            errors.description.length > 0 ||
+            errors.picture.length > 0
+        ) {
+            setErrorState(prev => ({
+                ...prev,
+                restaurantError: errors.restaurant,
+                cityError: errors.city,
+                mealError: errors.meal,
+                descriptionError: errors.description,
+                pictureError: errors.picture
+            }))
+        } else {
+            axios.post(API + '/addmeal', {
+                restaurant, city, meal, description, picture
+            }, {
+                withCredentials: true
+            }).then((res) => {
+                if (res.data === "meal added") {
+                    history.push('/mymeals');
+                }
+            })
+        }
+    }
+
+    let pictureFeedback;
+    if (errorState.pictureError) {
+        pictureFeedback = (
+            <>
+                <label className='form-feedback'>Please upload an image.</label>
+            </>
+        )
     }
 
     return (
         <>
             <div className='add-meal'>
                 <h3>Enter a Meal</h3>
-                <form>
-                    <div className="form-group">
-                        <input className="form-control"
-                            type="text"
+                <Form>
+                    <Form.Group>
+                        <Form.Control
+                            type='text'
                             placeholder="Restaurant Name"
                             value={restaurant}
-                            onChange={e => setRestaurant(e.target.value)}
+                            onChange={e => {
+                                setRestaurant(e.target.value)
+                                setErrorState(prev => ({
+                                    ...prev,
+                                    restaurantError: ''
+                                }))
+                            }}
+                            isInvalid={!!errorState.restaurantError}
                         />
-                    </div>
-                    <div className="form-group">
-                        <input className="form-control"
+                        <Form.Control.Feedback type='invalid'>
+                            {errorState.restaurantError}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Control
                             type="text"
                             placeholder="City"
                             value={city}
-                            onChange={e => setCity(e.target.value)}
+                            onChange={e => {
+                                setCity(e.target.value)
+                                setErrorState(prev => ({
+                                    ...prev,
+                                    cityError: ''
+                                }))
+                            }}
+                            isInvalid={!!errorState.cityError}
                         />
-                    </div>
-                    <div className="form-group">
-                        <input className="form-control"
+                        <Form.Control.Feedback type='invalid'>
+                            {errorState.cityError}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Control
                             type="text"
-                            placeholder="Meal Name"
+                            placeholder="Meal"
                             value={meal}
-                            onChange={e => setMeal(e.target.value)}
+                            onChange={e => {
+                                setMeal(e.target.value)
+                                setErrorState(prev => ({
+                                    ...prev,
+                                    mealError: ''
+                                }))
+                            }}
+                            isInvalid={!!errorState.mealError}
                         />
-                    </div>
-                    <div className="form-group">
-                        <textarea
-                            className="form-control"
+                        <Form.Control.Feedback type='invalid'>
+                            {errorState.mealError}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
                             placeholder="Description"
                             value={description}
-                            onChange={e => setDescription(e.target.value)}
+                            onChange={e => {
+                                setDescription(e.target.value)
+                                setErrorState(prev => ({
+                                    ...prev,
+                                    descriptionError: ''
+                                }))
+                            }}
+                            isInvalid={!!errorState.descriptionError}
                         />
-                    </div>
-                    <div>
-                        <label htmlFor="img">Upload Image!</label>
-                        <br />
+                        <Form.Control.Feedback type='invalid'>
+                            {errorState.descriptionError}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group>
                         <input onChange={onDrop} type="file" name="img" id="img"></input>
-
-                        {/* <ImageUploader
-                        withIcon={true}
-                        buttonText='Choose image'
-                        onChange={onDrop}
-                        imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                        maxFileSize={5242880}
-                        singleImage={true}
-                    /> */}
                         <br />
+                        {pictureFeedback}
                         <br />
                         <button className='btn btn-secondary' onClick={e => { rotateMinus(e) }}>Orientation -</button>
                         <button className='btn btn-secondary' onClick={e => { rotatePlus(e) }}>Orientation +</button>
@@ -163,8 +241,8 @@ export default function AddMeal() {
                         <br />
                         <img className='photo' alt='' src={picture} />
                         <br />
-                    </div>
-                </form>
+                    </Form.Group>
+                </Form>
             </div>
         </>
     )

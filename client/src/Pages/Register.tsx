@@ -19,22 +19,6 @@ export default function Register() {
 		}
 	);
 
-	const usernameFn = (e) => {
-		setState(prev => ({
-			...prev,
-			username: e,
-			usernameError: ''
-		}))
-	}
-
-	const passwordFn = (e) => {
-		setState(prev => ({
-			...prev,
-			password: e,
-			passwordError: ''
-		}))
-	}
-
 	const validate = () => {
 		const errors: FormError = {
 			username: '',
@@ -105,7 +89,11 @@ export default function Register() {
 					<Form.Control
 						type='text'
 						placeholder='Username'
-						onChange={e => usernameFn(e.target.value)}
+						onChange={e => setState(prev => ({
+							...prev,
+							username: e.target.value,
+							usernameError: ''
+						}))}
 						isInvalid={!!state.usernameError}
 					/>
 					<Form.Control.Feedback type='invalid'>
@@ -116,7 +104,11 @@ export default function Register() {
 					<Form.Control
 						type='password'
 						placeholder='Password'
-						onChange={e => passwordFn(e.target.value)}
+						onChange={e => setState(prev => ({
+							...prev,
+							password: e.target.value,
+							passwordError: ''
+						}))}
 						isInvalid={!!state.passwordError}
 					/>
 					<Form.Control.Feedback type='invalid'>
