@@ -7,22 +7,39 @@ import { Form } from 'react-bootstrap';
 
 export default function AddMeal(props) {
 
-    // const [restaurant, setRestaurant] = useState<string>("");
-    // const [city, setCity] = useState<string>("");
-    // const [meal, setMeal] = useState<string>("");
-    // const [description, setDescription] = useState<string>("");
-    // const [picture, setPicture] = useState<string>();
-    // const [orientation, setOrientation] = useState<number>(8);
-    
-    const _id = props.location._id;
-    const [restaurant, setRestaurant] = useState<string>(props.location.restaurant);
-    const [city, setCity] = useState<string>(props.location.city);
-    const [meal, setMeal] = useState<string>(props.location.meal);
-    const [description, setDescription] = useState<string>(props.location.description);
-    const [picture, setPicture] = useState<string>(props.location.picture);
-    const [orientation, setOrientation] = useState<number>(8);
+    let initial;
+    if (!props.location._id) {
+        initial = {
+            _id: '',
+            restaurant: '',
+            city: '',
+            meal: '',
+            description: '',
+            picture: '',
+            orientation: 8,
+            isEditMeal: false
+        }
+    } else {
+        initial = {
+            _id: props.location._id,
+            restaurant: props.location.restaurant,
+            city: props.location.city,
+            meal: props.location.meal,
+            description: props.location.description,
+            picture: props.location.picture,
+            orientation: 8,
+            isEditMeal: props.location.idEditMeal
+        }
+    }
 
-    const isEditMeal = props.location.isEditMeal;
+    const _id = initial._id;
+    const [restaurant, setRestaurant] = useState<string>(initial.restaurant);
+    const [city, setCity] = useState<string>(initial.city);
+    const [meal, setMeal] = useState<string>(initial.meal);
+    const [description, setDescription] = useState<string>(initial.description);
+    const [picture, setPicture] = useState<string>(initial.picture);
+    const [orientation, setOrientation] = useState<number>(8);
+    const isEditMeal = initial.isEditMeal;
 
     const [errorState, setErrorState] = useState(
         {
