@@ -4,7 +4,10 @@ import { Link } from "react-router-dom";
 import API from '../config'
 
 export default function Meal(props) {
-    const { _id, meal, restaurant, city, picture, description, myMeal, adminMeal, isApproved } = props;
+    const {
+        _id, meal, restaurant,
+        city, picture, description,
+        myMeal, adminMeal, isApproved } = props;
 
     const editmeal = {
         pathname: "/editmeal",
@@ -13,7 +16,8 @@ export default function Meal(props) {
         restaurant: restaurant,
         city: city,
         picture: picture,
-        description: description
+        description: description,
+        isEditMeal: true
     }
 
     const deleteMeal = () => {

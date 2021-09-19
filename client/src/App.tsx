@@ -11,7 +11,7 @@ import './main.css';
 import AddMeal from './Pages/AddMeal';
 import MyMeals from './Pages/MyMeals';
 import AdminPage from './Pages/AdminPage';
-import EditMeal from './Pages/EditMeal';
+// import EditMeal from './Pages/EditMeal';
 
 function App() {
   const ctx = useContext(myContext);
@@ -24,7 +24,7 @@ function App() {
         <Route path='/profile' exact component={Profile}></Route>
         <Route path='/addmeal' exact component={AddMeal}></Route>
         <Route path='/mymeals' exact component={MyMeals}></Route>
-        <Route path='/editmeal' exact component={EditMeal}></Route>
+        <Route path='/editmeal' exact component={AddMeal}></Route>
       </>
     )
   } else {

@@ -5,14 +5,24 @@ import piexif from 'piexifjs';
 import API from '../config'
 import { Form } from 'react-bootstrap';
 
-export default function AddMeal() {
+export default function AddMeal(props) {
 
-    const [restaurant, setRestaurant] = useState<string>("");
-    const [city, setCity] = useState<string>("");
-    const [meal, setMeal] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [picture, setPicture] = useState<string>();
+    // const [restaurant, setRestaurant] = useState<string>("");
+    // const [city, setCity] = useState<string>("");
+    // const [meal, setMeal] = useState<string>("");
+    // const [description, setDescription] = useState<string>("");
+    // const [picture, setPicture] = useState<string>();
+    // const [orientation, setOrientation] = useState<number>(8);
+    
+    const _id = props.location._id;
+    const [restaurant, setRestaurant] = useState<string>(props.location.restaurant);
+    const [city, setCity] = useState<string>(props.location.city);
+    const [meal, setMeal] = useState<string>(props.location.meal);
+    const [description, setDescription] = useState<string>(props.location.description);
+    const [picture, setPicture] = useState<string>(props.location.picture);
     const [orientation, setOrientation] = useState<number>(8);
+
+    const isEditMeal = props.location.isEditMeal;
 
     const [errorState, setErrorState] = useState(
         {
@@ -108,7 +118,7 @@ export default function AddMeal() {
         };
     }
 
-    const submitMeal = (e) => {
+    const submitMeal = async (e) => {
 
         e.preventDefault();
 
@@ -130,15 +140,27 @@ export default function AddMeal() {
                 pictureError: errors.picture
             }))
         } else {
-            axios.post(API + '/addmeal', {
-                restaurant, city, meal, description, picture
-            }, {
-                withCredentials: true
-            }).then((res) => {
-                if (res.data === "meal added") {
-                    history.push('/mymeals');
-                }
-            })
+            if (isEditMeal) {
+                await axios.put(API + '/addmeal', {
+                    _id, restaurant, city, meal, description, picture
+                }, {
+                    withCredentials: true
+                }).then((res) => {
+                    if (res.data === "meal updated") {
+                        history.push('/mymeals');
+                    }
+                })
+            } else {
+                await axios.post(API + '/addmeal', {
+                    restaurant, city, meal, description, picture
+                }, {
+                    withCredentials: true
+                }).then((res) => {
+                    if (res.data === "meal added") {
+                        history.push('/mymeals');
+                    }
+                })
+            }
         }
     }
 
