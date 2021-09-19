@@ -62,7 +62,7 @@ textarea {
 }
 
 .container {
-    display: flex;
+    /* display: flex; when on, single post on large display is bad  */
     flex-wrap: wrap;
     justify-content: space-evenly;
     align-items: flex-start;
