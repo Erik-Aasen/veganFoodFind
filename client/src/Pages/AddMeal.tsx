@@ -28,7 +28,7 @@ export default function AddMeal(props) {
             description: props.location.description,
             picture: props.location.picture,
             orientation: 8,
-            isEditMeal: props.location.idEditMeal
+            isEditMeal: props.location.isEditMeal
         }
     }
 
@@ -39,7 +39,7 @@ export default function AddMeal(props) {
     const [description, setDescription] = useState<string>(initial.description);
     const [picture, setPicture] = useState<string>(initial.picture);
     const [orientation, setOrientation] = useState<number>(8);
-    const isEditMeal = initial.isEditMeal;
+    const isEditMeal = initial.isEditMeal;    
 
     const [errorState, setErrorState] = useState(
         {
@@ -157,7 +157,7 @@ export default function AddMeal(props) {
                 pictureError: errors.picture
             }))
         } else {
-            if (isEditMeal) {
+            if (isEditMeal) {                
                 await axios.put(API + '/addmeal', {
                     _id, restaurant, city, meal, description, picture
                 }, {
