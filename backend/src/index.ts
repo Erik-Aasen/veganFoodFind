@@ -120,6 +120,8 @@ app.get("/usermeals", async (req: AuthRequest, res: Response) => {
   await User.findOne({ _id: _id }, '_id username posts').exec(function (err, data: MongoInterface) {
     if (err) throw err;
     const posts = data.posts;
+    // console.log('usermeals data sent: ' + new Date().getTime());
+
     res.send(posts)
   })
 })
@@ -362,8 +364,8 @@ app.put("/addmeal", async (req: AuthRequest, res: Response) => {
       }
     }).exec(function (err) {
       if (err) throw err;
+      res.send('meal updated')
     })
-    res.send('meal updated')
   }
 })
 
