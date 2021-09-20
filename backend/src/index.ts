@@ -266,10 +266,12 @@ function returnMealsAndCities(allposts: MongoInterface[]) {
   let mealsAndCities: CityMeal[] = [];
   allposts.forEach((user) => {
     user.posts.forEach((post) => {
-      mealsAndCities.push({
-        city: post.city,
-        meal: post.meal
-      })
+      if (post.isApproved === true) {
+        mealsAndCities.push({
+          city: post.city,
+          meal: post.meal
+        })          
+      }
     })
   })
   return mealsAndCities
