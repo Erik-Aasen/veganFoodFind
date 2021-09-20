@@ -120,8 +120,6 @@ app.get("/usermeals", async (req: AuthRequest, res: Response) => {
   await User.findOne({ _id: _id }, '_id username posts').exec(function (err, data: MongoInterface) {
     if (err) throw err;
     const posts = data.posts;
-    // console.log('usermeals data sent: ' + new Date().getTime());
-
     res.send(posts)
   })
 })
@@ -144,7 +142,7 @@ app.get("/getmeals", async (req: AuthRequest, res: Response) => {
 
 app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: Response) => {
   await User.find({
-    posts: { $elemMatch: { isApproved: false} }
+    posts: { $elemMatch: { isApproved: false } }
   }, (err: Error, data) => {
     if (err) throw err;
     const posts = returnUnapprovedPosts(data)
@@ -197,17 +195,21 @@ app.post("/deleteuser", isAdministratorMiddleware, async (req: AuthRequest, res:
   res.send("user deleted")
 });
 
+function capitalizeAndTrim(post: CapitalizeAndTrim) {
+  Object.keys(post).map(entry => post[entry] = capitalizeFirstLetter(post[entry].trim()))
+
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+}
+
 app.post("/addmeal", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { body } = req;
   const { restaurant, city, meal, description, picture } = body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
-  Object.keys(post).map(entry => post[entry] = capitalizeFirstLetter(post[entry].trim()))
-
-  function capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+  capitalizeAndTrim(post);  
 
   if (user) {
     await User.updateOne(
@@ -349,16 +351,19 @@ app.put("/addmeal", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { _id, restaurant, city, meal, description, picture } = req.body;
 
+  let post: CapitalizeAndTrim = { restaurant, city, meal, description };
+  capitalizeAndTrim(post);  
+
   if (user) {
 
     await User.updateOne({
       'posts._id': _id
     }, {
       '$set': {
-        'posts.$.restaurant': restaurant,
-        'posts.$.city': city,
-        'posts.$.meal': meal,
-        'posts.$.description': description,
+        'posts.$.restaurant': post.restaurant,
+        'posts.$.city': post.city,
+        'posts.$.meal': post.meal,
+        'posts.$.description': post.description,
         'posts.$.picture': picture,
         'posts.$.isApproved': false
       }
@@ -378,8 +383,10 @@ app.put("/deletemeal", async (req: AuthRequest, res) => {
       'posts._id': _id
     }, {
       '$pull': { posts: { _id: _id } }
-    }).exec(err => { if (err) throw err })
-    res.send('meal deleted')
+    }).exec(err => { 
+      if (err) throw err 
+      res.send('meal deleted')
+    })
   }
 })
 
@@ -396,8 +403,8 @@ app.put("/adminmeals", async (req: AuthRequest, res) => {
       }
     }).exec(function (err) {
       if (err) throw err;
-    })
     res.send('meal approved')
+    })
   }
 })
 
