@@ -70,6 +70,15 @@ export default function AddMeal(props) {
         return errors
     }
 
+
+    let buttonLabel = 'Upload Meal';
+    let header = 'Enter a Meal';
+
+    if (isEditMeal) {
+        buttonLabel = 'Submit Changes'
+        header = 'Edit Meal'
+    }
+
     let history = useHistory();
 
     const rotateMinus = (e) => {
@@ -193,7 +202,7 @@ export default function AddMeal(props) {
     return (
         <>
             <div className='add-meal'>
-                <h3>Enter a Meal</h3>
+                <h3>{header}</h3>
                 <Form>
                     <Form.Group>
                         <Form.Control
@@ -276,7 +285,7 @@ export default function AddMeal(props) {
                         <button className='btn btn-secondary' onClick={e => { rotatePlus(e) }}>Orientation +</button>
                         <br />
                         <br />
-                        <button className="btn btn-success" type="submit" onClick={e => { submitMeal(e) }}>Upload Meal</button>
+                        <button className="btn btn-success" type="submit" onClick={e => { submitMeal(e) }}>{buttonLabel}</button>
                         <br />
                         <img className='photo' alt='' src={picture} />
                         <br />
