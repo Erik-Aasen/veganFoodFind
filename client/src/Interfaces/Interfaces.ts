@@ -25,3 +25,8 @@ export interface RegisterInterface {
     usernameError: string,
     passwordError: string
 }
+
+export interface CityMeal {
+    city: string;
+    meal: string;
+  }

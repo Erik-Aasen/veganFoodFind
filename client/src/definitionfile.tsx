@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { PostInterface, UserInterface } from "./Interfaces/Interfaces";
+import { CityMeal, PostInterface, UserInterface } from "./Interfaces/Interfaces";
 
 export interface PostResponse extends AxiosResponse {
     data: PostInterface[]
@@ -7,4 +7,8 @@ export interface PostResponse extends AxiosResponse {
 
 export interface UserResponse extends AxiosResponse {
     data: UserInterface[]
+}
+
+export interface CityMealResponse extends AxiosResponse {
+    data: CityMeal[]
 }

@@ -32,3 +32,7 @@ export interface CapitalizeAndTrim {
   [key: string]: string;
 }
 
+export interface CityMeal {
+  city: string;
+  meal: string;
+}

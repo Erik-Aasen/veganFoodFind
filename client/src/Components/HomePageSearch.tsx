@@ -1,8 +1,8 @@
 import Axios from "axios"
 import { useEffect, useState } from "react"
 import API from '../config'
-import { PostResponse } from "../definitionfile"
-import { PostInterface } from "../Interfaces/Interfaces"
+import { CityMealResponse } from "../definitionfile"
+import { CityMeal } from "../Interfaces/Interfaces"
 
 export default function HomePageSearch(props) {
 
@@ -12,16 +12,16 @@ export default function HomePageSearch(props) {
     const [meals, setMeals] = useState<string[]>()
     const [cities, setCities] = useState<string[]>()
 
-    const [data, setData] = useState<PostInterface[]>()
+    const [data, setData] = useState<CityMeal[]>()
 
-    const filterMeals = (useEffectData: PostInterface[]) => {
+    const filterMeals = (useEffectData: CityMeal[]) => {
         let unfilteredMeals = useEffectData.map((item) => item.meal)
         let filteredMeals = [...new Set(unfilteredMeals)];
         filteredMeals.sort()
         return (filteredMeals)
     }
 
-    const filterCities = (useEffectData: PostInterface[]) => {
+    const filterCities = (useEffectData: CityMeal[]) => {
         let unfilteredCities = useEffectData.map((item) => item.city)
         let filteredCities = [...new Set(unfilteredCities)];
         filteredCities.sort();
@@ -33,7 +33,7 @@ export default function HomePageSearch(props) {
         async function getMeals() {
             await Axios.get(API + "/getmeals", {
                 withCredentials: true
-            }).then((res: PostResponse) => {
+            }).then((res: CityMealResponse) => {
                 setData(res.data)
                 setMeals(filterMeals(res.data))
                 setCities(filterCities(res.data))

@@ -8,7 +8,7 @@ import session from 'express-session';
 import bcrypt from 'bcryptjs';
 import User from './User';
 import dotenv from 'dotenv';
-import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim } from './Interfaces/Interfaces';
+import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim, CityMeal } from './Interfaces/Interfaces';
 import path from "path";
 import { AuthRequest } from './definitionfile';
 
@@ -133,10 +133,10 @@ app.get("/getallusers", isAdministratorMiddleware, async (req, res) => {
 app.get("/getmeals", async (req: AuthRequest, res: Response) => {
   await User.find({
     posts: { $elemMatch: { isApproved: true } }
-  }, (err: Error, data) => {
+  }, 'posts').exec(function (err, allposts) {
     if (err) throw err;
-    const posts = returnAllPosts(data)
-    res.send(posts)
+    const mealsAndCities = returnMealsAndCities(allposts)
+    res.send(mealsAndCities)
   })
 })
 
@@ -260,6 +260,19 @@ function returnAllPosts(userPosts: MongoInterface[]) {
 
   return postArray;
 
+}
+
+function returnMealsAndCities(allposts: MongoInterface[]) {
+  let mealsAndCities: CityMeal[] = [];
+  allposts.forEach((user) => {
+    user.posts.forEach((post) => {
+      mealsAndCities.push({
+        city: post.city,
+        meal: post.meal
+      })
+    })
+  })
+  return mealsAndCities
 }
 
 function returnMealSpecified(userPosts: MongoInterface[], meal: string) {
