@@ -19,31 +19,10 @@ export default function Homepage() {
             withCredentials: true
         }).then((res: PostResponse) => {
             setPosts(res.data)
+            // setButtonDisabled(false)
         })
         e.preventDefault();
     }
-
-    // function display(posts: PostInterface[]) {
-    //     return (
-    //         <>
-    //             {posts.map((post) => {
-    //                 const { city, description, meal, restaurant, _id, picture } = post;
-
-    //                 return (
-    //                     <Meal
-    //                         key={_id}
-    //                         city={city}
-    //                         description={description}
-    //                         meal={meal}
-    //                         restaurant={restaurant}
-    //                         picture={picture}
-    //                         myMeal={false}
-    //                     />
-    //                 )
-    //             })}
-    //         </>
-    //     )
-    // }
 
     return (
         <>

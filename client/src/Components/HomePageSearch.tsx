@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import API from '../config'
 import { CityMealResponse } from "../definitionfile"
 import { CityMeal } from "../Interfaces/Interfaces"
+import { Button, Spinner } from "react-bootstrap"
 
 export default function HomePageSearch(props) {
 
@@ -13,6 +14,8 @@ export default function HomePageSearch(props) {
     const [cities, setCities] = useState<string[]>()
 
     const [data, setData] = useState<CityMeal[]>()
+
+    const [buttonDisable, setButtonDisable] = useState<boolean>(false)
 
     const filterMeals = (useEffectData: CityMeal[]) => {
         let unfilteredMeals = useEffectData.map((item) => item.meal)
@@ -99,6 +102,35 @@ export default function HomePageSearch(props) {
         )
     }
 
+    let button;
+    if (!buttonDisable) {
+        button = (
+            <>
+                <Button variant='success'
+                    onClick={e => {
+                        props.postMeals(e, city, meal)
+                        setButtonDisable(true)
+                    }}
+                >Search
+                </Button>
+            </>
+        )
+    } else {
+        button = (
+            <>
+                <Button variant='success' disabled>
+                    <Spinner
+                        as='span'
+                        animation='grow'
+                        size='sm'
+                        role='status'
+                    />
+                    Searching...
+                </Button>
+            </>
+        )
+    }
+
     return (
         <div>
             <form>
@@ -112,7 +144,8 @@ export default function HomePageSearch(props) {
                         {listMeals(meals)}
                     </select>
                 </div>
-                <button type="button" className="btn btn-success" onClick={e => props.postMeals(e, city, meal)}>Search</button>
+                {/* <button type="button" className="btn btn-success" onClick={e => props.postMeals(e, city, meal)}>Search</button> */}
+                {button}
             </form>
 
         </div>
