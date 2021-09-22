@@ -32,24 +32,18 @@ export default function HomePageSearch(props) {
     }
 
     useEffect(() => {
-        console.log('child useEffect');
-        // async function getMeals() {
-        // await    
         Axios.get(API + "/getmeals", {
-                withCredentials: true
-            }).then((res: CityMealResponse) => {
-                setData(res.data)
-                setMeals(filterMeals(res.data))
-                setCities(filterCities(res.data))
-                console.log('child getmeals received data');
-                
-            })
-        // }
+            withCredentials: true
+        }).then((res: CityMealResponse) => {
+            setData(res.data)
+            setMeals(filterMeals(res.data))
+            setCities(filterCities(res.data))
+        })
+    }, []);
+
+    useEffect(() => {
         setButtonEnable(props.buttonEnable)
-        console.log('child receives updated button state from parent');
-        
-        // getMeals()
-    }, [props.buttonEnable]);
+    }, [props.buttonEnable])
 
     if (!data || !meals || !cities) {
         return null;
@@ -108,16 +102,12 @@ export default function HomePageSearch(props) {
     }
 
     let button;
-    console.log('child button state: ' + buttonEnable);
-    
-    if (buttonEnable === 'enabled' || buttonEnable === 'enabled-initial') {
+    if (buttonEnable === 'enabled') {
         button = (
             <>
                 <Button variant='success'
-                    // key={buttonEnable}
                     onClick={e => {
                         props.postMeals(e, city, meal)
-                        setButtonEnable('disabled')
                     }}
                 >Search
                 </Button>
@@ -126,10 +116,7 @@ export default function HomePageSearch(props) {
     } else if (buttonEnable === 'disabled') {
         button = (
             <>
-                <Button 
-                // key={buttonEnable} 
-                variant='success' disabled>
-                    
+                <Button variant='success' disabled>
                     <Spinner
                         as='span'
                         animation='border'
@@ -154,7 +141,6 @@ export default function HomePageSearch(props) {
                         {listMeals(meals)}
                     </select>
                 </div>
-                {/* <button type="button" className="btn btn-success" onClick={e => props.postMeals(e, city, meal)}>Search</button> */}
                 {button}
             </form>
 

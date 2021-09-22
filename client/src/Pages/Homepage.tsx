@@ -15,22 +15,15 @@ export default function Homepage() {
 
     const postMeals = (e, city, meal) => {
         setButtonEnable('disabled')
-        
         Axios.post(API + '/getmeals', {
             city, meal
         }, {
             withCredentials: true
         }).then((res: PostResponse) => {
             setPosts(res.data)
-            console.log('posts set');
-            // setButtonEnable('disabled')
-            setButtonEnable('enabled')
-            console.log('parent - button should be enabled now');
-    
+            setButtonEnable('enabled')    
         })
-        e.preventDefault();
-        console.log('parent button state: ' + buttonEnable);
-        
+        e.preventDefault();        
     }
 
     return (
@@ -38,7 +31,6 @@ export default function Homepage() {
             <div className="homepageSearch">
                 <h1>Find Vegan Meals By City</h1>
                 <HomePageSearch
-                // key={buttonEnable} 
                 postMeals={postMeals} 
                 buttonEnable={buttonEnable}
                 />
