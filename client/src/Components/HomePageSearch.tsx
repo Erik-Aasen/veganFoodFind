@@ -15,7 +15,7 @@ export default function HomePageSearch(props) {
 
     const [data, setData] = useState<CityMeal[]>()
 
-    const [buttonDisable, setButtonDisable] = useState<boolean>(false)
+    const [buttonEnable, setButtonEnable] = useState<string>('enabled')
 
     const filterMeals = (useEffectData: CityMeal[]) => {
         let unfilteredMeals = useEffectData.map((item) => item.meal)
@@ -32,19 +32,24 @@ export default function HomePageSearch(props) {
     }
 
     useEffect(() => {
-
-        async function getMeals() {
-            await Axios.get(API + "/getmeals", {
+        console.log('child useEffect');
+        // async function getMeals() {
+        // await    
+        Axios.get(API + "/getmeals", {
                 withCredentials: true
             }).then((res: CityMealResponse) => {
                 setData(res.data)
                 setMeals(filterMeals(res.data))
                 setCities(filterCities(res.data))
+                console.log('child getmeals received data');
+                
             })
-        }
-
-        getMeals()
-    }, []);
+        // }
+        setButtonEnable(props.buttonEnable)
+        console.log('child receives updated button state from parent');
+        
+        // getMeals()
+    }, [props.buttonEnable]);
 
     if (!data || !meals || !cities) {
         return null;
@@ -103,29 +108,34 @@ export default function HomePageSearch(props) {
     }
 
     let button;
-    if (!buttonDisable) {
+    console.log('child button state: ' + buttonEnable);
+    
+    if (buttonEnable === 'enabled' || buttonEnable === 'enabled-initial') {
         button = (
             <>
                 <Button variant='success'
+                    // key={buttonEnable}
                     onClick={e => {
                         props.postMeals(e, city, meal)
-                        setButtonDisable(true)
+                        setButtonEnable('disabled')
                     }}
                 >Search
                 </Button>
             </>
         )
-    } else {
+    } else if (buttonEnable === 'disabled') {
         button = (
             <>
-                <Button variant='success' disabled>
+                <Button 
+                // key={buttonEnable} 
+                variant='success' disabled>
+                    
                     <Spinner
                         as='span'
-                        animation='grow'
+                        animation='border'
                         size='sm'
                         role='status'
-                    />
-                    Searching...
+                    /> Searching...
                 </Button>
             </>
         )

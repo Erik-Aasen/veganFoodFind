@@ -11,24 +11,37 @@ import { display } from '../Components/DisplayPosts';
 export default function Homepage() {
 
     const [posts, setPosts] = useState<PostInterface[]>([]);
+    const [buttonEnable, setButtonEnable] = useState<string>('enabled')
 
     const postMeals = (e, city, meal) => {
+        setButtonEnable('disabled')
+        
         Axios.post(API + '/getmeals', {
             city, meal
         }, {
             withCredentials: true
         }).then((res: PostResponse) => {
             setPosts(res.data)
-            // setButtonDisabled(false)
+            console.log('posts set');
+            // setButtonEnable('disabled')
+            setButtonEnable('enabled')
+            console.log('parent - button should be enabled now');
+    
         })
         e.preventDefault();
+        console.log('parent button state: ' + buttonEnable);
+        
     }
 
     return (
         <>
             <div className="homepageSearch">
                 <h1>Find Vegan Meals By City</h1>
-                <HomePageSearch postMeals={postMeals} />
+                <HomePageSearch
+                // key={buttonEnable} 
+                postMeals={postMeals} 
+                buttonEnable={buttonEnable}
+                />
             </div>
             <div className="container">
                 <div className="row justify-content-center">
