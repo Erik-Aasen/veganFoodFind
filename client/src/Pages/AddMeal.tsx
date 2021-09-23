@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import piexif from 'piexifjs';
 import API from '../config'
-import { Form } from 'react-bootstrap';
+import { Form, Button, Spinner } from 'react-bootstrap';
 
 export default function AddMeal(props) {
 
@@ -41,6 +41,8 @@ export default function AddMeal(props) {
     const [orientation, setOrientation] = useState<number>(8);
     const isEditMeal = initial.isEditMeal;
 
+    const [buttonEnable, setButtonEnable] = useState<string>('enabled')
+
     const [errorState, setErrorState] = useState(
         {
             restaurantError: '',
@@ -59,24 +61,31 @@ export default function AddMeal(props) {
             description: '',
             picture: ''
         }
-
         if (!restaurant) { errors.restaurant = 'Please enter a restaurant' }
         if (!city) { errors.city = 'Please enter a city' }
         if (!meal) { errors.meal = 'Please enter a meal' }
         if (!description) { errors.description = 'Please enter a description' }
         if (!picture) { errors.picture = 'Please upload a picture' }
-
-
         return errors
     }
 
+    let pictureFeedback;
+    if (errorState.pictureError) {
+        pictureFeedback = (
+            <>
+                <label className='form-feedback'>Please upload an image.</label>
+            </>
+        )
+    }
 
     let buttonLabel = 'Upload Meal';
     let header = 'Enter a Meal';
+    let pressedButtonLabel = ' Adding Meal...'
 
     if (isEditMeal) {
         buttonLabel = 'Submit Changes'
         header = 'Edit Meal'
+        pressedButtonLabel = ' Updating Meal...'
     }
 
     let history = useHistory();
@@ -145,11 +154,8 @@ export default function AddMeal(props) {
     }
 
     const submitMeal = async (e) => {
-
         e.preventDefault();
-
         const errors = validate();
-
         if (
             errors.restaurant.length > 0 ||
             errors.city.length > 0 ||
@@ -166,6 +172,7 @@ export default function AddMeal(props) {
                 pictureError: errors.picture
             }))
         } else {
+            setButtonEnable('disabled')
             if (isEditMeal) {
                 await axios.put(API + '/addmeal', {
                     _id, restaurant, city, meal, description, picture
@@ -190,11 +197,29 @@ export default function AddMeal(props) {
         }
     }
 
-    let pictureFeedback;
-    if (errorState.pictureError) {
-        pictureFeedback = (
+
+
+    let button;
+    if (buttonEnable === 'enabled') {
+        button = (
             <>
-                <label className='form-feedback'>Please upload an image.</label>
+                <Button variant='success'
+                    onClick={e => { submitMeal(e) }}
+                >{buttonLabel}
+                </Button>
+            </>
+        )
+    } else if (buttonEnable === 'disabled') {
+        button = (
+            <>
+                <Button variant='success' disabled>
+                    <Spinner
+                        as='span'
+                        animation='border'
+                        size='sm'
+                        role='status'
+                    />{pressedButtonLabel}
+                </Button>
             </>
         )
     }
@@ -285,7 +310,8 @@ export default function AddMeal(props) {
                         <button className='btn btn-secondary' onClick={e => { rotatePlus(e) }}>Orientation +</button>
                         <br />
                         <br />
-                        <button className="btn btn-success" type="submit" onClick={e => { submitMeal(e) }}>{buttonLabel}</button>
+                        {/* <button className="btn btn-success" type="submit" onClick={e => { submitMeal(e) }}>{buttonLabel}</button> */}
+                        {button}
                         <br />
                         <img className='photo' alt='' src={picture} />
                         <br />
