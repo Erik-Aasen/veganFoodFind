@@ -156,3 +156,9 @@ form {
     color: red;
     margin-bottom: 10px;
 }
+
+.myMeals-loading {
+    padding-top: 20px;
+    text-align: center;
+    font-size: 200%;
+}
