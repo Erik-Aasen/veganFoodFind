@@ -100,5 +100,3 @@ Continuous Deployment with Heroku.
 &#8594; Better practice would be to store images in AWS S3 buckets and reference them in MongoDB
 
 - Images should be compressed to save space and improve loading time
-
-- Project is written in Typescript but most types need to be defined
