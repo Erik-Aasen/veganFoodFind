@@ -310,7 +310,6 @@ export default function AddMeal(props) {
                         <button className='btn btn-secondary' onClick={e => { rotatePlus(e) }}>Orientation +</button>
                         <br />
                         <br />
-                        {/* <button className="btn btn-success" type="submit" onClick={e => { submitMeal(e) }}>{buttonLabel}</button> */}
                         {button}
                         <br />
                         <img className='photo' alt='' src={picture} />
