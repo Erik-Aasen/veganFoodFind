@@ -9,11 +9,14 @@ if (process.env.NODE_ENV === 'production') {
     // var API = ""
 }
 
-else
-//  (process.env.NODE_ENV === 'staging') 
- {
+    // eslint-disable-next-line
+if (process.env.NODE_ENV === 'test') {
     // eslint-disable-next-line
     var API = "https://vegan-food-find-staging.herokuapp.com"
+}
+
+else {
+    var API = '';
 }
 
 export default API;
