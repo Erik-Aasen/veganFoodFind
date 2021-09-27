@@ -7,6 +7,9 @@
     "start": "cd backend && npm run start",
     "dev": "cd backend && nodemon src/index.ts"
   },
+  "devDependencies": {
+    "tsc": "^2.0.3"
+  },
   "author": "",
   "license": "ISC"
 }
