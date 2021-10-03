@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import piexif from 'piexifjs';
 import API from '../config'
 import { Form, Button, Spinner } from 'react-bootstrap';
+import imageCompression from 'browser-image-compression';
 
 export default function AddMeal(props) {
 
@@ -133,24 +134,41 @@ export default function AddMeal(props) {
     }
 
     const onDrop = async (e) => {
-        var reader = new FileReader();
-        await reader.readAsDataURL(e.target.files[0]);
-        reader.onload = function () {
-            const jpegData = reader.result;
-            var strippedJpeg = piexif.remove(jpegData)
-            var zeroth = {};
-            zeroth[piexif.ImageIFD.Orientation] = orientation;
-            var exifObj = { "0th": zeroth }
-            var exifbytes = piexif.dump(exifObj);
-            var newJpeg = piexif.insert(exifbytes, strippedJpeg)
-            setPicture(newJpeg)
-            setErrorState(prev => ({
-                ...prev,
-                pictureError: ''
-            }))
-        };
-        reader.onerror = function (error) {
-        };
+        const options = {
+            maxSizeMB: .1,
+            // maxWidthOrHeight: 1920,
+            // useWebWorker: true
+        }
+        const imageFile = e.target.files[0];
+
+        try {
+            const compressedFile = await imageCompression(imageFile, options);
+            var reader = new FileReader();
+            await reader.readAsDataURL(compressedFile);
+            reader.onload = function () {
+                const jpegData = reader.result;
+                var exifObjInitial = piexif.load(jpegData)
+                console.log(exifObjInitial);
+                var strippedJpeg = piexif.remove(jpegData)
+                var zeroth = {};
+                zeroth[piexif.ImageIFD.Orientation] = orientation;
+                var exifObj = { "0th": zeroth }
+                var exifbytes = piexif.dump(exifObj);
+                var newJpeg = piexif.insert(exifbytes, strippedJpeg)
+                setPicture(newJpeg)
+                setErrorState(prev => ({
+                    ...prev,
+                    pictureError: ''
+                }))
+            };
+            reader.onerror = function (error) {
+            };
+            // await uploadToServer(compressedFile); // write your own logic
+        } catch (error) {
+            // console.log(error);
+        }
+
+
     }
 
     const submitMeal = async (e) => {
@@ -160,7 +178,7 @@ export default function AddMeal(props) {
             errors.restaurant.length > 0 ||
             errors.city.length > 0 ||
             errors.meal.length > 0 ||
-            errors.description.length > 0 || 
+            errors.description.length > 0 ||
             errors.picture.length > 0
         ) {
             setErrorState(prev => ({
@@ -180,7 +198,7 @@ export default function AddMeal(props) {
                     withCredentials: true
                 }).then((res) => {
                     if (res.data === "meal updated") {
-                        history.push({pathname: '/mymeals'});
+                        history.push({ pathname: '/mymeals' });
                     }
                 })
             } else {
