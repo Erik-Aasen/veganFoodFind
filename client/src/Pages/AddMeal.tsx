@@ -135,26 +135,52 @@ export default function AddMeal(props) {
 
     const onDrop = async (e) => {
         const options = {
-            maxSizeMB: .1,
-            // maxWidthOrHeight: 1920,
-            // useWebWorker: true
+            maxSizeMB: .15,
+            maxIteration: 20
         }
-        const imageFile = e.target.files[0];
-
         try {
+            // Load event target file
+            const imageFile = e.target.files[0];
+
+            // Print unmodified EXIF data
+            // var readerUncompressed = new FileReader();
+            // await readerUncompressed.readAsDataURL(imageFile);
+            // readerUncompressed.onload = function () {
+            //     const jpegData = readerUncompressed.result;
+            //     var exifObjInitialUncompressed = piexif.load(jpegData)
+            //     console.log(exifObjInitialUncompressed.GPS);
+            // }
+
+            // Print original file size
+            // console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
+
+            // Compress file and print compressed file size
             const compressedFile = await imageCompression(imageFile, options);
+            // console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+
+            // Load compressed file
             var reader = new FileReader();
             await reader.readAsDataURL(compressedFile);
             reader.onload = function () {
                 const jpegData = reader.result;
-                var exifObjInitial = piexif.load(jpegData)
-                console.log(exifObjInitial);
+
+                // Print EXIF data of compressed image
+                // var exifObjInitial = piexif.load(jpegData)
+                // console.log(exifObjInitial);
+
+                // Strip EXIF data of compressed image and set orientation
                 var strippedJpeg = piexif.remove(jpegData)
                 var zeroth = {};
                 zeroth[piexif.ImageIFD.Orientation] = orientation;
                 var exifObj = { "0th": zeroth }
                 var exifbytes = piexif.dump(exifObj);
                 var newJpeg = piexif.insert(exifbytes, strippedJpeg)
+
+                // Print EXIF data of compressed image
+                // var exifObjCompressed = piexif.load(newJpeg)
+                // console.log(exifObjCompressed);
+
+                // Set picture state as compressed and EXIF stripped image
                 setPicture(newJpeg)
                 setErrorState(prev => ({
                     ...prev,
@@ -163,12 +189,8 @@ export default function AddMeal(props) {
             };
             reader.onerror = function (error) {
             };
-            // await uploadToServer(compressedFile); // write your own logic
         } catch (error) {
-            // console.log(error);
         }
-
-
     }
 
     const submitMeal = async (e) => {
