@@ -7,6 +7,7 @@ import API from '../config';
 import { PostResponse } from '../definitionfile';
 import { PostInterface } from '../Interfaces/Interfaces';
 import { display } from '../Components/DisplayPosts';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 export default function Homepage() {
 
@@ -21,9 +22,9 @@ export default function Homepage() {
             withCredentials: true
         }).then((res: PostResponse) => {
             setPosts(res.data)
-            setButtonEnable('enabled')    
+            setButtonEnable('enabled')
         })
-        e.preventDefault();        
+        e.preventDefault();
     }
 
     return (
@@ -31,15 +32,27 @@ export default function Homepage() {
             <div className="homepageSearch">
                 <h1>Find Vegan Meals By City</h1>
                 <HomePageSearch
-                postMeals={postMeals} 
-                buttonEnable={buttonEnable}
+                    postMeals={postMeals}
+                    buttonEnable={buttonEnable}
                 />
             </div>
-            <div className="container">
-                <div className="row justify-content-center">
-                    {display(posts, false, false)}
+            {/* <InfiniteScroll
+                dataLength={posts.length}
+                next={fetchMoreData}
+                hasMore={hasMore}
+                loader={<h4>Loading...</h4>}
+            
+            >
+
+
+            </InfiniteScroll> */}
+                <div className="container">
+                    <div className="row justify-content-center">
+                        {display(posts, false, false)}
+                    </div>
                 </div>
-            </div>
+
+            {/* </div> */}
         </>
     )
 }
