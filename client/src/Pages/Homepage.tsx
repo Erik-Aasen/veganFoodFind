@@ -7,7 +7,7 @@ import API from '../config';
 import { PostResponse } from '../definitionfile';
 import { PostInterface } from '../Interfaces/Interfaces';
 import { display } from '../Components/DisplayPosts';
-import InfiniteScroll from 'react-infinite-scroll-component';
+// import InfiniteScroll from 'react-infinite-scroll-component';
 
 export default function Homepage() {
 

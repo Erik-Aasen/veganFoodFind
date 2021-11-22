@@ -11,6 +11,7 @@ import dotenv from 'dotenv';
 import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim, CityMeal } from './Interfaces/Interfaces';
 import path from "path";
 import { AuthRequest } from './definitionfile';
+import { getFileStream, uploadFile } from './s3';
 
 const LocalStrategy = passportLocal.Strategy;
 dotenv.config();
@@ -150,6 +151,12 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
   })
 })
 
+app.get("/test", async (req: AuthRequest, res: Response) => {
+  const picture = getFileStream('test')
+  // res.send(picture)
+  res.send(picture.pipe(res))
+})
+
 //POST ROUTES
 app.post('/register', async (req: Request, res: Response) => {
 
@@ -203,6 +210,10 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
   }
 }
 
+
+
+
+
 app.post("/addmeal", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { body } = req;
@@ -227,7 +238,12 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
       })
     // .catch(err => throw err);
     // .then();
+
+    const result = await uploadFile(picture)
+
     res.send("meal added")
+
+
 
   }
 })
