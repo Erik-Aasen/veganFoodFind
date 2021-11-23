@@ -12,6 +12,7 @@ import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, Capitali
 import path from "path";
 import { AuthRequest } from './definitionfile';
 import { getFileStream, uploadFile } from './s3';
+import crypto from 'crypto';
 
 const LocalStrategy = passportLocal.Strategy;
 dotenv.config();
@@ -152,9 +153,19 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
 })
 
 app.get("/test", async (req: AuthRequest, res: Response) => {
-  const picture = getFileStream('test')
+  const readStream = await getFileStream('test')
   // res.send(picture)
-  res.send(picture.pipe(res))
+  // res.send(picture.pipe(res))
+  // console.log(res.type);
+  // console.log(readStream.pipe(res));
+
+  // console.log(readStream);
+  res.send(readStream)
+  // console.log('ok');
+
+  // readStream.pipe(res) this is the command for file transfer
+  // console.log('ok2');
+
 })
 
 //POST ROUTES
@@ -220,7 +231,9 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
   const { restaurant, city, meal, description, picture } = body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
-  capitalizeAndTrim(post);  
+  capitalizeAndTrim(post);
+
+  const key = crypto.randomBytes(20).toString('hex');
 
   if (user) {
     await User.updateOne(
@@ -232,14 +245,16 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
             "city": post.city,
             "meal": post.meal,
             "description": post.description,
-            "picture": picture
+            "picture": key
           }
         }
       })
     // .catch(err => throw err);
     // .then();
 
-    const result = await uploadFile(picture)
+
+
+    const result = await uploadFile(key, picture)
 
     res.send("meal added")
 
@@ -266,14 +281,38 @@ function returnUnapprovedPosts(userPosts: MongoInterface[]) {
 function returnAllPosts(userPosts: MongoInterface[]) {
 
   let postArray: PostInterface[] = [];
-  userPosts.forEach((user) => {
-    user.posts.forEach((post) => {
+  userPosts.forEach( (user) => {
+    user.posts.forEach( (post) => {
       if (post.isApproved === true) {
-        postArray.push(post)
+        // try {
+        // const readStream = getFileStream(post.picture)
+        // const picture = await getFileStream(post.picture)
+        // if (picture != '') {
+        //   post.picture = picture
+        // console.log(picture)
+        // console.log('s3 api');
+
+        // };
+
+        // console.log(readStream.pipe());
+
+        // } catch (error) {}
+        // await console.log(1);
+
+         postArray.push(post)
+         console.log('array added');
+
+
+
       }
     })
   })
+  postArray.forEach(post => {
+    console.log(post._id);
 
+  })
+  console.log(postArray);
+  
   return postArray;
 
 }
@@ -286,7 +325,7 @@ function returnMealsAndCities(allposts: MongoInterface[]) {
         mealsAndCities.push({
           city: post.city,
           meal: post.meal
-        })          
+        })
       }
     })
   })
@@ -345,8 +384,8 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
     if (meal === "All meals") {
       await User.find({
         posts: { $elemMatch: { isApproved: true } }
-      }, 'posts').exec(function (err, userPosts) {
-        const postArray = returnAllPosts(userPosts);
+      }, 'posts').exec(async function (err, userPosts) {
+        const postArray = await returnAllPosts(userPosts);
         res.send(postArray)
       })
     } else {
@@ -383,7 +422,7 @@ app.put("/addmeal", async (req: AuthRequest, res: Response) => {
   const { _id, restaurant, city, meal, description, picture } = req.body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
-  capitalizeAndTrim(post);  
+  capitalizeAndTrim(post);
 
   if (user) {
 
@@ -414,8 +453,8 @@ app.put("/deletemeal", async (req: AuthRequest, res) => {
       'posts._id': _id
     }, {
       '$pull': { posts: { _id: _id } }
-    }).exec(err => { 
-      if (err) throw err 
+    }).exec(err => {
+      if (err) throw err
       res.send('meal deleted')
     })
   }
@@ -434,7 +473,7 @@ app.put("/adminmeals", async (req: AuthRequest, res) => {
       }
     }).exec(function (err) {
       if (err) throw err;
-    res.send('meal approved')
+      res.send('meal approved')
     })
   }
 })

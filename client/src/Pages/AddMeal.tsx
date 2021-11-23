@@ -135,7 +135,7 @@ export default function AddMeal(props) {
 
     const onDrop = async (e) => {
         const options = {
-            maxSizeMB: .2,
+            maxSizeMB: .25, // 0.15 might be the best
             maxIteration: 20
         }
         try {

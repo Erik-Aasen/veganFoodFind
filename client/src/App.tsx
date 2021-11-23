@@ -26,6 +26,7 @@ function App() {
         <Route path='/addmeal' exact component={AddMeal}></Route>
         <Route path='/mymeals' exact component={MyMeals}></Route>
         <Route path='/editmeal' exact component={AddMeal}></Route>
+        <Route path='/test' exact component={Test}></Route>
       </>
     )
   } else {
