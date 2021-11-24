@@ -278,44 +278,43 @@ function returnUnapprovedPosts(userPosts: MongoInterface[]) {
 
 }
 
-function returnAllPosts(userPosts: MongoInterface[]) {
+// async function returnAllPosts(userPosts: MongoInterface[]) {
 
+//   let postArray: PostInterface[] = [];
+//   for (const user of userPosts) {
+//     for (const post of user.posts) {
+//       if (post.isApproved === true) {
+//         const picture = await getFileStream(post.picture)
+//         if (picture != '') {
+//           post.picture = picture
+//         }
+//         await postArray.push(post)
+//       }
+//     }
+//   }
+
+//   return postArray
+
+// }
+
+async function returnAllPosts(userPosts: MongoInterface[]) {
   let postArray: PostInterface[] = [];
-  userPosts.forEach( (user) => {
-    user.posts.forEach( (post) => {
+  for (const user of userPosts) {
+    const posts = user.posts
+    await Promise.all(posts.map(async (post) => {
       if (post.isApproved === true) {
-        // try {
-        // const readStream = getFileStream(post.picture)
-        // const picture = await getFileStream(post.picture)
-        // if (picture != '') {
-        //   post.picture = picture
-        // console.log(picture)
-        // console.log('s3 api');
-
-        // };
-
-        // console.log(readStream.pipe());
-
-        // } catch (error) {}
-        // await console.log(1);
-
-         postArray.push(post)
-         console.log('array added');
-
-
-
+        const picture = await getFileStream(post.picture)
+        if (picture != '') {
+          post.picture = picture
+        }
+        await postArray.push(post)
       }
-    })
-  })
-  postArray.forEach(post => {
-    console.log(post._id);
-
-  })
-  console.log(postArray);
-  
-  return postArray;
-
+    }))
+  }
+  return postArray
 }
+
+
 
 function returnMealsAndCities(allposts: MongoInterface[]) {
   let mealsAndCities: CityMeal[] = [];

@@ -46,7 +46,7 @@ export async function getFileStream(fileKey: string) {
   // })
 
   const data = await s3.getObject(downloadParams).promise();
-  return data.Body.toString('utf-8');
+  return await data.Body.toString('utf-8');
   
 
 
