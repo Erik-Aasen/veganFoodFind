@@ -59,7 +59,7 @@ export default function MyMeals() {
             </div>
             {addMeal}
             <div className='container'>
-                <div className="row justify-content-center">
+                <div className="row justify-content-center page-bottom">
                     {display(posts, true, false)}
                 </div>
             </div>

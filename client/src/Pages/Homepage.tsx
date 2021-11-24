@@ -47,7 +47,7 @@ export default function Homepage() {
 
             </InfiniteScroll> */}
                 <div className="container">
-                    <div className="row justify-content-center">
+                    <div className="row justify-content-center page-bottom">
                         {display(posts, false, false)}
                     </div>
                 </div>

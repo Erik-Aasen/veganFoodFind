@@ -162,3 +162,7 @@ form {
     text-align: center;
     font-size: 200%;
 }
+
+.page-bottom {
+    padding-bottom: 50px;
+}

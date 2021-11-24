@@ -118,13 +118,22 @@ app.get("/user", (req: AuthRequest, res: Response) => {
 app.get("/usermeals", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { _id } = user;
+  let postArray: PostInterface[] = [];
 
-  await User.findOne({ _id: _id }, '_id username posts').exec(function (err, data: MongoInterface) {
+  await User.findOne({ _id: _id }, '_id username posts').exec(async function (err, data: MongoInterface) {
     if (err) throw err;
     const posts = data.posts;
-    res.send(posts)
+    await Promise.all(posts.map(async (post) => {
+      const picture = await getFileStream(post.picture)
+      if (picture != '') {
+        post.picture = picture
+      }
+      postArray.push(post)
+    }))
   })
+  res.send(postArray)
 })
+
 
 app.get("/getallusers", isAdministratorMiddleware, async (req, res) => {
   await User.find({}, '_id username isAdmin').exec(function (err, data) {
@@ -145,9 +154,9 @@ app.get("/getmeals", async (req: AuthRequest, res: Response) => {
 app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: Response) => {
   await User.find({
     posts: { $elemMatch: { isApproved: false } }
-  }, (err: Error, data) => {
+  }, async (err: Error, data) => {
     if (err) throw err;
-    const posts = returnUnapprovedPosts(data)
+    const posts = await returnAllPosts(data, false)
     res.send(posts)
   })
 })
@@ -263,58 +272,48 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
   }
 })
 
-function returnUnapprovedPosts(userPosts: MongoInterface[]) {
-
-  let postArray: PostInterface[] = [];
-  userPosts.forEach((user) => {
-    user.posts.forEach((post) => {
-      if (post.isApproved === false) {
-        postArray.push(post)
-      }
-    })
-  })
-
-  return postArray;
-
-}
-
-// async function returnAllPosts(userPosts: MongoInterface[]) {
+// function returnUnapprovedPosts(userPosts: MongoInterface[]) {
 
 //   let postArray: PostInterface[] = [];
-//   for (const user of userPosts) {
-//     for (const post of user.posts) {
-//       if (post.isApproved === true) {
-//         const picture = await getFileStream(post.picture)
-//         if (picture != '') {
-//           post.picture = picture
-//         }
-//         await postArray.push(post)
+//   userPosts.forEach((user) => {
+//     user.posts.forEach((post) => {
+//       if (post.isApproved === false) {
+//         postArray.push(post)
 //       }
-//     }
-//   }
+//     })
+//   })
 
-//   return postArray
+//   return postArray;
 
 // }
 
-async function returnAllPosts(userPosts: MongoInterface[]) {
+async function returnAllPosts(userPosts: MongoInterface[], isApproved: boolean) {
   let postArray: PostInterface[] = [];
   for (const user of userPosts) {
     const posts = user.posts
     await Promise.all(posts.map(async (post) => {
-      if (post.isApproved === true) {
-        const picture = await getFileStream(post.picture)
-        if (picture != '') {
-          post.picture = picture
+      if (isApproved === true) {
+        if (post.isApproved === true) {
+          const picture = await getFileStream(post.picture)
+          if (picture != '') {
+            post.picture = picture
+          }
+          postArray.push(post)
         }
-        await postArray.push(post)
+      } else // isApproved === false 
+      {
+        if (post.isApproved === false) {
+          const picture = await getFileStream(post.picture)
+          if (picture != '') {
+            post.picture = picture
+          }
+          postArray.push(post)
+        }
       }
     }))
   }
   return postArray
 }
-
-
 
 function returnMealsAndCities(allposts: MongoInterface[]) {
   let mealsAndCities: CityMeal[] = [];
@@ -331,50 +330,58 @@ function returnMealsAndCities(allposts: MongoInterface[]) {
   return mealsAndCities
 }
 
-function returnMealSpecified(userPosts: MongoInterface[], meal: string) {
-
+async function returnMealSpecified(userPosts: MongoInterface[], meal: string) {
   let postArray: PostInterface[] = [];
-  userPosts.forEach((user) => {
-    user.posts.forEach((post) => {
+  for (const user of userPosts) {
+    const posts = user.posts
+    await Promise.all(posts.map(async (post) => {
       if (post.meal === meal) {
+        const picture = await getFileStream(post.picture)
+        if (picture != '') {
+          post.picture = picture
+        }
         postArray.push(post)
       }
-    })
-  })
-
-  return postArray;
-
+    }))
+  }
+  return postArray
 }
 
-function returnCitySpecified(userPosts: MongoInterface[], city: string) {
+async function returnCitySpecified(userPosts: MongoInterface[], city: string) {
 
   let postArray: PostInterface[] = [];
-  userPosts.forEach((user) => {
-    user.posts.forEach((post) => {
+  for (const user of userPosts) {
+    const posts = user.posts
+    await Promise.all(posts.map(async (post) => {
       if (post.city === city) {
+        const picture = await getFileStream(post.picture)
+        if (picture != '') {
+          post.picture = picture
+        }
         postArray.push(post)
       }
-    })
-  })
-
+    }))
+  }
   return postArray;
-
 }
 
-function returnCityMealSpecified(userPosts: MongoInterface[], city: string, meal: string) {
+async function returnCityMealSpecified(userPosts: MongoInterface[], city: string, meal: string) {
   let postArray: PostInterface[] = [];
-  userPosts.forEach((user) => {
-    user.posts.forEach((post) => {
+  for (const user of userPosts) {
+    const posts = user.posts
+    await Promise.all(posts.map(async (post) => {
       if (post.city === city) {
         if (post.meal === meal) {
+          const picture = await getFileStream(post.picture)
+          if (picture != '') {
+            post.picture = picture
+          }
           postArray.push(post)
         }
       }
-    })
-  })
-
+    }))
+  }
   return postArray;
-
 }
 
 app.post("/getmeals", async (req: AuthRequest, res) => {
@@ -384,14 +391,14 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
       await User.find({
         posts: { $elemMatch: { isApproved: true } }
       }, 'posts').exec(async function (err, userPosts) {
-        const postArray = await returnAllPosts(userPosts);
+        const postArray = await returnAllPosts(userPosts, true);
         res.send(postArray)
       })
     } else {
       await User.find({
         posts: { $elemMatch: { meal: meal, isApproved: true } }
-      }, 'posts').exec(function (err, userPosts) {
-        const postArray = returnMealSpecified(userPosts, meal)
+      }, 'posts').exec(async function (err, userPosts) {
+        const postArray = await returnMealSpecified(userPosts, meal)
         res.send(postArray)
       })
     }
@@ -399,15 +406,15 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
     if (meal === "All meals") {
       await User.find({
         posts: { $elemMatch: { city: city, isApproved: true } }
-      }, 'posts').exec(function (err, userPosts) {
-        const postArray = returnCitySpecified(userPosts, city)
+      }, 'posts').exec(async function (err, userPosts) {
+        const postArray = await returnCitySpecified(userPosts, city)
         res.send(postArray)
       })
     } else {
       await User.find({
         posts: { $elemMatch: { city: city, meal: meal, isApproved: true } }
-      }, 'posts').exec(function (err, userPosts) {
-        const postArray = returnCityMealSpecified(userPosts, city, meal)
+      }, 'posts').exec(async function (err, userPosts) {
+        const postArray = await returnCityMealSpecified(userPosts, city, meal)
         res.send(postArray)
       })
     }
