@@ -115,23 +115,30 @@ app.get("/user", (req: AuthRequest, res: Response) => {
   res.send(req.user);
 })
 
+async function getUserPictures(posts: PostInterface[]) {
+  let postArray: PostInterface[] = [];
+  await Promise.all(posts.map(async (post) => {
+    const picture = await getFileStream(post.picture)
+    if (picture != '') {
+      post.picture = picture
+    }
+    postArray.push(post)
+    console.log(postArray[0]._id);
+  }))
+  return postArray
+}
+
 app.get("/usermeals", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { _id } = user;
-  let postArray: PostInterface[] = [];
 
   await User.findOne({ _id: _id }, '_id username posts').exec(async function (err, data: MongoInterface) {
     if (err) throw err;
     const posts = data.posts;
-    await Promise.all(posts.map(async (post) => {
-      const picture = await getFileStream(post.picture)
-      if (picture != '') {
-        post.picture = picture
-      }
-      postArray.push(post)
-    }))
+    const postArray = await getUserPictures(posts)
+    // console.log(postArray[0]._id);
+    res.send(postArray)
   })
-  res.send(postArray)
 })
 
 
