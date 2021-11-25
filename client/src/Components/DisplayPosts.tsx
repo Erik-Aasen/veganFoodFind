@@ -7,7 +7,7 @@ export function display(posts: PostInterface[], myMeal: boolean, adminMeal: bool
         <>
             {posts.map((post) => {
 
-                const { city, description, meal, restaurant, _id, picture, isApproved } = post;
+                const { city, description, meal, restaurant, _id, pictureString, isApproved } = post;
 
                 return (
                     <Meal
@@ -17,7 +17,7 @@ export function display(posts: PostInterface[], myMeal: boolean, adminMeal: bool
                         description={description}
                         meal={meal}
                         restaurant={restaurant}
-                        picture={picture}
+                        pictureString={pictureString}
                         myMeal={myMeal}
                         isApproved={isApproved}
                         adminMeal={adminMeal}

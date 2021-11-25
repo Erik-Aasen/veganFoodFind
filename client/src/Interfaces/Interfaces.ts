@@ -10,7 +10,8 @@ export interface PostInterface {
     city: string;
     meal: string;
     description: string;
-    picture: string;
+    pictureKey: string;
+    pictureString: string;
     isApproved: boolean;
   }
 

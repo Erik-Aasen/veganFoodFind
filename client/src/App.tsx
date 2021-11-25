@@ -11,7 +11,7 @@ import './main.css';
 import AddMeal from './Pages/AddMeal';
 import MyMeals from './Pages/MyMeals';
 import AdminPage from './Pages/AdminPage';
-import Test from './Pages/Test';
+// import Test from './Pages/Test';
 // import EditMeal from './Pages/EditMeal';
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
         <Route path='/addmeal' exact component={AddMeal}></Route>
         <Route path='/mymeals' exact component={MyMeals}></Route>
         <Route path='/editmeal' exact component={AddMeal}></Route>
-        <Route path='/test' exact component={Test}></Route>
+        {/* <Route path='/test' exact component={Test}></Route> */}
       </>
     )
   } else {
@@ -35,7 +35,7 @@ function App() {
         <Route path='/' exact component={Homepage}></Route>
         <Route path='/login' exact component={Login}></Route>
         <Route path='/register' exact component={Register}></Route>
-        <Route path='/test' exact component={Test}></Route>
+        {/* <Route path='/test' exact component={Test}></Route> */}
       </>
     )
   }

@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim, CityMeal } from './Interfaces/Interfaces';
 import path from "path";
 import { AuthRequest } from './definitionfile';
-import { getFileStream, uploadFile } from './s3';
+import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 
 const LocalStrategy = passportLocal.Strategy;
@@ -118,12 +118,11 @@ app.get("/user", (req: AuthRequest, res: Response) => {
 async function getUserPictures(posts: PostInterface[]) {
   let postArray: PostInterface[] = [];
   await Promise.all(posts.map(async (post) => {
-    const picture = await getFileStream(post.picture)
-    if (picture != '') {
-      post.picture = picture
-    }
+    const picture = await getFileStream(post.pictureKey)
+    post.pictureString = picture
+    post.pictureKey = '' // don't send the pictureKey to client
     postArray.push(post)
-    console.log(postArray[0]._id);
+    // console.log(postArray);
   }))
   return postArray
 }
@@ -136,7 +135,7 @@ app.get("/usermeals", async (req: AuthRequest, res: Response) => {
     if (err) throw err;
     const posts = data.posts;
     const postArray = await getUserPictures(posts)
-    // console.log(postArray[0]._id);
+    // console.log(postArray);
     res.send(postArray)
   })
 })
@@ -244,7 +243,7 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
 app.post("/addmeal", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { body } = req;
-  const { restaurant, city, meal, description, picture } = body;
+  const { restaurant, city, meal, description, pictureString } = body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
@@ -261,16 +260,17 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
             "city": post.city,
             "meal": post.meal,
             "description": post.description,
-            "picture": key
+            "pictureKey": key
           }
         }
       })
     // .catch(err => throw err);
     // .then();
 
+    // console.log(key, pictureString);
 
 
-    const result = await uploadFile(key, picture)
+    const result = await uploadFile(key, pictureString)
 
     res.send("meal added")
 
@@ -301,19 +301,17 @@ async function returnAllPosts(userPosts: MongoInterface[], isApproved: boolean) 
     await Promise.all(posts.map(async (post) => {
       if (isApproved === true) {
         if (post.isApproved === true) {
-          const picture = await getFileStream(post.picture)
-          if (picture != '') {
-            post.picture = picture
-          }
+          const picture = await getFileStream(post.pictureKey)
+          post.pictureKey = ''
+          post.pictureString = picture
           postArray.push(post)
         }
       } else // isApproved === false 
       {
         if (post.isApproved === false) {
-          const picture = await getFileStream(post.picture)
-          if (picture != '') {
-            post.picture = picture
-          }
+          const picture = await getFileStream(post.pictureKey)
+          post.pictureKey = ''
+          post.pictureString = picture
           postArray.push(post)
         }
       }
@@ -343,10 +341,9 @@ async function returnMealSpecified(userPosts: MongoInterface[], meal: string) {
     const posts = user.posts
     await Promise.all(posts.map(async (post) => {
       if (post.meal === meal) {
-        const picture = await getFileStream(post.picture)
-        if (picture != '') {
-          post.picture = picture
-        }
+        const picture = await getFileStream(post.pictureKey)
+        post.pictureKey = ''
+        post.pictureString = picture
         postArray.push(post)
       }
     }))
@@ -361,10 +358,9 @@ async function returnCitySpecified(userPosts: MongoInterface[], city: string) {
     const posts = user.posts
     await Promise.all(posts.map(async (post) => {
       if (post.city === city) {
-        const picture = await getFileStream(post.picture)
-        if (picture != '') {
-          post.picture = picture
-        }
+        const picture = await getFileStream(post.pictureKey)
+        post.pictureKey = ''
+        post.pictureString = picture
         postArray.push(post)
       }
     }))
@@ -379,10 +375,9 @@ async function returnCityMealSpecified(userPosts: MongoInterface[], city: string
     await Promise.all(posts.map(async (post) => {
       if (post.city === city) {
         if (post.meal === meal) {
-          const picture = await getFileStream(post.picture)
-          if (picture != '') {
-            post.picture = picture
-          }
+          const picture = await getFileStream(post.pictureKey)
+          post.pictureKey = ''
+          post.pictureString = picture
           postArray.push(post)
         }
       }
@@ -429,15 +424,23 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
 })
 
 // PUT ROUTES
-app.put("/addmeal", async (req: AuthRequest, res: Response) => {
+app.put("/editmeal", async (req: AuthRequest, res: Response) => {
 
   const { user } = req;
-  const { _id, restaurant, city, meal, description, picture } = req.body;
+  const { _id, restaurant, city, meal,
+    description, pictureString } = req.body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
 
+  const key = crypto.randomBytes(20).toString('hex');
+
   if (user) {
+    await User.findOne({ _id: user._id }, 'posts').exec(async function (err, data: MongoInterface) {
+      if (err) throw err;
+      const oldKey = data.posts.find(post => post._id == _id).pictureKey
+      deleteFile(oldKey)
+    })
 
     await User.updateOne({
       'posts._id': _id
@@ -447,11 +450,12 @@ app.put("/addmeal", async (req: AuthRequest, res: Response) => {
         'posts.$.city': post.city,
         'posts.$.meal': post.meal,
         'posts.$.description': post.description,
-        'posts.$.picture': picture,
+        'posts.$.pictureKey': key,
         'posts.$.isApproved': false
       }
-    }).exec(function (err) {
+    }).exec(async function (err) {
       if (err) throw err;
+      const result = await uploadFile(key, pictureString)
       res.send('meal updated')
     })
   }
@@ -462,6 +466,13 @@ app.put("/deletemeal", async (req: AuthRequest, res) => {
   const { _id } = req.body;
 
   if (user) {
+
+    User.findOne({ _id: user._id }, 'posts').exec(function (err, data: MongoInterface) {
+      if (err) throw err;
+      const oldKey = data.posts.find(post => post._id == _id).pictureKey
+      deleteFile(oldKey)
+    })
+
     await User.updateOne({
       'posts._id': _id
     }, {

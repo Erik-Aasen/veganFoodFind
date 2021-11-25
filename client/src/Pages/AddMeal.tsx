@@ -27,7 +27,7 @@ export default function AddMeal(props) {
             city: props.location.city,
             meal: props.location.meal,
             description: props.location.description,
-            picture: props.location.picture,
+            picture: props.location.pictureString,
             orientation: 8,
             isEditMeal: props.location.isEditMeal
         }
@@ -136,7 +136,7 @@ export default function AddMeal(props) {
     const onDrop = async (e) => {
         const options = {
             maxSizeMB: .25, // 0.15 might be the best
-            maxIteration: 20
+            maxIteration: 30
         }
         try {
             // Load event target file
@@ -157,12 +157,15 @@ export default function AddMeal(props) {
             // Compress file and print compressed file size
             const compressedFile = await imageCompression(imageFile, options);
             // console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+            // console.log(typeof compressedFile);
 
             // Load compressed file
             var reader = new FileReader();
             await reader.readAsDataURL(compressedFile);
             reader.onload = function () {
                 const jpegData = reader.result;
+                // console.log(typeof jpegData);
+
 
                 // Print EXIF data of compressed image
                 // var exifObjInitial = piexif.load(jpegData)
@@ -214,8 +217,8 @@ export default function AddMeal(props) {
         } else {
             setButtonEnable('disabled')
             if (isEditMeal) {
-                await axios.put(API + '/addmeal', {
-                    _id, restaurant, city, meal, description, picture
+                await axios.put(API + '/editmeal', {
+                    _id, restaurant, city, meal, description, pictureString: picture
                 }, {
                     withCredentials: true
                 }).then((res) => {
@@ -225,7 +228,7 @@ export default function AddMeal(props) {
                 })
             } else {
                 await axios.post(API + '/addmeal', {
-                    restaurant, city, meal, description, picture
+                    restaurant, city, meal, description, pictureString: picture
                 }, {
                     withCredentials: true
                 }).then((res) => {

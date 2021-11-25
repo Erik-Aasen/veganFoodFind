@@ -14,7 +14,10 @@ const post = new mongoose.Schema({
     description: {
         type: String
     },
-    picture: {
+    pictureKey: {
+        type: String
+    },
+    pictureString: {
         type: String
     },
     isApproved: {

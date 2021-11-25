@@ -6,7 +6,7 @@ import API from '../config'
 export default function Meal(props) {
     const {
         _id, meal, restaurant,
-        city, picture, description,
+        city, pictureString, description,
         myMeal, adminMeal, isApproved } = props;
 
     const editmeal = {
@@ -15,7 +15,7 @@ export default function Meal(props) {
         meal: meal,
         restaurant: restaurant,
         city: city,
-        picture: picture,
+        pictureString: pictureString,
         description: description,
         isEditMeal: true
     }
@@ -81,7 +81,7 @@ export default function Meal(props) {
                     {approvalNotice}
                     {editDelete}
                     {approveDelete}
-                    <img className='card-img-top' alt='' src={picture} />
+                    <img className='card-img-top' alt='' src={pictureString} />
                     <h5 className='card-title'>{meal}</h5>
                     <p className='card-text'>{restaurant}</p>
                     <p className='card-text'>{city}</p>
