@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import { MongoInterface } from "./Interfaces/Interfaces";
 
 const post = new mongoose.Schema({
+    username: {
+        type: String,
+        unique: true
+    },
     restaurant: {
         type: String
     },
@@ -35,8 +39,7 @@ const user = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
-    },
-    posts: [post]
+    }
 });
 
 export default mongoose.model<MongoInterface>("User", user);
