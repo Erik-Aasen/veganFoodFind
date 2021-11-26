@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MongoInterface } from "./Interfaces/Interfaces";
+import { MongoInterface, PostInterface } from "./Interfaces/Interfaces";
 
 const post = new mongoose.Schema({
     username: {
@@ -42,7 +42,11 @@ const user = new mongoose.Schema({
     }
 });
 
-export default mongoose.model<MongoInterface>("User", user);
+const User = mongoose.model<MongoInterface>("User2", user)
+const Post = mongoose.model<PostInterface>("Post2", post)
+
+// export default ;
+export { User, Post };
 
 // Create new categories in user Schema:
     // isVerified default false

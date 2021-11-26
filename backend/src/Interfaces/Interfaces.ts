@@ -15,10 +15,11 @@ export interface MongoInterface {
   _id: object;
   username: string;
   password: string;
-  posts: PostInterface[];
+  // posts: PostInterface[];
 }
 
 export interface PostInterface {
+  username: string;
   _id: object;
   isApproved: boolean;
   restaurant: string;
