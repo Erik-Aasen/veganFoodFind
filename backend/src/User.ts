@@ -3,8 +3,7 @@ import { MongoInterface, PostInterface } from "./Interfaces/Interfaces";
 
 const post = new mongoose.Schema({
     username: {
-        type: String,
-        unique: true
+        type: String
     },
     restaurant: {
         type: String

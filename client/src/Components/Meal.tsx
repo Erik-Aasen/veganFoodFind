@@ -33,7 +33,7 @@ export default function Meal(props) {
 
     const approveMeal = () => {
         axios.put(API + '/adminmeals', {
-            _id, isApproved: true
+            _id
         }, {
             withCredentials: true
         }).then((res) => {
