@@ -29,8 +29,8 @@ mongoose.connect(`${process.env.PART1}${process.env.USERNAME}:${process.env.PASS
 // Middleware
 const app = express();
 // app.use(express.json());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ limit: '2mb', extended: true }));
 app.use(cors({
   origin: "http://localhost:3000",
   credentials: true
@@ -167,21 +167,11 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
   })
 })
 
-app.get("/test", async (req: AuthRequest, res: Response) => {
-  const readStream = await getFileStream('test')
-  // res.send(picture)
-  // res.send(picture.pipe(res))
-  // console.log(res.type);
-  // console.log(readStream.pipe(res));
-
-  // console.log(readStream);
-  res.send(readStream)
-  // console.log('ok');
-
+// app.get("/test", async (req: AuthRequest, res: Response) => {
+  // const readStream = await getFileStream('test')
+  // res.send(readStream)
   // readStream.pipe(res) this is the command for file transfer
-  // console.log('ok2');
-
-})
+// })
 
 //POST ROUTES
 app.post('/register', async (req: Request, res: Response) => {
@@ -278,21 +268,6 @@ app.post("/addmeal", async (req: AuthRequest, res: Response) => {
 
   }
 })
-
-// function returnUnapprovedPosts(userPosts: MongoInterface[]) {
-
-//   let postArray: PostInterface[] = [];
-//   userPosts.forEach((user) => {
-//     user.posts.forEach((post) => {
-//       if (post.isApproved === false) {
-//         postArray.push(post)
-//       }
-//     })
-//   })
-
-//   return postArray;
-
-// }
 
 async function returnAllPosts(userPosts: MongoInterface[], isApproved: boolean) {
   let postArray: PostInterface[] = [];
