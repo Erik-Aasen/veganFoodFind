@@ -41,8 +41,8 @@ const user = new mongoose.Schema({
     }
 });
 
-const User = mongoose.model<MongoInterface>("User2", user)
-const Post = mongoose.model<PostInterface>("Post2", post)
+const User = mongoose.model<MongoInterface>("User", user)
+const Post = mongoose.model<PostInterface>("Post", post)
 
 // export default ;
 export { User, Post };
