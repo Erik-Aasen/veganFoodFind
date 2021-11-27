@@ -327,10 +327,10 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
 }
 
 app.post("/getmeals", async (req: AuthRequest, res) => {
-  const { city, meal } = req.body;
+  const { city, meal, skip } = req.body;
   if (city === "All cities") {
     if (meal === "All meals") {
-      await Post.find({ isApproved: true }).exec(async function (err, posts: PostInterface[]) {
+      await Post.find({ isApproved: true }, {}, {skip: skip, limit: 3}).exec(async function (err, posts: PostInterface[]) {
         const postArray = await returnAllPosts(posts, true);
         res.send(postArray)
       })

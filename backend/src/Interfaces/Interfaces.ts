@@ -28,6 +28,7 @@ export interface PostInterface {
   description: string;
   pictureKey: string;
   pictureString: string;
+  skip: number;
 }
 
 export interface CapitalizeAndTrim {

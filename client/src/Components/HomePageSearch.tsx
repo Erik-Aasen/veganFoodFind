@@ -107,7 +107,7 @@ export default function HomePageSearch(props) {
             <>
                 <Button variant='success'
                     onClick={e => {
-                        props.postMeals(e, city, meal)
+                        props.postMeals(e, city, meal, 0, true)
                     }}
                 >Search
                 </Button>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import MealCarousel from '../Components/Carousel'
 import HomePageSearch from '../Components/HomePageSearch'
 import Axios from 'axios';
@@ -14,21 +14,49 @@ export default function Homepage() {
     const [posts, setPosts] = useState<PostInterface[]>([]);
     const [buttonEnable, setButtonEnable] = useState<string>('enabled')
 
-    const postMeals = (e, city, meal) => {
+    const [skip, setSkip] = useState(0);
+    const [city, setCity] = useState();
+    const [meal, setMeal] = useState();
+    const [apiHit, setApiHit] = useState(false)
+
+    const postMeals = (e, city, meal, skip, reset) => {
+        setSkip(skip)
+        setCity(city)
+        setMeal(meal)
+        setApiHit(true)
         setButtonEnable('disabled')
         Axios.post(API + '/getmeals', {
-            city, meal
+            city, meal, skip
         }, {
             withCredentials: true
         }).then((res: PostResponse) => {
-            setPosts(res.data)
+            if (reset) {
+                setPosts(res.data)    
+            } else {
+                setPosts(posts.concat(res.data))
+                // console.log(res.data);
+            }            
             setButtonEnable('enabled')
         })
         e.preventDefault();
     }
 
+    useEffect(() => {
+        if (apiHit) {
+            window.onscroll = (e) => {
+                if (window.scrollY + window.innerHeight === document.body.scrollHeight) {
+                    console.log('bottom')
+                    setSkip(skip + 3)
+                    postMeals(e, city, meal, skip+3, false)
+                }
+            }
+        }
+
+    });
+
+
     return (
-        <>
+        <div>
             <div className="homepageSearch">
                 <h1>Find Vegan Meals By City</h1>
                 <HomePageSearch
@@ -45,15 +73,16 @@ export default function Homepage() {
             >
 
 
+
             </InfiniteScroll> */}
-                <div className="container">
-                    <div className="row justify-content-center page-bottom">
-                        {display(posts, false, false)}
-                    </div>
+            <div className="container">
+                <div className="row justify-content-center page-bottom">
+                    {display(posts, false, false)}
                 </div>
+            </div>
 
             {/* </div> */}
-        </>
+        </div>
     )
 }
 

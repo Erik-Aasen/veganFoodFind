@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext} from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import NavBar from './Components/NavBar';
 import Homepage from './Pages/Homepage';
@@ -40,13 +40,27 @@ function App() {
     )
   }
 
+  // const handleScroll = (e) => {
+  //   console.log('ok1');
+
+  //   const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+  //   if (bottom) {
+  //     console.log('ok');
+  //   }
+  // }
+
+
+
+
   return (
-    <BrowserRouter>
-      <NavBar />
-      <Switch>
-        {routes}
-      </Switch>
-    </BrowserRouter>
+    // <div onScroll={e => { handleScroll(e) }}>
+      <BrowserRouter>
+        <NavBar />
+        <Switch>
+          {routes}
+        </Switch>
+      </BrowserRouter>
+    // </div>
   );
 }
 
