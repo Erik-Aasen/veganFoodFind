@@ -40,27 +40,13 @@ function App() {
     )
   }
 
-  // const handleScroll = (e) => {
-  //   console.log('ok1');
-
-  //   const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-  //   if (bottom) {
-  //     console.log('ok');
-  //   }
-  // }
-
-
-
-
   return (
-    // <div onScroll={e => { handleScroll(e) }}>
       <BrowserRouter>
         <NavBar />
         <Switch>
           {routes}
         </Switch>
       </BrowserRouter>
-    // </div>
   );
 }
 

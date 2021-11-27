@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { useContext } from 'react';
 import { myContext } from './Context';
 import API from '../config'
-import { Button, Spinner } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { PostInterface } from '../Interfaces/Interfaces';
 import { PostResponse } from '../definitionfile';
 import { display } from '../Components/DisplayPosts';
+// import LoadingSpinner from '../Components/Spinner';
 
 export default function MyMeals() {
     const ctx = useContext(myContext);
@@ -22,23 +23,11 @@ export default function MyMeals() {
         })
     }, []);
 
-    const spinner = (
-        <>
-        <div className='myMeals-loading'>
-        <Spinner
-                as='span'
-                animation='border'
-                role='status'
-            />
-            <br />
-            Loading Meals...
-        </div>
-        </>
-    )
 
-    if (!posts) {
-        return spinner
-    }
+
+    // if (!posts) {
+    //     return (LoadingSpinner)
+    // }
 
     let addMeal;
     if (display(posts, true, false).props.children.length === 0) {
