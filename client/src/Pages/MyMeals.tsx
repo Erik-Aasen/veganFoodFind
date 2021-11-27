@@ -26,7 +26,7 @@ export default function MyMeals() {
 
 
     if (!posts) {
-        return (LoadingSpinner)
+        return (LoadingSpinner())
         // return()
     }
 
