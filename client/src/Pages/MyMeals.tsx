@@ -8,7 +8,7 @@ import { Button } from 'react-bootstrap'
 import { PostInterface } from '../Interfaces/Interfaces';
 import { PostResponse } from '../definitionfile';
 import { display } from '../Components/DisplayPosts';
-// import LoadingSpinner from '../Components/Spinner';
+import LoadingSpinner from '../Components/Spinner';
 
 export default function MyMeals() {
     const ctx = useContext(myContext);
@@ -25,9 +25,10 @@ export default function MyMeals() {
 
 
 
-    // if (!posts) {
-    //     return (LoadingSpinner)
-    // }
+    if (!posts) {
+        return (LoadingSpinner)
+        // return()
+    }
 
     let addMeal;
     if (display(posts, true, false).props.children.length === 0) {
