@@ -61,7 +61,9 @@ export default function Homepage() {
             console.log(allPostsLoaded);
 
             window.onscroll = (e) => {
-                if (window.scrollY + window.innerHeight === document.body.scrollHeight) {
+                console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
+
+                if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
                     console.log('bottom')
                     setSkip(skip + 3)
                     postMeals(e, city, meal, skip + 3, false)
