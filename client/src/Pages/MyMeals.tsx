@@ -23,7 +23,7 @@ export default function MyMeals() {
     useEffect(() => {
         Axios.post(API + "/usermeals", {
             initialSkip
-        },{
+        }, {
             withCredentials: true
         }).then((res: PostResponse) => {
             setPosts(res.data);
@@ -61,25 +61,29 @@ export default function MyMeals() {
             })
         }
         e.preventDefault();
-    } 
+    }
 
     useEffect(() => {
         // if (apiHit) {
-            // if (allPostsLoaded === false) {
-            // console.log(allPostsLoaded);
+        // if (allPostsLoaded === false) {
+        // console.log(allPostsLoaded);
 
-            window.onscroll = (e) => {
-                // console.log('ok');
-                // console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
-                
-                if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
+        window.onscroll = (e) => {
+            // console.log('ok');
+            // console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
+
+            if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
+
+                setTimeout(() => {
 
                     console.log('bottom')
                     setSkip(skip + 3)
                     postMeals(e, skip + 3, false)
-                }
+                }, 1000);
+
             }
-            // }
+        }
+        // }
         // }
     });
 

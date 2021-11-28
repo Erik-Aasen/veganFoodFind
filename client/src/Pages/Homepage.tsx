@@ -22,19 +22,23 @@ export default function Homepage() {
     const [allPostsLoaded, setAllPostsLoaded] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
-    const postMeals = (e, city, meal, skip, reset) => {
+
+
+    const postMeals = async (e, city, meal, skip, reset) => {
         setSkip(skip)
         setCity(city)
         setMeal(meal)
         setApiHit(true)
 
+        // wait = true;
+
         if (reset || !allPostsLoaded) {
-            if (reset) {setAllPostsLoaded(false)}
+            if (reset) { setAllPostsLoaded(false) }
             setButtonEnable('disabled')
             console.log('posting');
             setIsLoading(true)
 
-            Axios.post(API + '/getmeals', {
+            await Axios.post(API + '/getmeals', {
                 city, meal, skip
             }, {
                 withCredentials: true
@@ -50,27 +54,44 @@ export default function Homepage() {
                     // console.log(res.data);
                 }
                 setButtonEnable('enabled')
+                // wait = false;
+
             })
         }
         e.preventDefault();
     }
-
+    
     useEffect(() => {
+    // var wait = false;
+
         if (apiHit) {
             // if (allPostsLoaded === false) {
+            // if (isLoading === false) {
             console.log(allPostsLoaded);
 
-            window.onscroll = (e) => {
-                console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
 
+
+            window.onscroll = (e) => {
+                console.log(document.body.scrollHeight - window.innerHeight - window.scrollY);
+
+                // if (wait === false) {
                 if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
-                    console.log('bottom')
-                    setSkip(skip + 3)
-                    postMeals(e, city, meal, skip + 3, false)
+                    // setIsLoading(true)
+                    // wait = true
+
+                    setTimeout(() => {
+                        console.log('bottom')
+                        setSkip(skip + 3)
+                        postMeals(e, city, meal, skip + 3, false)
+                    }, 1000);
+
                 }
             }
             // }
+            // }
         }
+
+        // return () => {}
     });
 
     let spinner;
