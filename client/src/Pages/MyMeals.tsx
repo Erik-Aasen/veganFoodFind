@@ -67,11 +67,10 @@ export default function MyMeals() {
         // if (apiHit) {
         // if (allPostsLoaded === false) {
         // console.log(allPostsLoaded);
+        console.log(('isMounted'));
 
-        window.onscroll = (e) => {
-            // console.log('ok');
-            // console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
 
+        const handleScroll = (e) => {
             if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
 
                 setTimeout(() => {
@@ -83,6 +82,20 @@ export default function MyMeals() {
 
             }
         }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+            console.log('unmounted');
+        }
+
+
+        // window.onscroll = (e) => {
+            // console.log('ok');
+            // console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
+
+           
+        // }
         // }
         // }
     });

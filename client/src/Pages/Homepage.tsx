@@ -63,35 +63,44 @@ export default function Homepage() {
     
     useEffect(() => {
     // var wait = false;
+        // var isMounted = true
+        console.log(('isMounted'));
 
+        const handleScroll = (e) => {
+            console.log(document.body.scrollHeight - window.innerHeight - window.scrollY);
+            if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
+                // setIsLoading(true)
+                // wait = true
+
+                setTimeout(() => {
+                    console.log('bottom')
+                    setSkip(skip + 3)
+                    postMeals(e, city, meal, skip + 3, false)
+                }, 1000);
+
+            }
+        }
+        
         if (apiHit) {
             // if (allPostsLoaded === false) {
             // if (isLoading === false) {
-            console.log(allPostsLoaded);
+            console.log('allPostsLoaded: ' + allPostsLoaded);
+            
+            window.addEventListener('scroll', handleScroll)
 
-
-
-            window.onscroll = (e) => {
-                console.log(document.body.scrollHeight - window.innerHeight - window.scrollY);
+            // window.onscroll = (e) => {
 
                 // if (wait === false) {
-                if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
-                    // setIsLoading(true)
-                    // wait = true
-
-                    setTimeout(() => {
-                        console.log('bottom')
-                        setSkip(skip + 3)
-                        postMeals(e, city, meal, skip + 3, false)
-                    }, 1000);
-
-                }
-            }
+                
+            // }
             // }
             // }
         }
 
-        // return () => {}
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+            console.log('unmounted');
+        }
     });
 
     let spinner;
