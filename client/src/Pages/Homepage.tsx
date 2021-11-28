@@ -27,9 +27,7 @@ export default function Homepage() {
         setCity(city)
         setMeal(meal)
         setApiHit(true)
-        // if (allPostsLoaded) {
 
-        // } else {
         if (reset || !allPostsLoaded) {
             if (reset) {setAllPostsLoaded(false)}
             setButtonEnable('disabled')

@@ -335,7 +335,7 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
         res.send(postArray)
       })
     } else {
-      await Post.find({ meal: meal, isApproved: true })
+      await Post.find({ meal: meal, isApproved: true }, {}, {skip: skip, limit: 3})
         .exec(async function (err, posts) {
           const postArray = await returnMealSpecified(posts, meal)
           res.send(postArray)
@@ -343,13 +343,13 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
     }
   } else {
     if (meal === "All meals") {
-      await Post.find({ city: city, isApproved: true })
+      await Post.find({ city: city, isApproved: true }, {}, {skip: skip, limit: 3})
         .exec(async function (err, posts) {
           const postArray = await returnCitySpecified(posts, city)
           res.send(postArray)
         })
     } else {
-      await Post.find({ city: city, meal: meal, isApproved: true })
+      await Post.find({ city: city, meal: meal, isApproved: true }, {}, {skip: skip, limit: 3})
         .exec(async function (err, posts) {
           const postArray = await returnCityMealSpecified(posts, city, meal)
           res.send(postArray)
