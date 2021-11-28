@@ -8,6 +8,7 @@ import { PostResponse } from '../definitionfile';
 import { PostInterface } from '../Interfaces/Interfaces';
 import { display } from '../Components/DisplayPosts';
 // import InfiniteScroll from 'react-infinite-scroll-component';
+import LoadingSpinner from '../Components/Spinner';
 
 export default function Homepage() {
 
@@ -18,41 +19,64 @@ export default function Homepage() {
     const [city, setCity] = useState();
     const [meal, setMeal] = useState();
     const [apiHit, setApiHit] = useState(false)
+    const [allPostsLoaded, setAllPostsLoaded] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const postMeals = (e, city, meal, skip, reset) => {
         setSkip(skip)
         setCity(city)
         setMeal(meal)
         setApiHit(true)
-        setButtonEnable('disabled')
-        Axios.post(API + '/getmeals', {
-            city, meal, skip
-        }, {
-            withCredentials: true
-        }).then((res: PostResponse) => {
-            if (reset) {
-                setPosts(res.data)    
-            } else {
-                setPosts(posts.concat(res.data))
-                // console.log(res.data);
-            }            
-            setButtonEnable('enabled')
-        })
+        // if (allPostsLoaded) {
+
+        // } else {
+        if (reset || !allPostsLoaded) {
+            if (reset) {setAllPostsLoaded(false)}
+            setButtonEnable('disabled')
+            console.log('posting');
+            setIsLoading(true)
+
+            Axios.post(API + '/getmeals', {
+                city, meal, skip
+            }, {
+                withCredentials: true
+            }).then((res: PostResponse) => {
+                setIsLoading(false)
+                if (reset) {
+                    setPosts(res.data)
+                } else {
+                    setPosts(posts.concat(res.data))
+                    if (res.data.length < 3) {
+                        setAllPostsLoaded(true)
+                    }
+                    // console.log(res.data);
+                }
+                setButtonEnable('enabled')
+            })
+        }
         e.preventDefault();
     }
 
     useEffect(() => {
         if (apiHit) {
+            // if (allPostsLoaded === false) {
+            console.log(allPostsLoaded);
+
             window.onscroll = (e) => {
                 if (window.scrollY + window.innerHeight === document.body.scrollHeight) {
                     console.log('bottom')
                     setSkip(skip + 3)
-                    postMeals(e, city, meal, skip+3, false)
+                    postMeals(e, city, meal, skip + 3, false)
                 }
             }
+            // }
         }
-
     });
+
+    let spinner;
+    if (isLoading) {
+        spinner = LoadingSpinner()
+    }
 
 
     return (
@@ -78,6 +102,7 @@ export default function Homepage() {
             <div className="container">
                 <div className="row justify-content-center page-bottom">
                     {display(posts, false, false)}
+                    {spinner}
                 </div>
             </div>
 
