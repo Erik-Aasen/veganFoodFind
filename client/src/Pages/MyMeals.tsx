@@ -13,21 +13,84 @@ import LoadingSpinner from '../Components/Spinner';
 export default function MyMeals() {
     const ctx = useContext(myContext);
 
-    const [posts, setPosts] = useState<PostInterface[]>();
+    const [posts, setPosts] = useState<PostInterface[]>([]);
+    // const [buttonEnable, setButtonEnable] = useState<string>('enabled')
+    const [skip, setSkip] = useState(0);
+    const [allPostsLoaded, setAllPostsLoaded] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const initialSkip = 0
 
     useEffect(() => {
-        Axios.get(API + "/usermeals", {
+        Axios.post(API + "/usermeals", {
+            initialSkip
+        },{
             withCredentials: true
         }).then((res: PostResponse) => {
             setPosts(res.data);
         })
     }, []);
 
+    const postMeals = (e, skip, reset) => {
+        setSkip(skip)
+        // setCity(city)
+        // setMeal(meal)
+        // setApiHit(true)
 
+        if (!allPostsLoaded) {
+            // if (reset) {setAllPostsLoaded(false)}
+            // setButtonEnable('disabled')
+            console.log('posting');
+            setIsLoading(true)
 
-    if (!posts) {
+            Axios.post(API + '/usermeals', {
+                skip
+            }, {
+                withCredentials: true
+            }).then((res: PostResponse) => {
+                setIsLoading(false)
+                if (reset) {
+                    setPosts(res.data)
+                } else {
+                    setPosts(posts.concat(res.data))
+                    if (res.data.length < 3) {
+                        setAllPostsLoaded(true)
+                    }
+                    // console.log(res.data);
+                }
+                // setButtonEnable('enabled')
+            })
+        }
+        e.preventDefault();
+    } 
+
+    useEffect(() => {
+        // if (apiHit) {
+            // if (allPostsLoaded === false) {
+            // console.log(allPostsLoaded);
+
+            window.onscroll = (e) => {
+                // console.log('ok');
+                // console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
+                
+                if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
+
+                    console.log('bottom')
+                    setSkip(skip + 3)
+                    postMeals(e, skip + 3, false)
+                }
+            }
+            // }
+        // }
+    });
+
+    if (posts === []) {
         return (LoadingSpinner())
         // return()
+    }
+
+    let spinner;
+    if (isLoading) {
+        spinner = LoadingSpinner()
     }
 
     let addMeal;
@@ -51,6 +114,7 @@ export default function MyMeals() {
             <div className='container'>
                 <div className="row justify-content-center page-bottom">
                     {display(posts, true, false)}
+                    {spinner}
                 </div>
             </div>
         </>

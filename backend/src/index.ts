@@ -123,19 +123,6 @@ async function getUserPictures(posts: PostInterface[]) {
   return posts
 }
 
-app.get("/usermeals", async (req: AuthRequest, res: Response) => {
-  const { user } = req;
-  const { _id } = user;
-
-  await Post.find({ username: user.username })
-    .exec(async function (err, posts) {
-      if (err) throw err;
-      const postArray = await getUserPictures(posts)
-      res.send(postArray)
-    })
-})
-
-
 app.get("/getallusers", isAdministratorMiddleware, async (req, res) => {
   await User.find({}, '_id username isAdmin').exec(function (err, data) {
     res.send(data)
@@ -356,6 +343,19 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
         })
     }
   }
+})
+
+app.post("/usermeals", async (req: AuthRequest, res: Response) => {
+  const { user } = req;
+  // const { _id } = user;
+  const { skip } = req.body;
+
+  await Post.find({ username: user.username }, {}, {skip: skip, limit: 3})
+    .exec(async function (err, posts) {
+      if (err) throw err;
+      const postArray = await getUserPictures(posts)
+      res.send(postArray)
+    })
 })
 
 // // PUT ROUTES
