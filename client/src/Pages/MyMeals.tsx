@@ -17,7 +17,7 @@ export default function MyMeals() {
     // const [buttonEnable, setButtonEnable] = useState<string>('enabled')
     const [skip, setSkip] = useState(0);
     const [allPostsLoaded, setAllPostsLoaded] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const initialSkip = 0
 
     useEffect(() => {
@@ -27,6 +27,7 @@ export default function MyMeals() {
             withCredentials: true
         }).then((res: PostResponse) => {
             setPosts(res.data);
+            setIsLoading(false)
         })
     }, []);
 
@@ -73,17 +74,21 @@ export default function MyMeals() {
         const handleScroll = (e) => {
             if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
 
-                setTimeout(() => {
-
-                    console.log('bottom')
-                    setSkip(skip + 3)
-                    postMeals(e, skip + 3, false)
-                }, 1000);
+                // setTimeout(() => {
+                setIsLoading(true)
+                if (allPostsLoaded) { setIsLoading(false) }
+                console.log('bottom')
+                setSkip(skip + 3)
+                postMeals(e, skip + 3, false)
+                // }, 1000);
 
             }
         }
 
-        window.addEventListener('scroll', handleScroll)
+        if (!isLoading) {
+            window.addEventListener('scroll', handleScroll)
+        }
+
         return () => {
             window.removeEventListener('scroll', handleScroll)
             console.log('unmounted');
@@ -91,10 +96,10 @@ export default function MyMeals() {
 
 
         // window.onscroll = (e) => {
-            // console.log('ok');
-            // console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
+        // console.log('ok');
+        // console.log(window.scrollY, window.innerHeight, document.body.scrollHeight);
 
-           
+
         // }
         // }
         // }
@@ -111,15 +116,17 @@ export default function MyMeals() {
     }
 
     let addMeal;
-    if (display(posts, true, false).props.children.length === 0) {
-        addMeal = (
-            <>
-                <div className='add-meal-prompt'>
-                    <h5>You haven't added any meals yet!</h5>
-                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
-                </div>
-            </>
-        )
+    if (!isLoading) {
+        if (display(posts, true, false).props.children.length === 0) {
+            addMeal = (
+                <>
+                    <div className='add-meal-prompt'>
+                        <h5>You haven't added any meals yet!</h5>
+                        <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
+                    </div>
+                </>
+            )
+        }
     }
 
     return (
