@@ -35,7 +35,7 @@ export default function Homepage() {
         if (reset || !allPostsLoaded) {
             if (reset) { setAllPostsLoaded(false) }
             setButtonEnable('disabled')
-            console.log('posting');
+            // console.log('posting');
             setIsLoading(true)
 
             await Axios.post(API + '/getmeals', {
@@ -70,7 +70,7 @@ export default function Homepage() {
     useEffect(() => {
         // var wait = false;
         // var isMounted = true
-        console.log(('isMounted'));
+        // console.log(('isMounted'));
 
         const handleScroll = (e) => {
             console.log(document.body.scrollHeight - window.innerHeight - window.scrollY);
@@ -80,7 +80,7 @@ export default function Homepage() {
                 setIsLoading(true)
                 if (allPostsLoaded) { setIsLoading(false) }
                 // setTimeout(() => {
-                    console.log('bottom')
+                    // console.log('bottom')
                     setSkip(skip + 3)
                     postMeals(e, city, meal, skip + 3, false)
                 // }, 100);
@@ -91,7 +91,7 @@ export default function Homepage() {
         if (apiHit && !isLoading) {
             // if (allPostsLoaded === false) {
             // if (isLoading === false) {
-            console.log('allPostsLoaded: ' + allPostsLoaded);
+            // console.log('allPostsLoaded: ' + allPostsLoaded);
 
             window.addEventListener('scroll', handleScroll)
 
@@ -106,7 +106,7 @@ export default function Homepage() {
 
         return () => {
             window.removeEventListener('scroll', handleScroll)
-            console.log('unmounted');
+            // console.log('unmounted');
         }
     });
 

@@ -40,7 +40,7 @@ export default function MyMeals() {
         if (!allPostsLoaded) {
             // if (reset) {setAllPostsLoaded(false)}
             // setButtonEnable('disabled')
-            console.log('posting');
+            // console.log('posting');
             setIsLoading(true)
 
             Axios.post(API + '/usermeals', {
@@ -68,7 +68,7 @@ export default function MyMeals() {
         // if (apiHit) {
         // if (allPostsLoaded === false) {
         // console.log(allPostsLoaded);
-        console.log(('isMounted'));
+        // console.log(('isMounted'));
 
 
         const handleScroll = (e) => {
@@ -77,7 +77,7 @@ export default function MyMeals() {
                 // setTimeout(() => {
                 setIsLoading(true)
                 if (allPostsLoaded) { setIsLoading(false) }
-                console.log('bottom')
+                // console.log('bottom')
                 setSkip(skip + 3)
                 postMeals(e, skip + 3, false)
                 // }, 1000);
@@ -91,7 +91,7 @@ export default function MyMeals() {
 
         return () => {
             window.removeEventListener('scroll', handleScroll)
-            console.log('unmounted');
+            // console.log('unmounted');
         }
 
 
