@@ -20,7 +20,7 @@ export default function Homepage() {
     const [meal, setMeal] = useState();
     const [apiHit, setApiHit] = useState(false)
     const [allPostsLoaded, setAllPostsLoaded] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
 
 
@@ -60,9 +60,15 @@ export default function Homepage() {
         }
         e.preventDefault();
     }
-    
+
     useEffect(() => {
-    // var wait = false;
+        if (!apiHit) {
+            setIsLoading(false)
+        }
+    }, [apiHit])
+
+    useEffect(() => {
+        // var wait = false;
         // var isMounted = true
         console.log(('isMounted'));
 
@@ -71,27 +77,28 @@ export default function Homepage() {
             if (window.scrollY + window.innerHeight >= document.body.scrollHeight) {
                 // setIsLoading(true)
                 // wait = true
-
-                setTimeout(() => {
+                setIsLoading(true)
+                if (allPostsLoaded) { setIsLoading(false) }
+                // setTimeout(() => {
                     console.log('bottom')
                     setSkip(skip + 3)
                     postMeals(e, city, meal, skip + 3, false)
-                }, 1000);
+                // }, 100);
 
             }
         }
-        
-        if (apiHit) {
+
+        if (apiHit && !isLoading) {
             // if (allPostsLoaded === false) {
             // if (isLoading === false) {
             console.log('allPostsLoaded: ' + allPostsLoaded);
-            
+
             window.addEventListener('scroll', handleScroll)
 
             // window.onscroll = (e) => {
 
-                // if (wait === false) {
-                
+            // if (wait === false) {
+
             // }
             // }
             // }
