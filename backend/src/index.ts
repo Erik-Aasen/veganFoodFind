@@ -45,7 +45,7 @@ app.use(cors({
   credentials: true
 }))
 
-app.set("trust proxy", 1);
+// app.set("trust proxy", 1); // turn this on to set rate limiting per IP address
 
 app.use(
   session({
