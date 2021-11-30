@@ -13,7 +13,8 @@ import path from "path";
 import { AuthRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
-import rateLimit from 'express-rate-limit'
+// import rateLimit from 'express-rate-limit'
+const rateLimit = require('express-rate-limit')
 
 const LocalStrategy = passportLocal.Strategy;
 dotenv.config();
