@@ -30,8 +30,8 @@ mongoose.connect(`${process.env.PART1}${process.env.USERNAME}:${process.env.PASS
 
 const apiLimiter = rateLimit({
   // windowMs: 15 * 60 * 1000, // 15 minutes
-  windowMs: 2 * 1000, // 5 seconds
-  max: 1 // limit each IP to 100 requests per windowMs
+  windowMs: 60 * 60 * 1000, // 60 minutes
+  max: 1000 // limit each IP to 1000 requests per windowMs
 });
 
 
@@ -167,38 +167,38 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
 // // })
 
 // //POST ROUTES
-app.post('/api/register', async (req: Request, res: Response) => {
+// app.post('/api/register', async (req: Request, res: Response) => {
 
-  const { username, password } = req.body;
-  if (
-    !username ||
-    !password ||
-    typeof username !== "string" ||
-    typeof password !== "string" ||
-    password.length < 8 ||
-    password.length > 20 ||
-    username.length >= 20
-  ) {
-    res.send("Improper values")
-    return;
-  }
+//   const { username, password } = req.body;
+//   if (
+//     !username ||
+//     !password ||
+//     typeof username !== "string" ||
+//     typeof password !== "string" ||
+//     password.length < 8 ||
+//     password.length > 20 ||
+//     username.length >= 20
+//   ) {
+//     res.send("Improper values")
+//     return;
+//   }
 
-  User.findOne({ username }, async (err: Error, data: MongoInterface) => {
-    if (err) throw err;
-    if (data) {
-      res.send('User already exists');
-    }
-    if (!data) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const newUser = new User({
-        username,
-        password: hashedPassword
-      });
-      await newUser.save();
-      res.send("registered")
-    }
-  })
-})
+//   User.findOne({ username }, async (err: Error, data: MongoInterface) => {
+//     if (err) throw err;
+//     if (data) {
+//       res.send('User already exists');
+//     }
+//     if (!data) {
+//       const hashedPassword = await bcrypt.hash(req.body.password, 10);
+//       const newUser = new User({
+//         username,
+//         password: hashedPassword
+//       });
+//       await newUser.save();
+//       res.send("registered")
+//     }
+//   })
+// })
 
 app.post("/api/login", passport.authenticate("local"), (req: AuthRequest, res: Response) => {
   res.send("logged in");
