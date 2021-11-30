@@ -217,7 +217,7 @@ export default function AddMeal(props) {
         } else {
             setButtonEnable('disabled')
             if (isEditMeal) {
-                await axios.put(API + '/editmeal', {
+                await axios.put(API + '/api/editmeal', {
                     _id, restaurant, city, meal, description, pictureString: picture
                 }, {
                     withCredentials: true
@@ -227,7 +227,7 @@ export default function AddMeal(props) {
                     }
                 })
             } else {
-                await axios.post(API + '/addmeal', {
+                await axios.post(API + '/api/addmeal', {
                     restaurant, city, meal, description, pictureString: picture
                 }, {
                     withCredentials: true

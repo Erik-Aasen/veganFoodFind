@@ -50,7 +50,7 @@ export default function Register() {
 				passwordError: errors.password
 			}))			
 		} else {			
-			axios.post(API + '/register', {
+			axios.post(API + '/api/register', {
 				username: state.username,
 				password: state.password
 			}, {
@@ -76,7 +76,7 @@ export default function Register() {
 
 	const login = (e) => {
 		history.push({
-			pathname: '/login',
+			pathname: '/api/login',
 			state: { registrationStatus: 'Successfully registered. Please log in.' }
 		})
 	}

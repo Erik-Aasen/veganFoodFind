@@ -154,7 +154,7 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
 // // })
 
 // //POST ROUTES
-app.post('/register', async (req: Request, res: Response) => {
+app.post('/api/register', async (req: Request, res: Response) => {
 
   const { username, password } = req.body;
   if (
@@ -187,7 +187,7 @@ app.post('/register', async (req: Request, res: Response) => {
   })
 })
 
-app.post("/login", passport.authenticate("local"), (req: AuthRequest, res: Response) => {
+app.post("/api/login", passport.authenticate("local"), (req: AuthRequest, res: Response) => {
   res.send("logged in");
 })
 
@@ -206,7 +206,7 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
   }
 }
 
-app.post("/addmeal", async (req: AuthRequest, res: Response) => {
+app.post("/api/addmeal", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { body } = req;
   const { restaurant, city, meal, description, pictureString } = body;
@@ -313,7 +313,7 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
   return posts;
 }
 
-app.post("/getmeals", async (req: AuthRequest, res) => {
+app.post("/api/getmeals", async (req: AuthRequest, res) => {
   const { city, meal, skip } = req.body;
   if (city === "All cities") {
     if (meal === "All meals") {
@@ -345,7 +345,7 @@ app.post("/getmeals", async (req: AuthRequest, res) => {
   }
 })
 
-app.post("/usermeals", async (req: AuthRequest, res: Response) => {
+app.post("/api/usermeals", async (req: AuthRequest, res: Response) => {
   const { user } = req;
   // const { _id } = user;
   const { skip } = req.body;
@@ -359,7 +359,7 @@ app.post("/usermeals", async (req: AuthRequest, res: Response) => {
 })
 
 // // PUT ROUTES
-app.put("/editmeal", async (req: AuthRequest, res: Response) => {
+app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
 
   const { user } = req;
   const { _id, restaurant, city, meal,
@@ -397,7 +397,7 @@ app.put("/editmeal", async (req: AuthRequest, res: Response) => {
   }
 })
 
-app.put("/deletemeal", async (req: AuthRequest, res) => {
+app.put("/api/deletemeal", async (req: AuthRequest, res) => {
   const { user } = req;
   const { _id } = req.body;
 

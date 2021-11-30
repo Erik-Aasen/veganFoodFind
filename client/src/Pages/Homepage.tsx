@@ -38,7 +38,7 @@ export default function Homepage() {
             // console.log('posting');
             setIsLoading(true)
 
-            await Axios.post(API + '/getmeals', {
+            await Axios.post(API + '/api/getmeals', {
                 city, meal, skip
             }, {
                 withCredentials: true

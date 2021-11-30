@@ -10,7 +10,7 @@ export default function Meal(props) {
         myMeal, adminMeal, isApproved } = props;
 
     const editmeal = {
-        pathname: "/editmeal",
+        pathname: "/api/editmeal",
         _id: _id,
         meal: meal,
         restaurant: restaurant,
@@ -21,7 +21,7 @@ export default function Meal(props) {
     }
 
     const deleteMeal = () => {
-        axios.put(API + '/deletemeal', {
+        axios.put(API + '/api/deletemeal', {
             _id
         }, { withCredentials: true }
         ).then((res) => {

@@ -41,7 +41,7 @@ export default function Login(props) {
 
     const login = async (e) => {
         e.preventDefault();
-        await axios.post(API + '/login', {
+        await axios.post(API + '/api/login', {
             username,
             password
         }, {

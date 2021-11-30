@@ -21,7 +21,7 @@ export default function MyMeals() {
     const initialSkip = 0
 
     useEffect(() => {
-        Axios.post(API + "/usermeals", {
+        Axios.post(API + "/api/usermeals", {
             initialSkip
         }, {
             withCredentials: true
@@ -43,7 +43,7 @@ export default function MyMeals() {
             // console.log('posting');
             setIsLoading(true)
 
-            Axios.post(API + '/usermeals', {
+            Axios.post(API + '/api/usermeals', {
                 skip
             }, {
                 withCredentials: true
@@ -122,7 +122,7 @@ export default function MyMeals() {
                 <>
                     <div className='add-meal-prompt'>
                         <h5>You haven't added any meals yet!</h5>
-                        <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
+                        <Button href="/api/addmeal" variant="outline-success">Add a Meal</Button>
                     </div>
                 </>
             )
