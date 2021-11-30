@@ -49,7 +49,7 @@ export default function NavBar() {
         loginlogout = (
             <>
                 <Nav.Link href="/api/login">Login</Nav.Link>
-                <Nav.Link href="/api/register">Register</Nav.Link>
+                {/* <Nav.Link href="/api/register">Register</Nav.Link> */}
                 <Button href="/api/login" variant="outline-success">Login to Add a Meal</Button>
             </>
         )
