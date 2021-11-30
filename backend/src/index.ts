@@ -13,6 +13,7 @@ import path from "path";
 import { AuthRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
+import rateLimit from 'express-rate-limit'
 
 const LocalStrategy = passportLocal.Strategy;
 dotenv.config();
@@ -26,11 +27,18 @@ mongoose.connect(`${process.env.PART1}${process.env.USERNAME}:${process.env.PASS
   console.log("Connected to Mongo");
 });
 
+const apiLimiter = rateLimit({
+  // windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 2 * 1000, // 5 seconds
+  max: 1 // limit each IP to 100 requests per windowMs
+});
+
+
 // Middleware
 const app = express();
 // app.use(express.json());
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ limit: '2mb', extended: true }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '1mb', extended: true }));
 app.use(cors({
   origin: "http://localhost:3000",
   credentials: true
@@ -51,9 +59,13 @@ app.use(
   })
 );
 
+
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("/api/", apiLimiter);
+
 
 //Passport
 passport.use(new LocalStrategy((username: string, password: string, done) => {
@@ -314,6 +326,8 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
 }
 
 app.post("/api/getmeals", async (req: AuthRequest, res) => {
+  console.log(Date.now());
+  
   const { city, meal, skip } = req.body;
   if (city === "All cities") {
     if (meal === "All meals") {
