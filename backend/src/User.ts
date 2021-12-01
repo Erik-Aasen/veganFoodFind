@@ -26,6 +26,12 @@ const post = new mongoose.Schema({
     isApproved: {
         type: Boolean,
         default: false
+    }, 
+    creationDate: {
+        type: Object
+    }, 
+    updateDate: {
+        type: Object
     }
 })
 

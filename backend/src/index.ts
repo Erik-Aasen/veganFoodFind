@@ -237,7 +237,8 @@ app.post("/api/addmeal", async (req: AuthRequest, res: Response) => {
       city: post.city,
       meal: post.meal,
       description: post.description,
-      pictureKey: key
+      pictureKey: key,
+      creationDate: new Date()
     })
 
     await newPost.save()
@@ -327,7 +328,7 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
 }
 
 app.post("/api/getmeals", async (req: AuthRequest, res) => {
-  console.log(Date.now());
+  // console.log(Date.now());  
   
   const { city, meal, skip } = req.body;
   if (city === "All cities") {
@@ -400,7 +401,8 @@ app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
         'meal': post.meal,
         'description': post.description,
         'pictureKey': key,
-        'isApproved': false
+        'isApproved': false,
+        'updateDate': new Date()
       },
       runValidators: true
     })
