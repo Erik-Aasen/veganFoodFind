@@ -15,6 +15,7 @@ import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 // import rateLimit from 'express-rate-limit'
 const rateLimit = require('express-rate-limit')
+const nodemailer = require('nodemailer')
 
 const LocalStrategy = passportLocal.Strategy;
 dotenv.config();
@@ -258,7 +259,7 @@ async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
         const picture = await getFileStream(post.pictureKey)
         post.pictureKey = ''
         post.pictureString = picture
-  
+
       }
     } else // isApproved === false 
     {
@@ -266,7 +267,7 @@ async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
         const picture = await getFileStream(post.pictureKey)
         post.pictureKey = ''
         post.pictureString = picture
-  
+
       }
     }
   }))
@@ -329,16 +330,16 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
 
 app.post("/api/getmeals", async (req: AuthRequest, res) => {
   // console.log(Date.now());  
-  
+
   const { city, meal, skip } = req.body;
   if (city === "All cities") {
     if (meal === "All meals") {
-      await Post.find({ isApproved: true }, {}, {skip: skip, limit: 3}).exec(async function (err, posts: PostInterface[]) {
+      await Post.find({ isApproved: true }, {}, { skip: skip, limit: 3 }).exec(async function (err, posts: PostInterface[]) {
         const postArray = await returnAllPosts(posts, true);
         res.send(postArray)
       })
     } else {
-      await Post.find({ meal: meal, isApproved: true }, {}, {skip: skip, limit: 3})
+      await Post.find({ meal: meal, isApproved: true }, {}, { skip: skip, limit: 3 })
         .exec(async function (err, posts) {
           const postArray = await returnMealSpecified(posts, meal)
           res.send(postArray)
@@ -346,13 +347,13 @@ app.post("/api/getmeals", async (req: AuthRequest, res) => {
     }
   } else {
     if (meal === "All meals") {
-      await Post.find({ city: city, isApproved: true }, {}, {skip: skip, limit: 3})
+      await Post.find({ city: city, isApproved: true }, {}, { skip: skip, limit: 3 })
         .exec(async function (err, posts) {
           const postArray = await returnCitySpecified(posts, city)
           res.send(postArray)
         })
     } else {
-      await Post.find({ city: city, meal: meal, isApproved: true }, {}, {skip: skip, limit: 3})
+      await Post.find({ city: city, meal: meal, isApproved: true }, {}, { skip: skip, limit: 3 })
         .exec(async function (err, posts) {
           const postArray = await returnCityMealSpecified(posts, city, meal)
           res.send(postArray)
@@ -366,12 +367,32 @@ app.post("/api/usermeals", async (req: AuthRequest, res: Response) => {
   // const { _id } = user;
   const { skip } = req.body;
 
-  await Post.find({ username: user.username }, {}, {skip: skip, limit: 3})
+  await Post.find({ username: user.username }, {}, { skip: skip, limit: 3 })
     .exec(async function (err, posts) {
       if (err) throw err;
       const postArray = await getUserPictures(posts)
       res.send(postArray)
     })
+})
+
+app.post('/email', isAdministratorMiddleware, (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS
+    }
+  })
+
+  transporter.sendMail({
+    to: process.env.GMAIL_USER,
+    subject: 'Subject',
+    html: '<b>Hello world?</b>'
+  })
+
+  res.send('ok')
+
+
 })
 
 // // PUT ROUTES

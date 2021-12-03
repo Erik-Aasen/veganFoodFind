@@ -44,6 +44,16 @@ const user = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    }, 
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    confirmationCode: {
+        type: String
+    },
+    confirmationCodeDate: {
+        type: Object
     }
 });
 

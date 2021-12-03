@@ -46,7 +46,7 @@ export default function AdminPage() {
         })
 
         Axios.post(API + "/deleteuser", {
-            _id: userid!  //! tells react that we know there will be a userid as a string since it will be defined in the if statement. React worries that it might not get defined and then not have the chance to be a string
+            _id: userid!  //! tells ts that we know there will be a userid as a string since it will be defined in the if statement. Ts worries that it might not get defined and then not have the chance to be a string
         }, {
             withCredentials: true
         }).then((res: AxiosResponse) => {
@@ -74,6 +74,16 @@ export default function AdminPage() {
         )
     }
 
+    const sendEmail = () => {
+        Axios.post(API + '/email', {}, {withCredentials: true})
+        .then((res) => {
+            if (res.data === 'ok') {
+                console.log('ok');
+                
+            } 
+        })
+    }
+
 
     return (
         <div>
@@ -81,6 +91,7 @@ export default function AdminPage() {
             <div className='myMeals'>
                 {displayUsers(users)}
                 <button value={selectedUser} onClick={deleteUser}>Delete</button>
+                <button onClick={sendEmail}>Send email</button>
             </div>
             <div className='container'>
                 <div className="row justify-content-center">
