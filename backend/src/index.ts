@@ -10,7 +10,7 @@ import { User, Post } from './User';
 import dotenv from 'dotenv';
 import { MongoInterface, UserSerialize, UserDeserialize, PostInterface, CapitalizeAndTrim, CityMeal } from './Interfaces/Interfaces';
 import path from "path";
-import { AuthRequest } from './definitionfile';
+import { AuthRequest, RegisterRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 // import rateLimit from 'express-rate-limit'
@@ -168,38 +168,75 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
 // // })
 
 // //POST ROUTES
-// app.post('/api/register', async (req: Request, res: Response) => {
+function looksLikeMail(str: string) {
+  const lastAtPos = str.lastIndexOf('@');
+  const lastDotPos = str.lastIndexOf('.');
+  return (lastAtPos < lastDotPos && lastAtPos > 0 && str.indexOf('@@') === -1 && lastDotPos > 2 && (str.length - lastDotPos) > 2);
+}
+app.post('/api/register', async (req: RegisterRequest, res: Response) => {
 
-//   const { username, password } = req.body;
-//   if (
-//     !username ||
-//     !password ||
-//     typeof username !== "string" ||
-//     typeof password !== "string" ||
-//     password.length < 8 ||
-//     password.length > 20 ||
-//     username.length >= 20
-//   ) {
-//     res.send("Improper values")
-//     return;
-//   }
+  const { email, username, password } = req.body;
+  if (
+    !email ||
+    !username ||
+    !password ||
+    typeof email !== "string" ||
+    typeof username !== "string" ||
+    typeof password !== "string" ||
+    // email.length < 0 ||
+    !looksLikeMail(email) ||
+    username.length >= 20 ||
+    password.length < 8 ||
+    password.length > 20
+  ) {
+    res.send("Improper values")
+    return;
+  }
 
-//   User.findOne({ username }, async (err: Error, data: MongoInterface) => {
-//     if (err) throw err;
-//     if (data) {
-//       res.send('User already exists');
-//     }
-//     if (!data) {
-//       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-//       const newUser = new User({
-//         username,
-//         password: hashedPassword
-//       });
-//       await newUser.save();
-//       res.send("registered")
-//     }
-//   })
-// })
+  User.findOne({ username }, async (err: Error, data: MongoInterface) => {
+    if (err) throw err;
+    if (data) {
+      res.send('User already exists');
+    }
+    if (!data) {
+      const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_PASS
+        }
+      })
+
+      try {
+        await transporter.sendMail({
+          to: email,
+          subject: 'Subject',
+          html: '<b>test</b>'
+        }, (error: any, info: any) => {
+          if(error) {console.log(error);
+          } else {
+            console.log(info
+              // .response
+              );
+            
+          }
+        })
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        const newUser = new User({
+          email,
+          username,
+          password: hashedPassword
+        });
+        await newUser.save()
+        res.send("registered")
+      } catch (err) {
+        console.log(err)
+      }
+
+    }
+  })
+})
 
 app.post("/api/login", passport.authenticate("local"), (req: AuthRequest, res: Response) => {
   res.send("logged in");

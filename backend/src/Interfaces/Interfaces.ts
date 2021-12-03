@@ -13,6 +13,7 @@ export interface UserDeserialize {
 export interface MongoInterface {
   isAdmin: boolean;
   _id: object;
+  email: string;
   username: string;
   password: string;
   // posts: PostInterface[];
