@@ -38,7 +38,7 @@ const post = new mongoose.Schema({
 const user = new mongoose.Schema({
     email: {
         type: String,
-        unique: true
+        // unique: true
     },
     username: {
         type: String,

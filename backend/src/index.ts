@@ -200,10 +200,10 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
     }
     if (!data) {
       const transporter = nodemailer.createTransport({
-        service: 'Gmail',
+        service: process.env.MAIL_SERVICEPROVIDER,
         auth: {
-          user: process.env.GMAIL_USER,
-          pass: process.env.GMAIL_PASS
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS
         }
       })
 
@@ -414,17 +414,18 @@ app.post("/api/usermeals", async (req: AuthRequest, res: Response) => {
 
 app.post('/email', isAdministratorMiddleware, (req, res) => {
   const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    service: process.env.MAIL_SERVICEPROVIDER,
     auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASS
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS
     }
   })
 
   transporter.sendMail({
-    to: process.env.GMAIL_USER,
-    subject: 'Subject',
-    html: '<b>Hello world?</b>'
+    to: process.env.MAIL_USER2,
+    subject: 'Confirmation email testing',
+    // html: '<b>Hello world?</b>'
+    text: 'Testing confirmation link email'
   })
 
   res.send('ok')
