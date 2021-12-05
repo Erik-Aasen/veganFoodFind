@@ -75,14 +75,14 @@ passport.use(new LocalStrategy((username: string, password: string, done) => {
   // User.findOne({ username: username }, (err: Error, user: MongoInterface) => {
   User.findOne({ username: username }, '_id username password isVerified').exec(function (err, user) {
     if (err) throw err;
-    if (!user) return done(null, false);
-    if (user.isVerified === false) return done('error', false);
+    if (!user) return done(null, false, { message: 'username password incorrect' });
+    if (user.isVerified === false) return done(null, false, { message: 'not verified' });
     bcrypt.compare(password, user.password, (err: Error, result: boolean) => {
       if (err) throw err;
       if (result === true) {
         return done(null, user);
       } else {
-        return done(null, false);
+        return done(null, false, { message: 'username password incorrect' });
       }
     })
   })
@@ -245,15 +245,29 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
   })
 })
 
-app.post("/api/login", passport.authenticate("local", (error) => {
-  const loginError = error
-  console.log(loginError);
-  return loginError
-  
-}), (req: AuthRequest, res: Response) => {
-  res.send("logged in");
-  // res.send(loginError)
+// app.post("/api/login", passport.authenticate("local", (error) => {
+//   const loginError = error
+//   console.log(loginError);
+//   return loginError
+
+// }), (req: AuthRequest, res: Response) => {
+//   res.send("logged in");
+//   // res.send(loginError)
+// })
+
+app.post('/api/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) { return next(err) }
+    if (!user) {
+      return res.send(info.message)
+    }
+    req.logIn(user, (err) => {
+      if (err) { return next(err) }
+      return res.send('logged in')
+    })
+  })(req, res, next)
 })
+
 
 app.post("/deleteuser", isAdministratorMiddleware, async (req: AuthRequest, res: Response) => {
   const { _id } = req.body

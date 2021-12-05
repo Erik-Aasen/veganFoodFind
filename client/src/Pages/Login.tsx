@@ -8,18 +8,19 @@ export default function Login(props) {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [loginFail, setLoginFail] = useState<boolean>();
+    const [verified, setVerified] = useState<boolean>(true)
 
     let status;
     if (props.location.state) {
         const email = props.location.state.email
         status = (
             <>
-            <h2 className='registered'>
-                {/* {props.location.state.registrationStatus} */}
-                Almost done...
-            </h2>
-            <p>We've sent an email to {email}. Open it up to activate your account.</p>
-            <p className='registered2'>Check your spam folder!</p>
+                <h2 className='registered'>
+                    {/* {props.location.state.registrationStatus} */}
+                    Almost done...
+                </h2>
+                <p>We've sent an email to {email}. Open it up to activate your account.</p>
+                <p className='registered2'>Check your spam folder!</p>
             </>
         )
     }
@@ -34,15 +35,24 @@ export default function Login(props) {
         )
     }
 
+    if (!verified && !loginFail) {
+        status = (
+            <p className='login-fail'>
+                Email is not verified. Please click here to resend verification link.
+            </p>
+        )
+    }
+
     const usernameFn = (e) => {
-		setUsername(e);
-		setLoginFail(false);
-	}
+        setUsername(e);
+        setLoginFail(false);
+        setVerified(true)
+    }
 
     const passwordFn = (e) => {
-		setPassword(e);
-		setLoginFail(false);
-	}
+        setPassword(e);
+        setLoginFail(false);
+    }
 
 
     const login = async (e) => {
@@ -53,12 +63,20 @@ export default function Login(props) {
         }, {
             withCredentials: true
         }).then((res: AxiosResponse) => {
-            if (res.data === "logged in") {
+            if (res.data === 'logged in') {
                 window.location.href = "/"
             }
-        }, () => {
-            setLoginFail(true);
-        })
+            if (res.data === 'not verified') {
+                setVerified(false)
+            }
+            if (res.data === 'username password incorrect') {
+                setLoginFail(true)
+            }
+        }
+            //      () => {
+            //     setLoginFail(true);
+            // }
+        )
     }
 
     return (
