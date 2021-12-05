@@ -14,6 +14,7 @@ import { AuthRequest, RegisterRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken'
+// const jwt = require('jsonwebtoken')
 // import 'bootstrap'
 const url = require('url');
 // import rateLimit from 'express-rate-limit'
