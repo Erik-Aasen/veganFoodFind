@@ -245,6 +245,17 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
   })
 })
 
+app.post('/api/resendconfirmation', (req: RegisterRequest, res) => {
+  const { username } = req.body
+  User.findOne({username: username}, '_id email')
+  .exec((err: Error, data: MongoInterface) => {
+    if (err) throw err;
+    // console.log(data.email, data._id);
+    sendMail(data._id, data.email)
+    res.send('email sent')
+  })
+})
+
 // app.post("/api/login", passport.authenticate("local", (error) => {
 //   const loginError = error
 //   console.log(loginError);

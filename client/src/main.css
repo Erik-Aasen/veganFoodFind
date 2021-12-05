@@ -161,6 +161,12 @@ form {
     margin-bottom: 10px;
 }
 
+.verification-fail {
+    font-size: 80%;
+    color: blue;
+    margin-bottom: 10px;
+}
+
 .myMeals-loading {
     padding-top: 20px;
     text-align: center;

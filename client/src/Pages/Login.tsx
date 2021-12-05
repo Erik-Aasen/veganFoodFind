@@ -9,9 +9,11 @@ export default function Login(props) {
     const [password, setPassword] = useState<string>("");
     const [loginFail, setLoginFail] = useState<boolean>();
     const [verified, setVerified] = useState<boolean>(true)
+    const [emailSent, setEmailSent] = useState<boolean>(false)
 
     let status;
-    if (props.location.state) {
+    if (props.location.state && !emailSent) {
+        // setEmailSent(true)
         const email = props.location.state.email
         status = (
             <>
@@ -20,6 +22,19 @@ export default function Login(props) {
                     Almost done...
                 </h2>
                 <p>We've sent an email to {email}. Open it up to activate your account.</p>
+                <p className='registered2'>Check your spam folder!</p>
+            </>
+        )
+    }
+
+    if (emailSent) {
+        status = (
+            <>
+                <h2 className='registered'>
+                    {/* {props.location.state.registrationStatus} */}
+                    Almost done...
+                </h2>
+                <p>We've sent an email to the account email. Open it up to activate your account.</p>
                 <p className='registered2'>Check your spam folder!</p>
             </>
         )
@@ -35,13 +50,33 @@ export default function Login(props) {
         )
     }
 
+    const resendConfirmation = () => {
+        axios.post(API + '/api/resendConfirmation', {
+            username
+        }, {
+            withCredentials: true
+        }).then((res: AxiosResponse) => {
+            if (res.data === 'email sent') {
+                setEmailSent(true)
+                setVerified(true)
+                console.log('ok');
+                
+            }
+        })
+    }
+
     if (!verified && !loginFail) {
         status = (
-            <p className='login-fail'>
-                Email is not verified. Please click here to resend verification link.
+            <p className='verification-fail'>
+                Email is not verified. Please click 
+                {/* here  */}
+                <button onClick={resendConfirmation}>Here</button>
+                to resend verification link.
             </p>
         )
     }
+
+
 
     const usernameFn = (e) => {
         setUsername(e);
@@ -57,12 +92,18 @@ export default function Login(props) {
 
     const login = async (e) => {
         e.preventDefault();
+
+        if (username.length < 1 || password.length < 1) {
+            setLoginFail(true)
+            return
+        }
+
         await axios.post(API + '/api/login', {
             username,
             password
         }, {
             withCredentials: true
-        }).then((res: AxiosResponse) => {
+        }).then((res: AxiosResponse) => {            
             if (res.data === 'logged in') {
                 window.location.href = "/"
             }
