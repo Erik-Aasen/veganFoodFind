@@ -252,19 +252,32 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
     if (!data) {
       User.findOne({ email }, async (err: Error, data: MongoInterface) => {
         if (err) throw err;
-        if (data.isVerified === false) {
-          const hashedPassword = await bcrypt.hash(req.body.password, 10)
-          const newUser = new User({
-            email,
-            username,
-            password: hashedPassword
-          });
-          newUser.save((err, user) => {
-            sendMail(user.id, email)
-            res.send("registered")
-          })
+        if (data) {          
+          if (data.isVerified === false) {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10)
+            const newUser = new User({
+              email,
+              username,
+              password: hashedPassword
+            });
+            newUser.save((err, user) => {
+              sendMail(user.id, email)
+              res.send("registered")
+            })
+          } else {
+            res.send('email already registered')
+          } 
         } else {
-          res.send('email already registered')
+          const hashedPassword = await bcrypt.hash(req.body.password, 10)
+            const newUser = new User({
+              email,
+              username,
+              password: hashedPassword
+            });
+            newUser.save((err, user) => {
+              sendMail(user.id, email)
+              res.send("registered")
+            })
         }
       })
     }
