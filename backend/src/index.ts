@@ -14,6 +14,7 @@ import { AuthRequest, RegisterRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken'
+// import 'bootstrap'
 const url = require('url');
 // import rateLimit from 'express-rate-limit'
 const rateLimit = require('express-rate-limit')
@@ -182,8 +183,7 @@ app.get('/confirmation/:emailToken', async (req, res) => {
             "verified": "true"
           }
         })
-          
-          )
+        )
       })
   } catch (err) {
     res.redirect(process.env.API_CLIENT)
@@ -216,8 +216,13 @@ const sendMail = async (_id: object, email: string) => {
         const url = process.env.API + `/confirmation/${emailToken}`
         transporter.sendMail({
           to: email,
-          subject: 'Confirmation email testing',
-          html: `<b>Confirmation link: </b><a href="${url}">${url}</a>`
+          subject: 'Vegan Food Finder confirmation email',
+          html:
+              `<p>Thanks for joining Vegan Food Finder!</p>
+              <b>Please click here to confirm your account: </b>
+              <a href="${url}">Confirm Account</a>
+              `
+          // `<b>Confirmation link: </b><a href="${url}">${url}</a>`
         }, (error: any, info: any) => {
           if (error) {
             console.log(error);
@@ -260,7 +265,7 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
     if (!data) {
       User.findOne({ email }, async (err: Error, data: MongoInterface) => {
         if (err) throw err;
-        if (data) {          
+        if (data) {
           if (data.isVerified === false) {
             const hashedPassword = await bcrypt.hash(req.body.password, 10)
             const newUser = new User({
@@ -274,18 +279,18 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
             })
           } else {
             res.send('email already registered')
-          } 
+          }
         } else {
           const hashedPassword = await bcrypt.hash(req.body.password, 10)
-            const newUser = new User({
-              email,
-              username,
-              password: hashedPassword
-            });
-            newUser.save((err, user) => {
-              sendMail(user.id, email)
-              res.send("registered")
-            })
+          const newUser = new User({
+            email,
+            username,
+            password: hashedPassword
+          });
+          newUser.save((err, user) => {
+            sendMail(user.id, email)
+            res.send("registered")
+          })
         }
       })
     }
@@ -294,13 +299,13 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
 
 app.post('/api/resendconfirmation', (req: RegisterRequest, res) => {
   const { username } = req.body
-  User.findOne({username: username}, '_id email')
-  .exec((err: Error, data: MongoInterface) => {
-    if (err) throw err;
-    // console.log(data.email, data._id);
-    sendMail(data._id, data.email)
-    res.send('email sent')
-  })
+  User.findOne({ username: username }, '_id email')
+    .exec((err: Error, data: MongoInterface) => {
+      if (err) throw err;
+      // console.log(data.email, data._id);
+      sendMail(data._id, data.email)
+      res.send('email sent')
+    })
 })
 
 // app.post("/api/login", passport.authenticate("local", (error) => {
@@ -505,25 +510,33 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-// app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
-//   const { _id } = req.user;
-//   jwt.sign({
-//     _id: _id
-//   },
-//     process.env.EMAIL_SECRET
-//     , {
-//       expiresIn: '5m'
-//     },
-//     (err, emailToken) => {
-//       const url = process.env.API + `/confirmation/${emailToken}`
-//       transporter.sendMail({
-//         to: process.env.MAIL_USER2,
-//         subject: 'Confirmation email testing',
-//         html: `<b>Confirmation link: </b><a href="${url}">${url}</a>`
-//       })
-//     })
-//   res.send('ok')
-// })
+app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
+  const { _id } = req.user;
+  jwt.sign({
+    _id: _id
+  },
+    process.env.EMAIL_SECRET
+    , {
+      expiresIn: '5m'
+    },
+    (err, emailToken) => {
+      const url = process.env.API + `/confirmation/${emailToken}`
+      transporter.sendMail({
+        to: process.env.MAIL_USER2,
+        subject: 'Confirmation email testing',
+        html:
+          `<p>Thanks for joining Vegan Food Finder!</p>
+        <b>Please click here to confirm your account: </b>
+        <a href="${url}">Confirm Account</a>
+        `
+        //   <form style="display: inline" action="${url}">
+        //   <input type="submit" value="Confirm Account" />
+        // </form>    
+        // <input type="button" onClick="location.href='${url}';" value="Confirm Account" />
+      })
+    })
+  res.send('ok')
+})
 
 
 // // PUT ROUTES
