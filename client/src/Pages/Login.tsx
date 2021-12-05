@@ -11,10 +11,16 @@ export default function Login(props) {
 
     let status;
     if (props.location.state) {
+        const email = props.location.state.email
         status = (
-            <p className='registered'>
-                {props.location.state.registrationStatus}
-            </p>
+            <>
+            <h2 className='registered'>
+                {/* {props.location.state.registrationStatus} */}
+                Almost done...
+            </h2>
+            <p>We've sent an email to {email}. Open it up to activate your account.</p>
+            <p className='registered2'>Check your spam folder!</p>
+            </>
         )
     }
 

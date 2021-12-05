@@ -52,12 +52,6 @@ const user = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    confirmationCode: {
-        type: String
-    },
-    confirmationCodeDate: {
-        type: Object
-    }
 });
 
 const User = mongoose.model<MongoInterface>("User", user)

@@ -1,5 +1,5 @@
 import mongoose, { Error } from 'mongoose';
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, response } from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import passportLocal from 'passport-local';
@@ -73,9 +73,10 @@ app.use("/api/", apiLimiter);
 //Passport
 passport.use(new LocalStrategy((username: string, password: string, done) => {
   // User.findOne({ username: username }, (err: Error, user: MongoInterface) => {
-  User.findOne({ username: username }, '_id username password').exec(function (err, user) {
+  User.findOne({ username: username }, '_id username password isVerified').exec(function (err, user) {
     if (err) throw err;
     if (!user) return done(null, false);
+    if (user.isVerified === false) return done('error', false);
     bcrypt.compare(password, user.password, (err: Error, result: boolean) => {
       if (err) throw err;
       if (result === true) {
@@ -244,8 +245,14 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
   })
 })
 
-app.post("/api/login", passport.authenticate("local"), (req: AuthRequest, res: Response) => {
+app.post("/api/login", passport.authenticate("local", (error) => {
+  const loginError = error
+  console.log(loginError);
+  return loginError
+  
+}), (req: AuthRequest, res: Response) => {
   res.send("logged in");
+  // res.send(loginError)
 })
 
 app.post("/deleteuser", isAdministratorMiddleware, async (req: AuthRequest, res: Response) => {

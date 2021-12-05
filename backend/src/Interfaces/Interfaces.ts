@@ -16,6 +16,7 @@ export interface MongoInterface {
   email: string;
   username: string;
   password: string;
+  isVerified: boolean;
   // posts: PostInterface[];
 }
 

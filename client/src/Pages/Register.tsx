@@ -94,7 +94,8 @@ export default function Register() {
 	const login = (e) => {
 		history.push({
 			pathname: '/api/login',
-			state: { registrationStatus: 'Successfully registered. Please log in.' }
+			state: { 
+				email: state.email }
 		})
 	}
 

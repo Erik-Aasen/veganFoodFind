@@ -146,8 +146,12 @@ form {
 }
 
 .registered {
-    font-size: 80%;
+    font-size: 120%;
     color: green;
+    margin-bottom: 10px;
+}
+
+.registered2 {
     margin-bottom: 10px;
 }
 
