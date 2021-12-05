@@ -68,7 +68,7 @@ export default function Login(props) {
     if (!verified && !loginFail) {
         status = (
             <p className='verification-fail'>
-                Email is not verified. Please click 
+                Email is not verified. Please check your email for the verification link or click 
                 {/* here  */}
                 <button onClick={resendConfirmation}>Here</button>
                 to resend verification link.

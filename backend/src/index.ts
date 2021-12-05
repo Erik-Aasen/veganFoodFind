@@ -163,6 +163,25 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
     })
 })
 
+
+app.get('/confirmation/:emailToken', async (req, res) => {
+  try {
+    const _id = await jwt.verify(req.params.emailToken, process.env.EMAIL_SECRET) as UserDeserialize;
+    await User.updateOne({ _id: _id }, {
+      '$set': {
+        'isVerified': true
+      },
+      runValidators: true
+    })
+      .exec(async function (err) {
+        if (err) throw err;
+        res.redirect(process.env.API_CLIENT + `/api/login`)
+      })
+  } catch (err) {
+    res.redirect(process.env.API_CLIENT)
+  }
+})
+
 // // app.get("/test", async (req: AuthRequest, res: Response) => {
 // // const readStream = await getFileStream('test')
 // // res.send(readStream)
@@ -231,15 +250,22 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
       res.send('User already exists');
     }
     if (!data) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10)
-      const newUser = new User({
-        email,
-        username,
-        password: hashedPassword
-      });
-      newUser.save((err, user) => {
-        sendMail(user.id, email)
-        res.send("registered")
+      User.findOne({ email }, async (err: Error, data: MongoInterface) => {
+        if (err) throw err;
+        if (data.isVerified === false) {
+          const hashedPassword = await bcrypt.hash(req.body.password, 10)
+          const newUser = new User({
+            email,
+            username,
+            password: hashedPassword
+          });
+          newUser.save((err, user) => {
+            sendMail(user.id, email)
+            res.send("registered")
+          })
+        } else {
+          res.send('email already registered')
+        }
       })
     }
   })
@@ -458,43 +484,26 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
-  const { _id } = req.user;
-  jwt.sign({
-    _id: _id
-  },
-    process.env.EMAIL_SECRET
-    , {
-      expiresIn: '5m'
-    },
-    (err, emailToken) => {
-      const url = process.env.API + `/confirmation/${emailToken}`
-      transporter.sendMail({
-        to: process.env.MAIL_USER2,
-        subject: 'Confirmation email testing',
-        html: `<b>Confirmation link: </b><a href="${url}">${url}</a>`
-      })
-    })
-  res.send('ok')
-})
+// app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
+//   const { _id } = req.user;
+//   jwt.sign({
+//     _id: _id
+//   },
+//     process.env.EMAIL_SECRET
+//     , {
+//       expiresIn: '5m'
+//     },
+//     (err, emailToken) => {
+//       const url = process.env.API + `/confirmation/${emailToken}`
+//       transporter.sendMail({
+//         to: process.env.MAIL_USER2,
+//         subject: 'Confirmation email testing',
+//         html: `<b>Confirmation link: </b><a href="${url}">${url}</a>`
+//       })
+//     })
+//   res.send('ok')
+// })
 
-app.get('/confirmation/:emailToken', async (req, res) => {
-  try {
-    const _id = await jwt.verify(req.params.emailToken, process.env.EMAIL_SECRET) as UserDeserialize;
-    await User.updateOne({ _id: _id }, {
-      '$set': {
-        'isVerified': true
-      },
-      runValidators: true
-    })
-      .exec(async function (err) {
-        if (err) throw err;
-        res.redirect(process.env.API_CLIENT + `/api/login`)
-      })
-  } catch (err) {
-    res.redirect(process.env.API_CLIENT)
-  }
-})
 
 // // PUT ROUTES
 app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
