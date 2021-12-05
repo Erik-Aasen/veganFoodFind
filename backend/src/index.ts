@@ -14,6 +14,7 @@ import { AuthRequest, RegisterRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken'
+const url = require('url');
 // import rateLimit from 'express-rate-limit'
 const rateLimit = require('express-rate-limit')
 const nodemailer = require('nodemailer')
@@ -175,7 +176,14 @@ app.get('/confirmation/:emailToken', async (req, res) => {
     })
       .exec(async function (err) {
         if (err) throw err;
-        res.redirect(process.env.API_CLIENT + `/api/login`)
+        res.redirect(url.format({
+          pathname: process.env.API_CLIENT + '/api/login',
+          query: {
+            "verified": "true"
+          }
+        })
+          
+          )
       })
   } catch (err) {
     res.redirect(process.env.API_CLIENT)

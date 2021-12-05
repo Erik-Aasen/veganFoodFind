@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import API from '../config'
 import { Form, Button } from 'react-bootstrap';
+import queryString from 'query-string'
 
 export default function Login(props) {
 
@@ -11,7 +12,21 @@ export default function Login(props) {
     const [verified, setVerified] = useState<boolean>(true)
     const [emailSent, setEmailSent] = useState<boolean>(false)
 
+    let params = queryString.parse(props.location.search)
+    // console.log(params.verified);
+
     let status;
+    if (params.verified === 'true') {
+        status = (
+            <>
+                <h2 className='registered'>
+                    Successfully verified email!
+                </h2>
+                <p className='registered2'>Please log in.</p>
+            </>
+        )
+    }
+
     if (props.location.state && !emailSent) {
         // setEmailSent(true)
         const email = props.location.state.email
@@ -60,7 +75,7 @@ export default function Login(props) {
                 setEmailSent(true)
                 setVerified(true)
                 console.log('ok');
-                
+
             }
         })
     }
@@ -68,7 +83,7 @@ export default function Login(props) {
     if (!verified && !loginFail) {
         status = (
             <p className='verification-fail'>
-                Email is not verified. Please check your email for the verification link or click 
+                Email is not verified. Please check your email for the verification link or click
                 {/* here  */}
                 <button onClick={resendConfirmation}>Here</button>
                 to resend verification link.
@@ -103,7 +118,7 @@ export default function Login(props) {
             password
         }, {
             withCredentials: true
-        }).then((res: AxiosResponse) => {            
+        }).then((res: AxiosResponse) => {
             if (res.data === 'logged in') {
                 window.location.href = "/"
             }

@@ -33,7 +33,7 @@ function App() {
     routes = (
       <>
         <Route path='/' exact component={Homepage}></Route>
-        <Route path='/api/login' exact component={Login}></Route>
+        <Route path='/api/login/' component={Login}></Route>
         <Route path='/api/register' exact component={Register}></Route>
         {/* <Route path='/test' exact component={Test}></Route> */}
       </>
