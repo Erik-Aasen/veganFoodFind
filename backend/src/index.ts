@@ -43,7 +43,7 @@ const app = express();
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
 app.use(cors({
-  origin: process.env.clientAPI, // "http://localhost:3000",
+  origin: process.env.API_CLIENT, // "http://localhost:3000",
   credentials: true
 }))
 
@@ -457,10 +457,10 @@ app.get('/confirmation/:emailToken', async (req, res) => {
     })
       .exec(async function (err) {
         if (err) throw err;
-        res.redirect(process.env.clientAPI + `/api/login`)
+        res.redirect(process.env.API_CLIENT + `/api/login`)
       })
   } catch (err) {
-    res.redirect(process.env.clientAPI)
+    res.redirect(process.env.API_CLIENT)
   }
 })
 
