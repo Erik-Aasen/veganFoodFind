@@ -13,6 +13,7 @@ import path from "path";
 import { AuthRequest, RegisterRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken'
 // import rateLimit from 'express-rate-limit'
 const rateLimit = require('express-rate-limit')
 const nodemailer = require('nodemailer')
@@ -42,7 +43,7 @@ const app = express();
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: process.env.clientAPI, // "http://localhost:3000",
   credentials: true
 }))
 
@@ -173,9 +174,40 @@ function looksLikeMail(str: string) {
   const lastDotPos = str.lastIndexOf('.');
   return (lastAtPos < lastDotPos && lastAtPos > 0 && str.indexOf('@@') === -1 && lastDotPos > 2 && (str.length - lastDotPos) > 2);
 }
+
+const sendMail = async (_id: object, email: string) => {
+  try {
+    jwt.sign({
+      _id: _id
+    },
+      process.env.EMAIL_SECRET
+      , {
+        expiresIn: '5m'
+      },
+      (err, emailToken) => {
+        const url = process.env.API + `/confirmation/${emailToken}`
+        transporter.sendMail({
+          to: email,
+          subject: 'Confirmation email testing',
+          html: `<b>Confirmation link: </b><a href="${url}">${url}</a>`
+        }, (error: any, info: any) => {
+          if (error) {
+            console.log(error);
+          } else {
+            // console.log(info);
+          }
+        })
+      })
+  }
+  catch (err) {
+    console.log(err)
+  }
+}
+
 app.post('/api/register', async (req: RegisterRequest, res: Response) => {
 
   const { email, username, password } = req.body;
+
   if (
     !email ||
     !username ||
@@ -183,7 +215,6 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
     typeof email !== "string" ||
     typeof username !== "string" ||
     typeof password !== "string" ||
-    // email.length < 0 ||
     !looksLikeMail(email) ||
     username.length >= 20 ||
     password.length < 8 ||
@@ -199,41 +230,16 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
       res.send('User already exists');
     }
     if (!data) {
-      const transporter = nodemailer.createTransport({
-        service: process.env.MAIL_SERVICEPROVIDER,
-        auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASS
-        }
-      })
-
-      try {
-        await transporter.sendMail({
-          to: email,
-          subject: 'Subject',
-          html: '<b>test</b>'
-        }, (error: any, info: any) => {
-          if(error) {console.log(error);
-          } else {
-            console.log(info
-              // .response
-              );
-            
-          }
-        })
-
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        const newUser = new User({
-          email,
-          username,
-          password: hashedPassword
-        });
-        await newUser.save()
+      const hashedPassword = await bcrypt.hash(req.body.password, 10)
+      const newUser = new User({
+        email,
+        username,
+        password: hashedPassword
+      });
+      newUser.save((err, user) => {
+        sendMail(user.id, email)
         res.send("registered")
-      } catch (err) {
-        console.log(err)
-      }
-
+      })
     }
   })
 })
@@ -412,25 +418,50 @@ app.post("/api/usermeals", async (req: AuthRequest, res: Response) => {
     })
 })
 
-app.post('/email', isAdministratorMiddleware, (req, res) => {
-  const transporter = nodemailer.createTransport({
-    service: process.env.MAIL_SERVICEPROVIDER,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS
-    }
-  })
+const transporter = nodemailer.createTransport({
+  service: process.env.MAIL_SERVICEPROVIDER,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS
+  }
+})
 
-  transporter.sendMail({
-    to: process.env.MAIL_USER2,
-    subject: 'Confirmation email testing',
-    // html: '<b>Hello world?</b>'
-    text: 'Testing confirmation link email'
-  })
-
+app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
+  const { _id } = req.user;
+  jwt.sign({
+    _id: _id
+  },
+    process.env.EMAIL_SECRET
+    , {
+      expiresIn: '5m'
+    },
+    (err, emailToken) => {
+      const url = process.env.API + `/confirmation/${emailToken}`
+      transporter.sendMail({
+        to: process.env.MAIL_USER2,
+        subject: 'Confirmation email testing',
+        html: `<b>Confirmation link: </b><a href="${url}">${url}</a>`
+      })
+    })
   res.send('ok')
+})
 
-
+app.get('/confirmation/:emailToken', async (req, res) => {
+  try {
+    const _id = await jwt.verify(req.params.emailToken, process.env.EMAIL_SECRET) as UserDeserialize;
+    await User.updateOne({ _id: _id }, {
+      '$set': {
+        'isVerified': true
+      },
+      runValidators: true
+    })
+      .exec(async function (err) {
+        if (err) throw err;
+        res.redirect(process.env.clientAPI + `/api/login`)
+      })
+  } catch (err) {
+    res.redirect(process.env.clientAPI)
+  }
 })
 
 // // PUT ROUTES
