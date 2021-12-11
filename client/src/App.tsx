@@ -23,9 +23,9 @@ function App() {
         <Route path='/' exact component={Homepage}></Route>
         {ctx.isAdmin ? (<Route path='/adminpage' exact component={AdminPage}></Route>) : ''}
         <Route path='/profile' exact component={Profile}></Route>
-        <Route path='/api/addmeal' exact component={AddMeal}></Route>
+        <Route path='/addmeal' exact component={AddMeal}></Route>
         <Route path='/mymeals' exact component={MyMeals}></Route>
-        <Route path='/api/editmeal' exact component={AddMeal}></Route>
+        <Route path='/editmeal' exact component={AddMeal}></Route>
         {/* <Route path='/test' exact component={Test}></Route> */}
       </>
     )
@@ -33,8 +33,8 @@ function App() {
     routes = (
       <>
         <Route path='/' exact component={Homepage}></Route>
-        <Route path='/api/login/' component={Login}></Route>
-        <Route path='/api/register' exact component={Register}></Route>
+        <Route path='/login/' component={Login}></Route>
+        <Route path='/register' exact component={Register}></Route>
         {/* <Route path='/test' exact component={Test}></Route> */}
       </>
     )
