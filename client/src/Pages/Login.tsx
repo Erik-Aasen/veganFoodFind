@@ -82,10 +82,12 @@ export default function Login(props) {
 
     if (!verified && !loginFail) {
         status = (
-            <p className='verification-fail'>
-                Email is not verified. Please check your email for the verification link or click
+            <p className='verification-fail text-primary'>
+                Email is not verified. 
+                <br />
+                Please check your email for the verification link or click to
                 {/* here  */}
-                <button onClick={resendConfirmation}>Here</button>
+                <Button size='sm' variant='outline-primary' className='resend-btn' onClick={resendConfirmation}>resend verification link</Button>
                 to resend verification link.
             </p>
         )
@@ -158,6 +160,10 @@ export default function Login(props) {
                 </Form.Group>
                 <Button onClick={e => { login(e) }}>Submit</Button>
             </Form>
+            <div className='login-links'>
+                 <a href="/register">Register</a>
+                 <a href="/resetpassword">Forgot Password?</a>
+             </div>
         </div>
     )
 }

@@ -176,3 +176,17 @@ form {
 .page-bottom {
     padding-bottom: 50px;
 }
+
+.resend-btn {
+    margin-left: 5px;
+}
+
+.login-links {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    /* margin: 0 auto 0; */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
