@@ -32,7 +32,7 @@ export default function NavBar() {
                     <Nav.Link onClick={logout}>Logout</Nav.Link>
                     <Nav.Link href="/mymeals">My Meals</Nav.Link>
                     {/* <Nav.Link href="/getallusers">Get All Users</Nav.Link> */}
-                    <Button href="/api/addmeal" variant="outline-success">Add a Meal</Button>
+                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
                 </>
             )
         } else if (!ctx.isAdmin) {
@@ -41,16 +41,16 @@ export default function NavBar() {
                     <Nav.Link onClick={logout}>Logout</Nav.Link>
                     <Nav.Link href="/mymeals">My Meals</Nav.Link>
                     {/* <Nav.Link href="/getallusers">Get All Users</Nav.Link> */}
-                    <Button href="/api/addmeal" variant="outline-success">Add a Meal</Button>
+                    <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
                 </>
             )
         }
     } else if (!ctx) {
         loginlogout = (
             <>
-                <Nav.Link href="/api/login">Login</Nav.Link>
-                <Nav.Link href="/api/register">Register</Nav.Link>
-                <Button href="/api/login" variant="outline-success">Login to Add a Meal</Button>
+                <Nav.Link href="/login">Login</Nav.Link>
+                <Nav.Link href="/register">Register</Nav.Link>
+                <Button href="/login" variant="outline-success">Login to Add a Meal</Button>
             </>
         )
     }
