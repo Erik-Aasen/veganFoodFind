@@ -84,7 +84,7 @@ export default function Register() {
 					login(e)
 				} else if (res.data === 'User already exists') {
 					setState(prev => ({
-						...prev, usernameError: 'Please choose a different username'
+						...prev, usernameError: 'Username taken. Please choose a different username'
 					}))
 				} else if (res.data === 'email already registered') {
 					setState(prev => ({
@@ -97,7 +97,7 @@ export default function Register() {
 
 	const login = (e) => {
 		history.push({
-			pathname: '/api/login',
+			pathname: '/login',
 			state: { 
 				email: state.email }
 		})
