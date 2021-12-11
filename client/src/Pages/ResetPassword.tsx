@@ -8,6 +8,7 @@ import { useState } from "react"
      return (
          <div className='login'>
              <h1>Reset Password</h1>
+             <p className='verification-fail text-primary'>Enter your username or email to receive a link in your inbox to reset your password.</p>
              <Form>
                  <Form.Group>
                      <Form.Control
