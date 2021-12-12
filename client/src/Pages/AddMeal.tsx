@@ -28,7 +28,7 @@ export default function AddMeal(props) {
             meal: props.location.meal,
             description: props.location.description,
             picture: props.location.pictureString,
-            orientation: 8,
+            orientation: 8, //props.location.orientation?
             isEditMeal: props.location.isEditMeal
         }
     }
@@ -198,6 +198,21 @@ export default function AddMeal(props) {
         }
     }
 
+    const postImage = async (compressedFile) => {
+        const formData = new FormData();
+        formData.append('restaurant', restaurant)
+        formData.append('city', city)
+        formData.append('meal', meal)
+        formData.append('description', description)
+        formData.append('image', compressedFile)
+        await axios.post(API + '/api/addmeal', formData, { headers: {'Content-Type': 'multipart/form-data'}})
+        .then((res) => {
+            if (res.data === "meal added") {
+                history.push('/mymeals');
+            }
+        })
+    }
+
     const submitMeal = async (e) => {
         e.preventDefault();
         const errors = validate();
@@ -229,15 +244,12 @@ export default function AddMeal(props) {
                     }
                 })
             } else {
-                await axios.post(API + '/api/addmeal', {
-                    restaurant, city, meal, description, picture: compressedFile
-                }, {
-                    withCredentials: true
-                }).then((res) => {
-                    if (res.data === "meal added") {
-                        history.push('/mymeals');
-                    }
-                })
+                await postImage(compressedFile)
+                // await axios.post(API + '/api/addmeal', {
+                //     restaurant, city, meal, description, picture: compressedFile
+                // }, {
+                //     withCredentials: true
+                // })
             }
         }
     }

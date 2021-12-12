@@ -355,35 +355,40 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
   }
 }
 
-app.post("/api/addmeal", upload.single('image'), async (req: AuthRequest, res: Response) => {
-  const { user } = req;
-  const { body } = req;
-  const { restaurant, city, meal, description, picture } = body;
+app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response) => {
+  const file = req.file
+  console.log(file)
+  console.log(req.body);
+  
+  
+  // const { user } = req;
+  // const { body } = req;
+  // const { restaurant, city, meal, description, picture } = body;
 
-  let post: CapitalizeAndTrim = { restaurant, city, meal, description };
-  capitalizeAndTrim(post);
+  // let post: CapitalizeAndTrim = { restaurant, city, meal, description };
+  // capitalizeAndTrim(post);
 
-  const key = crypto.randomBytes(20).toString('hex');
+  // const key = crypto.randomBytes(20).toString('hex');
 
-  if (user) {
-    const newPost = new Post({
-      username: user.username,
-      isApproved: false,
-      restaurant: post.restaurant,
-      city: post.city,
-      meal: post.meal,
-      description: post.description,
-      pictureKey: key,
-      creationDate: new Date()
-    })
+  // if (user) {
+  //   const newPost = new Post({
+  //     username: user.username,
+  //     isApproved: false,
+  //     restaurant: post.restaurant,
+  //     city: post.city,
+  //     meal: post.meal,
+  //     description: post.description,
+  //     pictureKey: key,
+  //     creationDate: new Date()
+  //   })
 
-    await newPost.save()
-    // .catch(err => throw err);
-    // .then();
-    // console.log(key, picture);
-    const result = await uploadFile(key, picture)
-    res.send("meal added")
-  }
+  //   await newPost.save()
+  //   // .catch(err => throw err);
+  //   // .then();
+  //   // console.log(key, picture);
+  //   const result = await uploadFile(key, picture)
+  //   res.send("meal added")
+  // }
 })
 
 async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {

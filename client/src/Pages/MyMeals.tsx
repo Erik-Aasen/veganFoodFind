@@ -122,7 +122,7 @@ export default function MyMeals() {
                 <>
                     <div className='add-meal-prompt'>
                         <h5>You haven't added any meals yet!</h5>
-                        <Button href="/api/addmeal" variant="outline-success">Add a Meal</Button>
+                        <Button href="/addmeal" variant="outline-success">Add a Meal</Button>
                     </div>
                 </>
             )
