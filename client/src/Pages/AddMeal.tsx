@@ -40,6 +40,7 @@ export default function AddMeal(props) {
     const [description, setDescription] = useState<string>(initial.description);
     const [picture, setPicture] = useState<string>(initial.picture);
     const [orientation, setOrientation] = useState<number>(8);
+    const [compressedFile, setCompressedFile] = useState<object>(initial.compressedFile)
     const isEditMeal = initial.isEditMeal;
 
     const [buttonEnable, setButtonEnable] = useState<string>('enabled')
@@ -143,19 +144,20 @@ export default function AddMeal(props) {
             const imageFile = e.target.files[0];
 
             // Print unmodified EXIF data
-            // var readerUncompressed = new FileReader();
-            // await readerUncompressed.readAsDataURL(imageFile);
-            // readerUncompressed.onload = function () {
-            //     const jpegData = readerUncompressed.result;
-            //     var exifObjInitialUncompressed = piexif.load(jpegData)
-            //     console.log(exifObjInitialUncompressed.GPS);
-            // }
+            var readerUncompressed = new FileReader();
+            await readerUncompressed.readAsDataURL(imageFile);
+            readerUncompressed.onload = function () {
+                const jpegData = readerUncompressed.result;
+                var exifObjInitialUncompressed = piexif.load(jpegData)
+                console.log(exifObjInitialUncompressed.GPS);
+            }
 
             // Print original file size
             // console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
 
             // Compress file and print compressed file size
             const compressedFile = await imageCompression(imageFile, options);
+            setCompressedFile(compressedFile)
             // console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
             // console.log(typeof compressedFile);
 
@@ -168,8 +170,8 @@ export default function AddMeal(props) {
 
 
                 // Print EXIF data of compressed image
-                // var exifObjInitial = piexif.load(jpegData)
-                // console.log(exifObjInitial);
+                var exifObjInitial = piexif.load(jpegData)
+                console.log(exifObjInitial);
 
                 // Strip EXIF data of compressed image and set orientation
                 var strippedJpeg = piexif.remove(jpegData)
@@ -228,7 +230,7 @@ export default function AddMeal(props) {
                 })
             } else {
                 await axios.post(API + '/api/addmeal', {
-                    restaurant, city, meal, description, pictureString: picture
+                    restaurant, city, meal, description, picture: compressedFile
                 }, {
                     withCredentials: true
                 }).then((res) => {

@@ -1,5 +1,7 @@
 import S3 from 'aws-sdk/clients/s3';
 import dotenv from 'dotenv';
+const fs = require('fs')
+
 dotenv.config();
 
 const bucketName = process.env.AWS_BUCKET_NAME
@@ -13,11 +15,12 @@ const s3 = new S3({
   secretAccessKey
 })
 
-export function uploadFile(key: string, pictureString: string) {
+export function uploadFile(key: string, picture: any) {
+  const fileStream = fs.createReadStream(picture.path)
   // console.log(bucketName);
   const uploadParams = {
     Bucket: bucketName,
-    Body: pictureString,
+    Body: fileStream,
     Key: key
   }
   return s3.upload(uploadParams).promise()
@@ -41,23 +44,24 @@ export async function getFileStream(key: string) {
     Key: key,
     Bucket: bucketName
   }
-  // var pictureString = ''
+  // var picture = ''
 
   // return s3.getObject(downloadParams).createReadStream()
-  // const pictureString = 
-  // const pictureString = s3.getObject(downloadParams, (err, data) => {
+  // const picture = 
+  // const picture = s3.getObject(downloadParams, (err, data) => {
   // return data.Body.toString('utf-8')
   // return 1
-  // console.log(pictureString); // prints the string i want
-  // return pictureString
+  // console.log(picture); // prints the string i want
+  // return picture
   // })
 
   const data = await s3.getObject(downloadParams).promise();
-  return await data.Body.toString('utf-8');
+  // return await data.Body.toString('utf-8');
+  return data
 
 
 
-  // console.log(pictureString); // prints a big Request object
+  // console.log(picture); // prints a big Request object
 
   // return picture
 

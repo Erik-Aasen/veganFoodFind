@@ -21,6 +21,13 @@ const url = require('url');
 const rateLimit = require('express-rate-limit')
 const nodemailer = require('nodemailer')
 
+const fs = require('fs')
+const util = require('util')
+const unlinkFile = util.promisify(fs.unlink)
+
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
+
 const LocalStrategy = passportLocal.Strategy;
 dotenv.config();
 
@@ -136,7 +143,7 @@ app.get("/user", (req: AuthRequest, res: Response) => {
 async function getUserPictures(posts: PostInterface[]) {
   await Promise.all(posts.map(async (post) => {
     const picture = await getFileStream(post.pictureKey)
-    post.pictureString = picture
+    post.picture = picture
     post.pictureKey = '' // don't send the pictureKey to client
   }))
   return posts
@@ -348,10 +355,10 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
   }
 }
 
-app.post("/api/addmeal", async (req: AuthRequest, res: Response) => {
+app.post("/api/addmeal", upload.single('image'), async (req: AuthRequest, res: Response) => {
   const { user } = req;
   const { body } = req;
-  const { restaurant, city, meal, description, pictureString } = body;
+  const { restaurant, city, meal, description, picture } = body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
@@ -373,8 +380,8 @@ app.post("/api/addmeal", async (req: AuthRequest, res: Response) => {
     await newPost.save()
     // .catch(err => throw err);
     // .then();
-    // console.log(key, pictureString);
-    const result = await uploadFile(key, pictureString)
+    // console.log(key, picture);
+    const result = await uploadFile(key, picture)
     res.send("meal added")
   }
 })
@@ -386,7 +393,7 @@ async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
       if (post.isApproved === true) {
         const picture = await getFileStream(post.pictureKey)
         post.pictureKey = ''
-        post.pictureString = picture
+        post.picture = picture
 
       }
     } else // isApproved === false 
@@ -394,7 +401,7 @@ async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
       if (post.isApproved === false) {
         const picture = await getFileStream(post.pictureKey)
         post.pictureKey = ''
-        post.pictureString = picture
+        post.picture = picture
 
       }
     }
@@ -421,7 +428,7 @@ async function returnMealSpecified(posts: PostInterface[], meal: string) {
     if (post.meal === meal) {
       const picture = await getFileStream(post.pictureKey)
       post.pictureKey = ''
-      post.pictureString = picture
+      post.picture = picture
 
     }
   }))
@@ -435,7 +442,7 @@ async function returnCitySpecified(posts: PostInterface[], city: string) {
     if (post.city === city) {
       const picture = await getFileStream(post.pictureKey)
       post.pictureKey = ''
-      post.pictureString = picture
+      post.picture = picture
 
     }
   }))
@@ -449,7 +456,7 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
       if (post.meal === meal) {
         const picture = await getFileStream(post.pictureKey)
         post.pictureKey = ''
-        post.pictureString = picture
+        post.picture = picture
       }
     }
   }))
@@ -545,7 +552,7 @@ app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
 
   const { user } = req;
   const { _id, restaurant, city, meal,
-    description, pictureString } = req.body;
+    description, picture } = req.body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
@@ -574,7 +581,7 @@ app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
     })
       .exec(async function (err) {
         if (err) throw err;
-        const result = await uploadFile(key, pictureString)
+        const result = await uploadFile(key, picture)
         res.send('meal updated')
       })
   }

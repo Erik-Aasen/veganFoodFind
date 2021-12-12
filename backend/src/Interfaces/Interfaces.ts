@@ -29,7 +29,7 @@ export interface PostInterface {
   meal: string;
   description: string;
   pictureKey: string;
-  pictureString: string;
+  picture: object;
   skip: number;
 }
 
