@@ -11,7 +11,7 @@ export interface PostInterface {
     meal: string;
     description: string;
     pictureKey: string;
-    pictureString: string;
+    // picture: string;
     isApproved: boolean;
   }
 

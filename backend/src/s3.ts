@@ -15,13 +15,13 @@ const s3 = new S3({
   secretAccessKey
 })
 
-export function uploadFile(key: string, picture: any) {
-  const fileStream = fs.createReadStream(picture.path)
+export function uploadFile(file: any) {
+  const fileStream = fs.createReadStream(file.path)
   // console.log(bucketName);
   const uploadParams = {
     Bucket: bucketName,
     Body: fileStream,
-    Key: key
+    Key: file.filename
   }
   return s3.upload(uploadParams).promise()
 }
@@ -46,7 +46,7 @@ export async function getFileStream(key: string) {
   }
   // var picture = ''
 
-  // return s3.getObject(downloadParams).createReadStream()
+  return s3.getObject(downloadParams).createReadStream()
   // const picture = 
   // const picture = s3.getObject(downloadParams, (err, data) => {
   // return data.Body.toString('utf-8')
@@ -55,9 +55,17 @@ export async function getFileStream(key: string) {
   // return picture
   // })
 
-  const data = await s3.getObject(downloadParams).promise();
-  // return await data.Body.toString('utf-8');
-  return data
+  // const compressedFile = await s3.getObject(downloadParams).promise();
+  // console.log(compressedFile);
+  // console.log(compressedFile.toString());
+  
+  // var reader = new FileReader();
+  // await reader.readAsDataURL(compressedFile);
+  // reader.onload = function () {
+  //     const jpegData = reader.result;
+  // // return await data.Body.toString('utf-8');
+  // return jpegData
+  // return compressedFile
 
 
 

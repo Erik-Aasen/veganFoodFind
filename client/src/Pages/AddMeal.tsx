@@ -40,7 +40,7 @@ export default function AddMeal(props) {
     const [description, setDescription] = useState<string>(initial.description);
     const [picture, setPicture] = useState<string>(initial.picture);
     const [orientation, setOrientation] = useState<number>(8);
-    const [compressedFile, setCompressedFile] = useState<object>(initial.compressedFile)
+    const [compressedFile, setCompressedFile] = useState<File>(initial.compressedFile)
     const isEditMeal = initial.isEditMeal;
 
     const [buttonEnable, setButtonEnable] = useState<string>('enabled')
@@ -159,7 +159,7 @@ export default function AddMeal(props) {
             const compressedFile = await imageCompression(imageFile, options);
             setCompressedFile(compressedFile)
             // console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
-            // console.log(typeof compressedFile);
+            console.log(compressedFile);
 
             // Load compressed file
             var reader = new FileReader();
@@ -198,14 +198,17 @@ export default function AddMeal(props) {
         }
     }
 
-    const postImage = async (compressedFile) => {
+    const postImage = async () => {
         const formData = new FormData();
         formData.append('restaurant', restaurant)
         formData.append('city', city)
         formData.append('meal', meal)
         formData.append('description', description)
         formData.append('image', compressedFile)
-        await axios.post(API + '/api/addmeal', formData, { headers: {'Content-Type': 'multipart/form-data'}})
+        await axios.post(API + '/api/addmeal', formData, { 
+            withCredentials: true, 
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
         .then((res) => {
             if (res.data === "meal added") {
                 history.push('/mymeals');
@@ -244,7 +247,7 @@ export default function AddMeal(props) {
                     }
                 })
             } else {
-                await postImage(compressedFile)
+                await postImage()
                 // await axios.post(API + '/api/addmeal', {
                 //     restaurant, city, meal, description, picture: compressedFile
                 // }, {

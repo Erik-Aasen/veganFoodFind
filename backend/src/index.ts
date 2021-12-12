@@ -143,7 +143,7 @@ app.get("/user", (req: AuthRequest, res: Response) => {
 async function getUserPictures(posts: PostInterface[]) {
   await Promise.all(posts.map(async (post) => {
     const picture = await getFileStream(post.pictureKey)
-    post.picture = picture
+    // post.picture = picture
     post.pictureKey = '' // don't send the pictureKey to client
   }))
   return posts
@@ -198,6 +198,12 @@ app.get('/confirmation/:emailToken', async (req, res) => {
   }
 })
 
+app.get('/api/image/:key', async (req, res) => {
+  const key = req.params.key
+  const readStream = await getFileStream(key)
+  readStream.pipe(res)
+})
+
 // // app.get("/test", async (req: AuthRequest, res: Response) => {
 // // const readStream = await getFileStream('test')
 // // res.send(readStream)
@@ -226,7 +232,7 @@ const sendMail = async (_id: object, email: string) => {
           to: email,
           subject: 'Vegan Food Finder confirmation email',
           html:
-              `<p>Thanks for joining Vegan Food Finder!</p>
+            `<p>Thanks for joining Vegan Food Finder!</p>
               <b>Please click here to confirm your account: </b>
               <a href="${url}">Confirm Account</a>
               `
@@ -356,39 +362,50 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
 }
 
 app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response) => {
-  const file = req.file
-  console.log(file)
-  console.log(req.body);
+  const {file, body} = req
+  const {user} = req
+  // console.log(user, file, body);
   
-  
-  // const { user } = req;
-  // const { body } = req;
-  // const { restaurant, city, meal, description, picture } = body;
-
-  // let post: CapitalizeAndTrim = { restaurant, city, meal, description };
-  // capitalizeAndTrim(post);
+  // console.log(file)
+  // console.log(body);
 
   // const key = crypto.randomBytes(20).toString('hex');
 
-  // if (user) {
-  //   const newPost = new Post({
-  //     username: user.username,
-  //     isApproved: false,
-  //     restaurant: post.restaurant,
-  //     city: post.city,
-  //     meal: post.meal,
-  //     description: post.description,
-  //     pictureKey: key,
-  //     creationDate: new Date()
-  //   })
+  const result = await uploadFile(file)
+  unlinkFile(file.path)
 
-  //   await newPost.save()
-  //   // .catch(err => throw err);
-  //   // .then();
-  //   // console.log(key, picture);
-  //   const result = await uploadFile(key, picture)
-  //   res.send("meal added")
-  // }
+  // console.log(result);
+  
+  // const { user } = req;
+  // const { body } = req;
+  const { restaurant, city, meal, description } = body;
+
+  let post: CapitalizeAndTrim = { restaurant, city, meal, description };
+  capitalizeAndTrim(post);
+
+
+  if (user) {
+    // console.log(typeof file.filename);
+    
+    const newPost = new Post({
+      username: user.username,
+      isApproved: false,
+      restaurant: post.restaurant,
+      city: post.city,
+      meal: post.meal,
+      description: post.description,
+      pictureKey: file.filename,
+      creationDate: new Date()
+    })
+
+    await newPost.save()
+    // res.send("meal added")
+
+    // .catch(err => throw err);
+    // .then();
+    // console.log(key, picture);
+
+  }
 })
 
 async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
@@ -396,17 +413,17 @@ async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
   await Promise.all(posts.map(async (post) => {
     if (isApproved === true) {
       if (post.isApproved === true) {
-        const picture = await getFileStream(post.pictureKey)
-        post.pictureKey = ''
-        post.picture = picture
+        // const picture = await getFileStream(post.pictureKey)
+        // post.pictureKey = ''
+        // post.picture = picture
 
       }
     } else // isApproved === false 
     {
       if (post.isApproved === false) {
-        const picture = await getFileStream(post.pictureKey)
-        post.pictureKey = ''
-        post.picture = picture
+        // const picture = await getFileStream(post.pictureKey)
+        // post.pictureKey = ''
+        // post.picture = picture
 
       }
     }
@@ -433,7 +450,7 @@ async function returnMealSpecified(posts: PostInterface[], meal: string) {
     if (post.meal === meal) {
       const picture = await getFileStream(post.pictureKey)
       post.pictureKey = ''
-      post.picture = picture
+      // post.picture = picture
 
     }
   }))
@@ -447,7 +464,7 @@ async function returnCitySpecified(posts: PostInterface[], city: string) {
     if (post.city === city) {
       const picture = await getFileStream(post.pictureKey)
       post.pictureKey = ''
-      post.picture = picture
+      // post.picture = picture
 
     }
   }))
@@ -461,7 +478,7 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
       if (post.meal === meal) {
         const picture = await getFileStream(post.pictureKey)
         post.pictureKey = ''
-        post.picture = picture
+        // post.picture = picture
       }
     }
   }))
@@ -586,7 +603,7 @@ app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
     })
       .exec(async function (err) {
         if (err) throw err;
-        const result = await uploadFile(key, picture)
+        // const result = await uploadFile(key, picture)
         res.send('meal updated')
       })
   }
