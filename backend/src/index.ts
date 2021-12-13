@@ -501,16 +501,20 @@ app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
 
 
 // // PUT ROUTES
-app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
-
+app.put("/api/editmeal", upload.single('image'), async (req: any, res: Response) => {
+  const {file, body} = req;
   const { user } = req;
-  const { _id, restaurant, city, meal,
-    description, pictureKey } = req.body;
+  const result = await uploadFile(file)
+  unlinkFile(file.path)
+  const { _id, restaurant, city, meal, description, orientation } = body;
+
+  // const { _id, restaurant, city, meal,
+  //   description, pictureKey } = req.body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
 
-  const key = crypto.randomBytes(20).toString('hex');
+  // const key = crypto.randomBytes(20).toString('hex');
 
   if (user) {
     await Post.findOne({ _id: _id })
@@ -526,7 +530,7 @@ app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
         'city': post.city,
         'meal': post.meal,
         'description': post.description,
-        'pictureKey': key,
+        'pictureKey': file.filename,
         'isApproved': false,
         'updateDate': new Date()
       },
