@@ -20,6 +20,9 @@ const post = new mongoose.Schema({
     pictureKey: {
         type: String
     },
+    picture: {
+        type: String
+    },
     orientation: {
         type: Number
     },

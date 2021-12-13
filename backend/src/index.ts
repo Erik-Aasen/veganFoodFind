@@ -14,7 +14,6 @@ import { AuthRequest, RegisterRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken'
-// const jwt = require('jsonwebtoken')
 // import 'bootstrap'
 const url = require('url');
 // import rateLimit from 'express-rate-limit'
@@ -140,15 +139,6 @@ app.get("/user", (req: AuthRequest, res: Response) => {
   res.send(req.user);
 })
 
-async function getUserPictures(posts: PostInterface[]) {
-  await Promise.all(posts.map(async (post) => {
-    const picture = await getFileStream(post.pictureKey)
-    // post.picture = picture
-    post.pictureKey = '' // don't send the pictureKey to client
-  }))
-  return posts
-}
-
 app.get("/getallusers", isAdministratorMiddleware, async (req, res) => {
   await User.find({}, '_id username isAdmin').exec(function (err, data) {
     res.send(data)
@@ -168,9 +158,7 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
   await Post.find({ isApproved: false })
     .exec(async (err: Error, posts) => {
       if (err) throw err;
-      const postArray = await returnAllPosts(posts, false)
-
-      
+      const postArray = await returnAllPosts(posts)
       res.send(postArray)
     })
 })
@@ -203,8 +191,8 @@ app.get('/confirmation/:emailToken', async (req, res) => {
 app.get('/api/image/:key', async (req, res) => {
   const key = req.params.key
 
-  
-  
+
+
 })
 
 // // app.get("/test", async (req: AuthRequest, res: Response) => {
@@ -365,10 +353,10 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
 }
 
 app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response) => {
-  const {file, body} = req
-  const {user} = req
+  const { file, body } = req
+  const { user } = req
   // console.log(user, file, body);
-  
+
   // console.log(file)
   // console.log(body);
 
@@ -378,7 +366,7 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
   unlinkFile(file.path)
 
   // console.log(result);
-  
+
   // const { user } = req;
   // const { body } = req;
   const { restaurant, city, meal, description, orientation } = body;
@@ -389,7 +377,7 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
 
   if (user) {
     // console.log(typeof file.filename);
-    
+
     const newPost = new Post({
       username: user.username,
       isApproved: false,
@@ -403,7 +391,7 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
     })
 
     await newPost.save()
-    // res.send("meal added")
+    res.send("meal added")
 
     // .catch(err => throw err);
     // .then();
@@ -412,7 +400,7 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
   }
 })
 
-function streamToString (stream: any) {
+function streamToString(stream: any) {
   const chunks: any = [];
   return new Promise((resolve, reject) => {
     stream.on('data', (chunk: any) => chunks.push(Buffer.from(chunk)));
@@ -421,50 +409,14 @@ function streamToString (stream: any) {
   })
 }
 
-async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
+async function returnAllPosts(posts: PostInterface[]) {
 
   await Promise.all(posts.map(async (post) => {
-    if (isApproved === true) {
-      if (post.isApproved === true) {
-        // const picture = await getFileStream(post.pictureKey)
-        // post.pictureKey = ''
-        // post.picture = picture
-
-      }
-    } else // isApproved === false 
-    {
-      if (post.isApproved === false) {
-
-        const readStream = await getFileStream(post.pictureKey)
-        // readStream.pipe(res)
-        const result: any = await streamToString(readStream)
-        const picture = 'data:image/jpeg;base64,' + result
-
-        
-        
-        // res.send(image)
-      
-      
-     
-        // console.log(typeof readStream);
-        // console.log(readStream);
-
-
-
-
-
-
-
-        // const picture = await getFileStream(post.pictureKey)
-        post.pictureKey = ''
-        post.picture = picture
-
-        console.log(post);
-
-
-
-      }
-    }
+    const readStream = await getFileStream(post.pictureKey)
+    const result: any = await streamToString(readStream)
+    const picture = 'data:image/jpeg;base64,' + result
+    post.pictureKey = ''
+    post.picture = picture
   }))
   return posts
 }
@@ -523,6 +475,15 @@ async function returnCityMealSpecified(posts: PostInterface[], city: string, mea
   return posts;
 }
 
+// async function getUserPictures(posts: PostInterface[]) {
+//   await Promise.all(posts.map(async (post) => {
+//     const picture = await getFileStream(post.pictureKey)
+//     // post.picture = picture
+//     post.pictureKey = '' // don't send the pictureKey to client
+//   }))
+//   return posts
+// }
+
 app.post("/api/getmeals", async (req: AuthRequest, res) => {
   // console.log(Date.now());  
 
@@ -530,7 +491,7 @@ app.post("/api/getmeals", async (req: AuthRequest, res) => {
   if (city === "All cities") {
     if (meal === "All meals") {
       await Post.find({ isApproved: true }, {}, { skip: skip, limit: 3 }).exec(async function (err, posts: PostInterface[]) {
-        const postArray = await returnAllPosts(posts, true);
+        const postArray = await returnAllPosts(posts);
         res.send(postArray)
       })
     } else {
@@ -565,7 +526,7 @@ app.post("/api/usermeals", async (req: AuthRequest, res: Response) => {
   await Post.find({ username: user.username }, {}, { skip: skip, limit: 3 })
     .exec(async function (err, posts) {
       if (err) throw err;
-      const postArray = await getUserPictures(posts)
+      const postArray = await returnAllPosts(posts)
       res.send(postArray)
     })
 })

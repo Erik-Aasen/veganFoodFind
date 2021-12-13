@@ -12,7 +12,7 @@ export default function Meal(props) {
         city, pictureKey, picture, orientation, description,
         myMeal, adminMeal, isApproved } = props;
 
-    console.log(picture);
+    // console.log(picture);
     
 
     // const [picture, setPicture] = useState<string>()
