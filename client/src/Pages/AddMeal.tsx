@@ -205,6 +205,7 @@ export default function AddMeal(props) {
         formData.append('meal', meal)
         formData.append('description', description)
         formData.append('image', compressedFile)
+        formData.append('orientation', orientation.toString())
         await axios.post(API + '/api/addmeal', formData, { 
             withCredentials: true, 
             headers: {'Content-Type': 'multipart/form-data'}

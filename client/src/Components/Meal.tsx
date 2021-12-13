@@ -1,13 +1,43 @@
 
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from '../config'
+import piexif from 'piexifjs'
+// import streamToBlob from 'stream-to-blob'
 
 export default function Meal(props) {
     const {
         _id, meal, restaurant,
-        city, pictureKey, description,
+        city, pictureKey, orientation, description,
         myMeal, adminMeal, isApproved } = props;
+
+    const [picture, setPicture] = useState<string>()
+
+    useEffect(() => {
+        axios.get(API + '/api/image/' + pictureKey)
+            .then(async (res) => {
+                // console.log(res.data);
+                // const blob = await streamToBlob(res)
+
+                const result = res.data
+                //   const result = await streamToString(stream)
+
+                // var reader = new FileReader();
+                // await reader.readAsDataURL(result)
+                // reader.onload = function () {
+                //     const jpegData = reader.result;
+                //     // Strip EXIF data of compressed image and set orientation
+                //     var strippedJpeg = piexif.remove(jpegData)
+                //     var zeroth = {};
+                //     zeroth[piexif.ImageIFD.Orientation] = orientation;
+                //     var exifObj = { "0th": zeroth }
+                //     var exifbytes = piexif.dump(exifObj);
+                //     var newJpeg = piexif.insert(exifbytes, strippedJpeg)
+                setPicture(result)
+                // }
+            })
+    })
 
     const editmeal = {
         pathname: "/api/editmeal",
@@ -81,7 +111,7 @@ export default function Meal(props) {
                     {approvalNotice}
                     {editDelete}
                     {approveDelete}
-                    <img className='card-img-top' alt='' src={API + '/api/image/' + pictureKey} />
+                    <img className='card-img-top' alt='' src={picture} />
                     <h5 className='card-title'>{meal}</h5>
                     <p className='card-text'>{restaurant}</p>
                     <p className='card-text'>{city}</p>

@@ -201,7 +201,27 @@ app.get('/confirmation/:emailToken', async (req, res) => {
 app.get('/api/image/:key', async (req, res) => {
   const key = req.params.key
   const readStream = await getFileStream(key)
-  readStream.pipe(res)
+  // readStream.pipe(res)
+  const result: any = await streamToString(readStream)
+  const image = 'data:image/jpeg;base64,' + result
+  
+  // console.log(result);
+  
+  res.send(image)
+
+
+  function streamToString (stream: any) {
+      const chunks: any = [];
+      return new Promise((resolve, reject) => {
+        stream.on('data', (chunk: any) => chunks.push(Buffer.from(chunk)));
+        stream.on('error', (err: any) => reject(err));
+        stream.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
+      })
+    }
+  // console.log(typeof readStream);
+  // console.log(readStream);
+  
+  
 })
 
 // // app.get("/test", async (req: AuthRequest, res: Response) => {
@@ -395,6 +415,7 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
       meal: post.meal,
       description: post.description,
       pictureKey: file.filename,
+      orientation: Number(post.orientation),
       creationDate: new Date()
     })
 
@@ -574,7 +595,7 @@ app.put("/api/editmeal", async (req: AuthRequest, res: Response) => {
 
   const { user } = req;
   const { _id, restaurant, city, meal,
-    description, picture } = req.body;
+    description, pictureKey } = req.body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);

@@ -20,8 +20,8 @@ const post = new mongoose.Schema({
     pictureKey: {
         type: String
     },
-    pictureString: {
-        type: String
+    orientation: {
+        type: Number
     },
     isApproved: {
         type: Boolean,
