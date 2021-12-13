@@ -158,7 +158,7 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
   await Post.find({ isApproved: false })
     .exec(async (err: Error, posts) => {
       if (err) throw err;
-      const postArray = await returnAllPosts(posts)
+      const postArray = await returnPosts(posts)
       res.send(postArray)
     })
 })
@@ -176,7 +176,7 @@ app.get('/confirmation/:emailToken', async (req, res) => {
       .exec(async function (err) {
         if (err) throw err;
         res.redirect(url.format({
-          pathname: process.env.API_CLIENT + '/api/login',
+          pathname: process.env.API_CLIENT + '/login',
           query: {
             "verified": "true"
           }
@@ -355,29 +355,12 @@ function capitalizeAndTrim(post: CapitalizeAndTrim) {
 app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response) => {
   const { file, body } = req
   const { user } = req
-  // console.log(user, file, body);
-
-  // console.log(file)
-  // console.log(body);
-
-  // const key = crypto.randomBytes(20).toString('hex');
-
   const result = await uploadFile(file)
   unlinkFile(file.path)
-
-  // console.log(result);
-
-  // const { user } = req;
-  // const { body } = req;
   const { restaurant, city, meal, description, orientation } = body;
-
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
-
-
   if (user) {
-    // console.log(typeof file.filename);
-
     const newPost = new Post({
       username: user.username,
       isApproved: false,
@@ -409,7 +392,7 @@ function streamToString(stream: any) {
   })
 }
 
-async function returnAllPosts(posts: PostInterface[]) {
+async function returnPosts(posts: PostInterface[]) {
 
   await Promise.all(posts.map(async (post) => {
     const readStream = await getFileStream(post.pictureKey)
@@ -434,70 +417,19 @@ function returnMealsAndCities(allposts: PostInterface[]) {
   return mealsAndCities
 }
 
-async function returnMealSpecified(posts: PostInterface[], meal: string) {
-
-  await Promise.all(posts.map(async (post) => {
-    if (post.meal === meal) {
-      const picture = await getFileStream(post.pictureKey)
-      post.pictureKey = ''
-      // post.picture = picture
-
-    }
-  }))
-  return posts
-}
-
-async function returnCitySpecified(posts: PostInterface[], city: string) {
-
-
-  await Promise.all(posts.map(async (post) => {
-    if (post.city === city) {
-      const picture = await getFileStream(post.pictureKey)
-      post.pictureKey = ''
-      // post.picture = picture
-
-    }
-  }))
-  return posts;
-}
-
-async function returnCityMealSpecified(posts: PostInterface[], city: string, meal: string) {
-
-  await Promise.all(posts.map(async (post) => {
-    if (post.city === city) {
-      if (post.meal === meal) {
-        const picture = await getFileStream(post.pictureKey)
-        post.pictureKey = ''
-        // post.picture = picture
-      }
-    }
-  }))
-  return posts;
-}
-
-// async function getUserPictures(posts: PostInterface[]) {
-//   await Promise.all(posts.map(async (post) => {
-//     const picture = await getFileStream(post.pictureKey)
-//     // post.picture = picture
-//     post.pictureKey = '' // don't send the pictureKey to client
-//   }))
-//   return posts
-// }
-
 app.post("/api/getmeals", async (req: AuthRequest, res) => {
-  // console.log(Date.now());  
 
   const { city, meal, skip } = req.body;
   if (city === "All cities") {
     if (meal === "All meals") {
       await Post.find({ isApproved: true }, {}, { skip: skip, limit: 3 }).exec(async function (err, posts: PostInterface[]) {
-        const postArray = await returnAllPosts(posts);
+        const postArray = await returnPosts(posts);
         res.send(postArray)
       })
     } else {
       await Post.find({ meal: meal, isApproved: true }, {}, { skip: skip, limit: 3 })
         .exec(async function (err, posts) {
-          const postArray = await returnMealSpecified(posts, meal)
+          const postArray = await returnPosts(posts)
           res.send(postArray)
         })
     }
@@ -505,13 +437,13 @@ app.post("/api/getmeals", async (req: AuthRequest, res) => {
     if (meal === "All meals") {
       await Post.find({ city: city, isApproved: true }, {}, { skip: skip, limit: 3 })
         .exec(async function (err, posts) {
-          const postArray = await returnCitySpecified(posts, city)
+          const postArray = await returnPosts(posts)
           res.send(postArray)
         })
     } else {
       await Post.find({ city: city, meal: meal, isApproved: true }, {}, { skip: skip, limit: 3 })
         .exec(async function (err, posts) {
-          const postArray = await returnCityMealSpecified(posts, city, meal)
+          const postArray = await returnPosts(posts)
           res.send(postArray)
         })
     }
@@ -526,7 +458,7 @@ app.post("/api/usermeals", async (req: AuthRequest, res: Response) => {
   await Post.find({ username: user.username }, {}, { skip: skip, limit: 3 })
     .exec(async function (err, posts) {
       if (err) throw err;
-      const postArray = await returnAllPosts(posts)
+      const postArray = await returnPosts(posts)
       res.send(postArray)
     })
 })
