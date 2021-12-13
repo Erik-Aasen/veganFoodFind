@@ -169,6 +169,8 @@ app.get("/adminmeals", isAdministratorMiddleware, async (req: AuthRequest, res: 
     .exec(async (err: Error, posts) => {
       if (err) throw err;
       const postArray = await returnAllPosts(posts, false)
+
+      
       res.send(postArray)
     })
 })
@@ -200,26 +202,7 @@ app.get('/confirmation/:emailToken', async (req, res) => {
 
 app.get('/api/image/:key', async (req, res) => {
   const key = req.params.key
-  const readStream = await getFileStream(key)
-  // readStream.pipe(res)
-  const result: any = await streamToString(readStream)
-  const image = 'data:image/jpeg;base64,' + result
-  
-  // console.log(result);
-  
-  res.send(image)
 
-
-  function streamToString (stream: any) {
-      const chunks: any = [];
-      return new Promise((resolve, reject) => {
-        stream.on('data', (chunk: any) => chunks.push(Buffer.from(chunk)));
-        stream.on('error', (err: any) => reject(err));
-        stream.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
-      })
-    }
-  // console.log(typeof readStream);
-  // console.log(readStream);
   
   
 })
@@ -398,7 +381,7 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
   
   // const { user } = req;
   // const { body } = req;
-  const { restaurant, city, meal, description } = body;
+  const { restaurant, city, meal, description, orientation } = body;
 
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
@@ -415,7 +398,7 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
       meal: post.meal,
       description: post.description,
       pictureKey: file.filename,
-      orientation: Number(post.orientation),
+      orientation: Number(orientation),
       creationDate: new Date()
     })
 
@@ -428,6 +411,15 @@ app.post("/api/addmeal", upload.single('image'), async (req: any, res: Response)
 
   }
 })
+
+function streamToString (stream: any) {
+  const chunks: any = [];
+  return new Promise((resolve, reject) => {
+    stream.on('data', (chunk: any) => chunks.push(Buffer.from(chunk)));
+    stream.on('error', (err: any) => reject(err));
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('base64')));
+  })
+}
 
 async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
 
@@ -442,9 +434,34 @@ async function returnAllPosts(posts: PostInterface[], isApproved: boolean) {
     } else // isApproved === false 
     {
       if (post.isApproved === false) {
+
+        const readStream = await getFileStream(post.pictureKey)
+        // readStream.pipe(res)
+        const result: any = await streamToString(readStream)
+        const picture = 'data:image/jpeg;base64,' + result
+
+        
+        
+        // res.send(image)
+      
+      
+     
+        // console.log(typeof readStream);
+        // console.log(readStream);
+
+
+
+
+
+
+
         // const picture = await getFileStream(post.pictureKey)
-        // post.pictureKey = ''
-        // post.picture = picture
+        post.pictureKey = ''
+        post.picture = picture
+
+        console.log(post);
+
+
 
       }
     }

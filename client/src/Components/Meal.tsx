@@ -1,43 +1,46 @@
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+// import { useState } from "react";
 import { Link } from "react-router-dom";
 import API from '../config'
-import piexif from 'piexifjs'
+// import piexif from 'piexifjs'
 // import streamToBlob from 'stream-to-blob'
 
 export default function Meal(props) {
     const {
         _id, meal, restaurant,
-        city, pictureKey, orientation, description,
+        city, pictureKey, picture, orientation, description,
         myMeal, adminMeal, isApproved } = props;
 
-    const [picture, setPicture] = useState<string>()
+    console.log(picture);
+    
 
-    useEffect(() => {
-        axios.get(API + '/api/image/' + pictureKey)
-            .then(async (res) => {
-                // console.log(res.data);
-                // const blob = await streamToBlob(res)
+    // const [picture, setPicture] = useState<string>()
 
-                const result = res.data
-                //   const result = await streamToString(stream)
+    // useEffect(() => {
+    //     axios.get(API + '/api/image/' + pictureKey)
+    //         .then(async (res) => {
+    //             // console.log(res.data);
+    //             // const blob = await streamToBlob(res)
 
-                // var reader = new FileReader();
-                // await reader.readAsDataURL(result)
-                // reader.onload = function () {
-                //     const jpegData = reader.result;
-                //     // Strip EXIF data of compressed image and set orientation
-                //     var strippedJpeg = piexif.remove(jpegData)
-                //     var zeroth = {};
-                //     zeroth[piexif.ImageIFD.Orientation] = orientation;
-                //     var exifObj = { "0th": zeroth }
-                //     var exifbytes = piexif.dump(exifObj);
-                //     var newJpeg = piexif.insert(exifbytes, strippedJpeg)
-                setPicture(result)
-                // }
-            })
-    })
+    //             const result = res.data
+    //             //   const result = await streamToString(stream)
+
+    //             // var reader = new FileReader();
+    //             // await reader.readAsDataURL(result)
+    //             // reader.onload = function () {
+    //             //     const jpegData = reader.result;
+    //             //     // Strip EXIF data of compressed image and set orientation
+    //             //     var strippedJpeg = piexif.remove(jpegData)
+    //             //     var zeroth = {};
+    //             //     zeroth[piexif.ImageIFD.Orientation] = orientation;
+    //             //     var exifObj = { "0th": zeroth }
+    //             //     var exifbytes = piexif.dump(exifObj);
+    //             //     var newJpeg = piexif.insert(exifbytes, strippedJpeg)
+    //             setPicture(result)
+    //             // }
+    //         })
+    // })
 
     const editmeal = {
         pathname: "/api/editmeal",

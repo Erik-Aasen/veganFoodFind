@@ -30,7 +30,7 @@ export interface PostInterface {
   description: string;
   pictureKey: string;
   orientation: number;
-  // picture: string;
+  picture: string;
   skip: number;
 }
 
