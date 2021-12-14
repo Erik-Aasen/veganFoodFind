@@ -21,14 +21,16 @@ export default function AddMeal(props) {
             isEditMeal: false
         }
     } else {
+        // console.log(props.location._id);
+        
         initial = {
             _id: props.location._id,
             restaurant: props.location.restaurant,
             city: props.location.city,
             meal: props.location.meal,
             description: props.location.description,
-            picture: props.location.pictureString,
-            orientation: 8, //props.location.orientation?
+            picture: props.location.picture,
+            orientation: props.location.orientation,
             isEditMeal: props.location.isEditMeal
         }
     }
@@ -39,8 +41,9 @@ export default function AddMeal(props) {
     const [meal, setMeal] = useState<string>(initial.meal);
     const [description, setDescription] = useState<string>(initial.description);
     const [picture, setPicture] = useState<string>(initial.picture);
-    const [orientation, setOrientation] = useState<number>(8);
+    const [orientation, setOrientation] = useState<number>(initial.orientation);
     const [compressedFile, setCompressedFile] = useState<File>(initial.compressedFile)
+    const [newPicture, setNewPicture] = useState<boolean>(false)
     const isEditMeal = initial.isEditMeal;
 
     const [buttonEnable, setButtonEnable] = useState<string>('enabled')
@@ -94,6 +97,8 @@ export default function AddMeal(props) {
 
     const rotateMinus = (e) => {
         e.preventDefault();
+        // console.log(orientation);
+
         if (orientation > 1) {
             setOrientation(orientation - 1)
             var zeroth = {};
@@ -115,6 +120,8 @@ export default function AddMeal(props) {
 
     const rotatePlus = (e) => {
         e.preventDefault();
+        // console.log(orientation);
+
         if (orientation < 8) {
             setOrientation(orientation + 1)
             var zeroth = {};
@@ -135,6 +142,7 @@ export default function AddMeal(props) {
     }
 
     const onDrop = async (e) => {
+        setNewPicture(true)
         const options = {
             maxSizeMB: .25, // 0.15 might be the best
             maxIteration: 30
@@ -177,6 +185,8 @@ export default function AddMeal(props) {
                 var strippedJpeg = piexif.remove(jpegData)
                 var zeroth = {};
                 zeroth[piexif.ImageIFD.Orientation] = orientation;
+                console.log(orientation);
+
                 var exifObj = { "0th": zeroth }
                 var exifbytes = piexif.dump(exifObj);
                 var newJpeg = piexif.insert(exifbytes, strippedJpeg)
@@ -198,23 +208,25 @@ export default function AddMeal(props) {
         }
     }
 
-    const postImage = async () => {
+    const postImage = async (addOrEdit) => {
         const formData = new FormData();
+        formData.append('_id', _id)
         formData.append('restaurant', restaurant)
         formData.append('city', city)
         formData.append('meal', meal)
         formData.append('description', description)
         formData.append('image', compressedFile)
         formData.append('orientation', orientation.toString())
-        await axios.post(API + '/api/addmeal', formData, { 
-            withCredentials: true, 
-            headers: {'Content-Type': 'multipart/form-data'}
+
+        await axios.post(API + `/api/${addOrEdit}meal`, formData, {
+            withCredentials: true,
+            headers: { 'Content-Type': 'multipart/form-data' }
         })
-        .then((res) => {
-            if (res.data === "meal added") {
-                history.push('/mymeals');
-            }
-        })
+            .then((res) => {
+                if (res.data === "meal added") {
+                    history.push('/mymeals');
+                }
+            })
     }
 
     const submitMeal = async (e) => {
@@ -238,17 +250,21 @@ export default function AddMeal(props) {
         } else {
             setButtonEnable('disabled')
             if (isEditMeal) {
-                await axios.put(API + '/api/editmeal', {
-                    _id, restaurant, city, meal, description, pictureString: picture
-                }, {
-                    withCredentials: true
-                }).then((res) => {
-                    if (res.data === "meal updated") {
-                        history.push({ pathname: '/mymeals' });
-                    }
-                })
+                if (newPicture) {
+                    await postImage('edit')
+                } else { //not newPicture
+                    await axios.put(API + '/api/editmealinfo', {
+                        _id, restaurant, city, meal, description, orientation
+                    }, {
+                        withCredentials: true
+                    }).then((res) => {
+                        if (res.data === "meal updated") {
+                            history.push({ pathname: '/mymeals' });
+                        }
+                    })
+                }
             } else {
-                await postImage()
+                await postImage('add')
                 // await axios.post(API + '/api/addmeal', {
                 //     restaurant, city, meal, description, picture: compressedFile
                 // }, {

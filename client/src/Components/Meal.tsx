@@ -3,17 +3,26 @@ import axios from "axios";
 // import { useState } from "react";
 import { Link } from "react-router-dom";
 import API from '../config'
-// import piexif from 'piexifjs'
+import piexif from 'piexifjs'
 // import streamToBlob from 'stream-to-blob'
 
 export default function Meal(props) {
     const {
         _id, meal, restaurant,
-        city, pictureKey, picture, orientation, description,
+        city, picture, orientation, description,
         myMeal, adminMeal, isApproved } = props;
 
-    // console.log(picture);
+    // console.log(orientation);
     
+
+    const zeroth = {};
+    zeroth[piexif.ImageIFD.Orientation] = orientation;
+    const exifObj = { "0th": zeroth }
+    const exifbytes = piexif.dump(exifObj);
+    const newJpeg = piexif.insert(exifbytes, picture)
+
+    // console.log(picture);
+
 
     // const [picture, setPicture] = useState<string>()
 
@@ -26,29 +35,30 @@ export default function Meal(props) {
     //             const result = res.data
     //             //   const result = await streamToString(stream)
 
-    //             // var reader = new FileReader();
+    //             // const reader = new FileReader();
     //             // await reader.readAsDataURL(result)
     //             // reader.onload = function () {
     //             //     const jpegData = reader.result;
     //             //     // Strip EXIF data of compressed image and set orientation
-    //             //     var strippedJpeg = piexif.remove(jpegData)
-    //             //     var zeroth = {};
+    //             //     const strippedJpeg = piexif.remove(jpegData)
+    //             //     const zeroth = {};
     //             //     zeroth[piexif.ImageIFD.Orientation] = orientation;
-    //             //     var exifObj = { "0th": zeroth }
-    //             //     var exifbytes = piexif.dump(exifObj);
-    //             //     var newJpeg = piexif.insert(exifbytes, strippedJpeg)
+    //             //     const exifObj = { "0th": zeroth }
+    //             //     const exifbytes = piexif.dump(exifObj);
+    //             //     const newJpeg = piexif.insert(exifbytes, strippedJpeg)
     //             setPicture(result)
     //             // }
     //         })
     // })
 
     const editmeal = {
-        pathname: "/api/editmeal",
+        pathname: "/editmeal",
         _id: _id,
         meal: meal,
         restaurant: restaurant,
         city: city,
-        pictureKey: pictureKey,
+        picture: newJpeg,
+        orientation: orientation,
         description: description,
         isEditMeal: true
     }
@@ -114,7 +124,7 @@ export default function Meal(props) {
                     {approvalNotice}
                     {editDelete}
                     {approveDelete}
-                    <img className='card-img-top' alt='' src={picture} />
+                    <img className='card-img-top' alt='' src={newJpeg} />
                     <h5 className='card-title'>{meal}</h5>
                     <p className='card-text'>{restaurant}</p>
                     <p className='card-text'>{city}</p>

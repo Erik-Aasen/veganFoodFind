@@ -400,6 +400,8 @@ async function returnPosts(posts: PostInterface[]) {
     const picture = 'data:image/jpeg;base64,' + result
     post.pictureKey = ''
     post.picture = picture
+    // console.log(post.pictureKey);
+    
   }))
   return posts
 }
@@ -501,16 +503,15 @@ app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
 
 
 // // PUT ROUTES
-app.put("/api/editmeal", upload.single('image'), async (req: any, res: Response) => {
+app.post("/api/editmeal", upload.single('image'), async (req: any, res: Response) => {
   const {file, body} = req;
   const { user } = req;
+
   const result = await uploadFile(file)
   unlinkFile(file.path)
   const { _id, restaurant, city, meal, description, orientation } = body;
-
-  // const { _id, restaurant, city, meal,
-  //   description, pictureKey } = req.body;
-
+  console.log(body);
+  
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
 
@@ -520,6 +521,8 @@ app.put("/api/editmeal", upload.single('image'), async (req: any, res: Response)
     await Post.findOne({ _id: _id })
       .exec(function (err, data: PostInterface) {
         if (err) throw err;
+        // console.log(data);
+        
         const oldKey = data.pictureKey
         deleteFile(oldKey)
       })
@@ -531,6 +534,46 @@ app.put("/api/editmeal", upload.single('image'), async (req: any, res: Response)
         'meal': post.meal,
         'description': post.description,
         'pictureKey': file.filename,
+        'orientation': orientation,
+        'isApproved': false,
+        'updateDate': new Date()
+      },
+      runValidators: true
+    })
+      .exec(async function (err) {
+        if (err) throw err;
+        // const result = await uploadFile(key, picture)
+        res.send('meal added')
+      })
+  }
+})
+
+app.put('/api/editmealinfo', async (req: any, res) => {
+  const { body } = req;
+  const { user } = req;
+  const { _id, restaurant, city, meal, description, orientation } = body;
+
+  let post: CapitalizeAndTrim = { restaurant, city, meal, description };
+  capitalizeAndTrim(post);
+
+  // const key = crypto.randomBytes(20).toString('hex');
+
+  if (user) {
+    // await Post.findOne({ _id: _id })
+    //   .exec(function (err, data: PostInterface) {
+    //     if (err) throw err;
+    //     const oldKey = data.pictureKey
+    //     deleteFile(oldKey)
+    //   })
+
+    await Post.updateOne({ _id: _id }, {
+      '$set': {
+        'restaurant': post.restaurant,
+        'city': post.city,
+        'meal': post.meal,
+        'description': post.description,
+        // 'pictureKey': file.filename,
+        'orientation': orientation,
         'isApproved': false,
         'updateDate': new Date()
       },
@@ -543,6 +586,7 @@ app.put("/api/editmeal", upload.single('image'), async (req: any, res: Response)
       })
   }
 })
+
 
 app.put("/api/deletemeal", async (req: AuthRequest, res) => {
   const { user } = req;
