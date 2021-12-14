@@ -22,7 +22,7 @@ export default function AddMeal(props) {
         }
     } else {
         // console.log(props.location._id);
-        
+
         initial = {
             _id: props.location._id,
             restaurant: props.location.restaurant,
@@ -44,6 +44,7 @@ export default function AddMeal(props) {
     const [orientation, setOrientation] = useState<number>(initial.orientation);
     const [compressedFile, setCompressedFile] = useState<File>(initial.compressedFile)
     const [newPicture, setNewPicture] = useState<boolean>(false)
+    const [exifStripped, setExifStripped] = useState<boolean>(false)
     const isEditMeal = initial.isEditMeal;
 
     const [buttonEnable, setButtonEnable] = useState<string>('enabled')
@@ -157,7 +158,7 @@ export default function AddMeal(props) {
             readerUncompressed.onload = function () {
                 const jpegData = readerUncompressed.result;
                 var exifObjInitialUncompressed = piexif.load(jpegData)
-                console.log(exifObjInitialUncompressed.GPS);
+                console.log(exifObjInitialUncompressed);
             }
 
             // Print original file size
@@ -167,11 +168,12 @@ export default function AddMeal(props) {
             const compressedFile = await imageCompression(imageFile, options);
             setCompressedFile(compressedFile)
             // console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
-            console.log(compressedFile);
+            // console.log(compressedFile);
 
             // Load compressed file
             var reader = new FileReader();
             await reader.readAsDataURL(compressedFile);
+            // await reader.readAsDataURL(imageFile) //test that it won't load
             reader.onload = function () {
                 const jpegData = reader.result;
                 // console.log(typeof jpegData);
@@ -179,13 +181,24 @@ export default function AddMeal(props) {
 
                 // Print EXIF data of compressed image
                 var exifObjInitial = piexif.load(jpegData)
-                console.log(exifObjInitial);
+                if (Object.keys(exifObjInitial.GPS).length === 0) {
+                    setExifStripped(true)
+                }
+
+                Object.keys(exifObjInitial).forEach(key => {
+                    if (key !== 'thumbnail') {
+                        if (Object.keys(exifObjInitial[key]).length > 0) {
+                            setExifStripped(false)
+                        }
+                    }
+                })
+
 
                 // Strip EXIF data of compressed image and set orientation
                 var strippedJpeg = piexif.remove(jpegData)
                 var zeroth = {};
                 zeroth[piexif.ImageIFD.Orientation] = orientation;
-                console.log(orientation);
+                // console.log(orientation);
 
                 var exifObj = { "0th": zeroth }
                 var exifbytes = piexif.dump(exifObj);
@@ -218,15 +231,17 @@ export default function AddMeal(props) {
         formData.append('image', compressedFile)
         formData.append('orientation', orientation.toString())
 
-        await axios.post(API + `/api/${addOrEdit}meal`, formData, {
-            withCredentials: true,
-            headers: { 'Content-Type': 'multipart/form-data' }
-        })
-            .then((res) => {
-                if (res.data === "meal added") {
-                    history.push('/mymeals');
-                }
+        if (exifStripped) {
+            await axios.post(API + `/api/${addOrEdit}meal`, formData, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'multipart/form-data' }
             })
+                .then((res) => {
+                    if (res.data === "meal added") {
+                        history.push('/mymeals');
+                    }
+                })
+        }
     }
 
     const submitMeal = async (e) => {
