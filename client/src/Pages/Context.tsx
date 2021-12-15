@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, PropsWithChildren } from 'react'
 import Axios, { AxiosResponse } from "axios";
 import { UserInterface } from '../Interfaces/Interfaces';
-import API from '../config'
+import {API} from '../config'
 
 export const myContext = createContext<Partial<UserInterface>>({})
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import API from '../config'
+import {API} from '../config'
 import { FormError } from '../Interfaces/Interfaces';
 import { Form, Button } from 'react-bootstrap';
 import { RegisterInterface } from '../Interfaces/Interfaces';

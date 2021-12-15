@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
-import API from '../config'
+import {API} from '../config'
 import { Form, Button } from 'react-bootstrap';
 import queryString from 'query-string'
 

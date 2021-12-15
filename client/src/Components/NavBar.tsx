@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { myContext } from '../Pages/Context';
 import Axios from "axios";
 import { Navbar, Nav, Button } from 'react-bootstrap'
-import API from '../config'
+import {API} from '../config'
 
 export default function NavBar() {
     const ctx = useContext(myContext);

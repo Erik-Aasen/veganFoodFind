@@ -1,6 +1,6 @@
 import Axios from "axios"
 import { useEffect, useState } from "react"
-import API from '../config'
+import {API} from '../config'
 import { CityMealResponse } from "../definitionfile"
 import { CityMeal } from "../Interfaces/Interfaces"
 import { Button, Spinner } from "react-bootstrap"

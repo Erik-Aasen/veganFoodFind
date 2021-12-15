@@ -2,7 +2,7 @@
 import axios from "axios";
 // import { useState } from "react";
 import { Link } from "react-router-dom";
-import API from '../config'
+import {API} from '../config'
 import piexif from 'piexifjs'
 // import streamToBlob from 'stream-to-blob'
 

@@ -3,7 +3,7 @@ import { myContext } from '../Pages/Context';
 import Axios, { AxiosResponse } from 'axios';
 import { useState, useEffect } from 'react';
 import { PostInterface, UserInterface } from '../Interfaces/Interfaces';
-import API from '../config'
+import {API} from '../config'
 import { PostResponse, UserResponse } from '../definitionfile';
 import { display } from '../Components/DisplayPosts';
 

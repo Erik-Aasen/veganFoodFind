@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 // import Meal from '../Components/Meal';
 import { useContext } from 'react';
 import { myContext } from './Context';
-import API from '../config'
+import {API} from '../config'
 import { Button } from 'react-bootstrap'
 import { PostInterface } from '../Interfaces/Interfaces';
 import { PostResponse } from '../definitionfile';

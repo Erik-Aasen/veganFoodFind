@@ -2,7 +2,7 @@ import { useState } from 'react'
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import piexif from 'piexifjs';
-import API from '../config'
+import {API} from '../config'
 import { Form, Button, Spinner } from 'react-bootstrap';
 import imageCompression from 'browser-image-compression';
 

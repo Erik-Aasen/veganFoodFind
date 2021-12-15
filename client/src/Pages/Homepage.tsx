@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import HomePageSearch from '../Components/HomePageSearch'
 import Axios from 'axios';
-import API from '../config';
+import {API} from '../config';
 import { PostResponse } from '../definitionfile';
 import { PostInterface } from '../Interfaces/Interfaces';
 import { display } from '../Components/DisplayPosts';
