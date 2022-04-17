@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "heroku-postbuild": "cd backend && npm install && npm run build && cd ../client && npm install && npm run build",
-    "start": "cd backend && npm run start",
+    "start": "cd backend && pwd",
     "dev": "cd backend && nodemon src/index.ts"
   },
   "devDependencies": {
