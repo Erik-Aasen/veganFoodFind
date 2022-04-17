@@ -3,7 +3,7 @@ if (process.env.NODE_ENV === 'production') {
     let API = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
     
     // eslint-disable-next-line
-    var API_CLIENT = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
+    // var API_CLIENT = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
     // var API = "https://vegan-food-find.herokuapp.com"
 }
 
@@ -25,8 +25,9 @@ else {
     let API = ''
     
     // eslint-disable-next-line
-    let API_CLIENT = ''
+    // let API_CLIENT = ''
 }
 
-export {API, API_CLIENT};
+export { API }
+// export {API, API_CLIENT};
 // export API_CLIENT;

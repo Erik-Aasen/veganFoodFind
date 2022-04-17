@@ -27,3 +27,5 @@ notes.txt
 
 .vscode
 package-lock.json
+
+heroku_config.sh

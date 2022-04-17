@@ -1,14 +1,16 @@
-if (process.env.MODE === 'production') {
+if (process.env.MODE === 'production' || process.env.MODE === 'staging') {
     // eslint-disable-next-line
-    var API = "https://vegan-food-find.herokuapp.com"
-    var API_CLIENT = "https://vegan-food-find.herokuapp.com"
+    var API  = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
+    var API_CLIENT  = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
+    // var API = "https://vegan-food-find.herokuapp.com"
+    // var API_CLIENT = "https://vegan-food-find.herokuapp.com"
 }
 
-if (process.env.MODE === 'test') {
-    // eslint-disable-next-line
-    var API = "https://vegan-food-find-staging.herokuapp.com"
-    var API_CLIENT = "https://vegan-food-find-staging.herokuapp.com"
-}
+// if (process.env.MODE === 'test') {
+//     // eslint-disable-next-line
+//     var API = "https://vegan-food-find-staging.herokuapp.com"
+//     var API_CLIENT = "https://vegan-food-find-staging.herokuapp.com"
+// }
 
 if (process.env.MODE === 'development') {
     // eslint-disable-next-line
