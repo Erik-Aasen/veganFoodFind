@@ -1,6 +1,6 @@
 if (process.env.NODE_ENV === 'production') {
     // eslint-disable-next-line
-    let API = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
+    var API = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
     
     // eslint-disable-next-line
     // var API_CLIENT = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'development') {
 
 else {
     // eslint-disable-next-line
-    let API = ''
+    var API = ''
     
     // eslint-disable-next-line
     // let API_CLIENT = ''
