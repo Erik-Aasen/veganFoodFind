@@ -230,7 +230,8 @@ export default function AddMeal(props) {
         formData.append('description', description)
         formData.append('image', compressedFile)
         formData.append('orientation', orientation.toString())
-
+        console.log(exifStripped);
+        
         if (exifStripped) {
             console.log(API);
             
