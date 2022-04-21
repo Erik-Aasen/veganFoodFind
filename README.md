@@ -4,15 +4,29 @@ App hosted on Heroku: https://vegan-food-find.herokuapp.com
 
 - A MERN full stack application that allows users to upload meals with images and provides an interactive search selector for finding meals by city
 
-- Session based authentication using passport.js and stored with React Context
+- Session based authentication using passport.js
+
+- Authorization via React Context and React Router
+
+- Node.js server with express framework and REST APIs
 
 - MongoDB Atlas management and integration
+
+- AWS S3 integration for image storing
+
+- Types defined with Typescript in front and back end
 
 - Image EXIF data stripped upon upload and users can choose image orientation, edit and delete their posts
 
 - Types defined with Typescript in front and back end
 
 - Mobile responsive design utilizing Bootstrap
+
+- Email confirmation for user authorization with nodemailer.js
+
+- Implemented custom admin middleware for content moderation through post approval
+
+- Lazy loading posts feature
 
 ## Technologies used
 
@@ -83,20 +97,16 @@ Continuous Deployment with Heroku.
 |   |   |-- user (record)
 |   |   |   |-- _id (ObjectId created by Mongo)
 |   |   |   |-- isAdmin (false by default)
+|   |   |   |-- isVerified (false by default)
+|	|	|	|-- email (set by user on registration)
 |   |   |   |-- username (set by user on registration)
 |   |   |   |-- password (set by user on registration + salted + hashed)
-|   |   |   |-- posts (Array)
-|   |   |   |   |-- Object
-|   |   |   |   |   |-- _id (ObjectId created by Mongo)
-|   |   |   |   |   |-- restaurant (set by user)
-|   |   |   |   |   |-- city (set by user)
-|   |   |   |   |   |-- meal (set by user)
-|   |   |   |   |   |-- description (set by user)
-|   |   |   |   |   |-- picture (set by user, base64 encoded string)
-```
-
-## Future improvements
-- Currently, the images are stored directly in MongoDB as base64 encoded strings  
-&#8594; Better practice would be to store images in AWS S3 buckets and reference them in MongoDB
-
-- Images should be compressed to save space and improve loading time
+|   |-- posts (collection)
+|   |   |-- post (record)
+|   |   |   |-- _id (ObjectId created by Mongo)
+|   |   |   |-- restaurant (set by user)
+|   |   |   |-- city (set by user)
+|   |   |   |-- meal (set by user)
+|   |   |   |-- description (set by user)
+|   |   |   |-- pictureKey (set by user, base64 encoded string)
+|   |   |   |-- orientation
