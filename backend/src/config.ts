@@ -1,19 +1,18 @@
-if (process.env.MODE === 'production' || process.env.MODE === 'staging') {
-    // eslint-disable-next-line
-    var API  = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
-    var API_CLIENT  = API;
+var API: string;
+var API_CLIENT: string;
+
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
+    API  = 'https://' + process.env.HEROKU_APP_NAME + '.herokuapp.com'
+    API_CLIENT  = API;
+    console.log(API);
+    
 }
 
-if (process.env.MODE === 'development') {
-    // eslint-disable-next-line
-    var API = process.env.API // "http://localhost:4000"
-    var API_CLIENT = process.env.API_CLIENT // "http://localhost:3000"
+if (process.env.NODE_ENV === 'development') {
+    API = process.env.API // "http://localhost:4000"
+    API_CLIENT = process.env.API_CLIENT // "http://localhost:3000"
+    console.log(API);
+    
 }
 
-else {
-    // eslint-disable-next-line
-    var API = ''
-    var API_CLIENT = ''
-}
-
-export {API, API_CLIENT}
+export { API, API_CLIENT }

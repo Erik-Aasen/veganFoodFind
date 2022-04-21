@@ -14,6 +14,7 @@ import { AuthRequest, RegisterRequest } from './definitionfile';
 import { deleteFile, getFileStream, uploadFile } from './s3';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken'
+import { API, API_CLIENT } from './config';
 // import 'bootstrap'
 const url = require('url');
 // import rateLimit from 'express-rate-limit'
@@ -51,10 +52,10 @@ const app = express();
 // app.use(express.json());
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
-app.use(cors({
-  origin: process.env.API_CLIENT, // "http://localhost:3000",
-  credentials: true
-}))
+// app.use(cors({
+//   origin: process.env.API_CLIENT, // "http://localhost:3000",
+//   credentials: true
+// }))
 
 // app.set("trust proxy", 1); // turn this on to set rate limiting per IP address
 
@@ -176,7 +177,7 @@ app.get('/confirmation/:emailToken', async (req, res) => {
       .exec(async function (err) {
         if (err) throw err;
         res.redirect(url.format({
-          pathname: process.env.API_CLIENT + '/login',
+          pathname: API_CLIENT + '/login',
           query: {
             "verified": "true"
           }
@@ -184,7 +185,7 @@ app.get('/confirmation/:emailToken', async (req, res) => {
         )
       })
   } catch (err) {
-    res.redirect(process.env.API_CLIENT)
+    res.redirect(API_CLIENT)
   }
 })
 
@@ -209,6 +210,10 @@ function looksLikeMail(str: string) {
 }
 
 const sendMail = async (_id: object, email: string) => {
+  console.log(process.env.NODE_ENV);
+  console.log(API);
+  
+  
   try {
     jwt.sign({
       _id: _id
@@ -218,7 +223,7 @@ const sendMail = async (_id: object, email: string) => {
         expiresIn: '5m'
       },
       (err, emailToken) => {
-        const url = process.env.API + `/confirmation/${emailToken}`
+        const url = API + `/confirmation/${emailToken}`
         transporter.sendMail({
           to: email,
           subject: 'Vegan Food Finder confirmation email',
@@ -630,4 +635,6 @@ app.get("/*", (req, res) => {
 
 app.listen(process.env.PORT || 4000, () => {
   console.log("Server Started");
+  console.log(API, process.env.NODE_ENV);
+  
 })
