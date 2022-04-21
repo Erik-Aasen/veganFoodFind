@@ -52,10 +52,10 @@ const app = express();
 // app.use(express.json());
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
-// app.use(cors({
-//   origin: process.env.API_CLIENT, // "http://localhost:3000",
-//   credentials: true
-// }))
+app.use(cors({
+  origin: process.env.API_CLIENT, // "http://localhost:3000",
+  credentials: true
+}))
 
 // app.set("trust proxy", 1); // turn this on to set rate limiting per IP address
 
