@@ -232,6 +232,8 @@ export default function AddMeal(props) {
         formData.append('orientation', orientation.toString())
 
         if (exifStripped) {
+            console.log(API);
+            
             await axios.post(API + `/api/${addOrEdit}meal`, formData, {
                 withCredentials: true,
                 headers: { 'Content-Type': 'multipart/form-data' }
