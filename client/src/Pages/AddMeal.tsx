@@ -158,7 +158,7 @@ export default function AddMeal(props) {
             readerUncompressed.onload = function () {
                 const jpegData = readerUncompressed.result;
                 var exifObjInitialUncompressed = piexif.load(jpegData)
-                console.log(exifObjInitialUncompressed);
+                // console.log(exifObjInitialUncompressed);
             }
 
             // Print original file size
@@ -178,7 +178,8 @@ export default function AddMeal(props) {
                 const jpegData = reader.result;
                 // console.log(typeof jpegData);
 
-
+                console.log(exifObjInitial);
+                
                 // Print EXIF data of compressed image
                 var exifObjInitial = piexif.load(jpegData)
                 if (Object.keys(exifObjInitial.GPS).length === 0) {
@@ -189,6 +190,8 @@ export default function AddMeal(props) {
                     if (key !== 'thumbnail') {
                         if (Object.keys(exifObjInitial[key]).length > 0) {
                             setExifStripped(false)
+                            console.log(exifObjInitial);
+                            
                         }
                     }
                 })
