@@ -1,5 +1,7 @@
 # Vegan Food Finder
 
+App hosted on Heroku: https://vegan-food-finder.herokuapp.com
+
 - A MERN full stack application that allows users to upload meals with images and provides an interactive search selector for finding meals by city
 
 - Session based authentication using passport.js
