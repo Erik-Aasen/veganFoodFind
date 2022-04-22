@@ -2,7 +2,7 @@ import { useState } from 'react'
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import piexif from 'piexifjs';
-import {API} from '../config'
+import { API } from '../config'
 import { Form, Button, Spinner } from 'react-bootstrap';
 import imageCompression from 'browser-image-compression';
 
@@ -178,23 +178,9 @@ export default function AddMeal(props) {
                 const jpegData = reader.result;
                 // console.log(typeof jpegData);
 
-                console.log(exifObjInitial);
-                
-                // Print EXIF data of compressed image
-                var exifObjInitial = piexif.load(jpegData)
-                if (Object.keys(exifObjInitial.GPS).length === 0) {
-                    setExifStripped(true)
-                }
 
-                Object.keys(exifObjInitial).forEach(key => {
-                    if (key !== 'thumbnail') {
-                        if (Object.keys(exifObjInitial[key]).length > 0) {
-                            setExifStripped(false)
-                            console.log(exifObjInitial);
-                            
-                        }
-                    }
-                })
+                // Print EXIF data of compressed image
+
 
 
                 // Strip EXIF data of compressed image and set orientation
@@ -206,6 +192,32 @@ export default function AddMeal(props) {
                 var exifObj = { "0th": zeroth }
                 var exifbytes = piexif.dump(exifObj);
                 var newJpeg = piexif.insert(exifbytes, strippedJpeg)
+
+                var exifObjInitial = piexif.load(newJpeg)
+                // console.log(exifObjInitial);
+                if (Object.keys(exifObjInitial.GPS).length === 0) {
+                    setExifStripped(true)
+                }
+
+                Object.keys(exifObjInitial).forEach(key => {
+                    // console.log(key, exifObjInitial[key]);
+
+                    if (key !== 'thumbnail') {
+                        if (key == '0th') {
+                            if (Object.keys(exifObjInitial[key]).length > 1) {
+                                setExifStripped(false)
+                                // console.log(false, exifObjInitial);
+                                // console.log(Object.keys(exifObjInitial[key]).length);
+                                
+                            }
+                        } else {
+                            if (Object.keys(exifObjInitial[key]).length > 0) {
+                                setExifStripped(false)
+                                // console.log(false, key, exifObjInitial);
+                            }
+                        }
+                    }
+                })
 
                 // Print EXIF data of compressed image
                 // var exifObjCompressed = piexif.load(newJpeg)
@@ -234,10 +246,10 @@ export default function AddMeal(props) {
         formData.append('image', compressedFile)
         formData.append('orientation', orientation.toString())
         console.log(exifStripped);
-        
+
         if (exifStripped) {
             console.log(API);
-            
+
             await axios.post(API + `/api/${addOrEdit}meal`, formData, {
                 withCredentials: true,
                 headers: { 'Content-Type': 'multipart/form-data' }
