@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
-import {API} from '../config'
+import { API } from '../config'
 import { Form, Button } from 'react-bootstrap';
 import queryString from 'query-string'
 
@@ -8,7 +8,7 @@ export default function Login(props) {
 
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [loginFail, setLoginFail] = useState<boolean>();
+    const [loginFail, setLoginFail] = useState<boolean>(false);
     const [verified, setVerified] = useState<boolean>(true)
     const [emailSent, setEmailSent] = useState<boolean>(false)
 
@@ -83,12 +83,11 @@ export default function Login(props) {
     if (!verified && !loginFail) {
         status = (
             <p className='verification-fail text-primary'>
-                Email is not verified. 
+                Email is not verified.
                 <br />
                 Please check your email for the verification link or click to
                 {/* here  */}
                 <Button size='sm' variant='outline-primary' className='resend-btn' onClick={resendConfirmation}>resend verification link</Button>
-                to resend verification link.
             </p>
         )
     }
@@ -161,9 +160,9 @@ export default function Login(props) {
                 <Button onClick={e => { login(e) }}>Submit</Button>
             </Form>
             <div className='login-links'>
-                 <a href="/register">Register</a>
-                 <a href="/resetpassword">Forgot Password?</a>
-             </div>
+                <a href="/register">Register</a>
+                <a href="/resetpassword">Forgot Password?</a>
+            </div>
         </div>
     )
 }
