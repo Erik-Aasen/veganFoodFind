@@ -29,15 +29,16 @@ App hosted on Heroku: https://vegan-food-finder.herokuapp.com
 ## Technologies used
 
 - React w/ Context
+- Node w/ Express
+- AWS S3
+- MongoDB Atlas
 - Typescript
-- Bootstrap
-- NodeJS
-- Express
 - Passport
 - Bcrypt
-- MongoDB
-- Piexifjs
 - Heroku
+- Piexifjs
+- Express-rate-limit
+- Bootstrap
 
 ## Views
 
