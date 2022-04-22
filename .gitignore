@@ -26,6 +26,6 @@ yarn-error.log*
 notes.txt
 
 .vscode
-package-lock.json
+# package-lock.json
 
 heroku_config.sh
