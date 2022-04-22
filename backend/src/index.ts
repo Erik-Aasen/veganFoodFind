@@ -209,11 +209,11 @@ function looksLikeMail(str: string) {
   return (lastAtPos < lastDotPos && lastAtPos > 0 && str.indexOf('@@') === -1 && lastDotPos > 2 && (str.length - lastDotPos) > 2);
 }
 
-const sendMail = async (_id: object, email: string) => {
+const sendMail = async (_id: object, email: string, reset: boolean) => {
   console.log(process.env.NODE_ENV);
   console.log(API);
-  
-  
+
+
   try {
     jwt.sign({
       _id: _id
@@ -223,23 +223,42 @@ const sendMail = async (_id: object, email: string) => {
         expiresIn: '5m'
       },
       (err, emailToken) => {
-        const url = API + `/confirmation/${emailToken}`
-        transporter.sendMail({
-          to: email,
-          subject: 'Vegan Food Finder confirmation email',
-          html:
-            `<p>Thanks for joining Vegan Food Finder!</p>
+        if (reset) {
+          const url = API + `/reset/${emailToken}`
+          transporter.sendMail({
+            to: email,
+            subject: 'Vegan Food Finder Password Reset',
+            html:
+              `<p>Hello from Vegan Food Finder!</p>
+              <b>Please click here to reset your password: </b>
+              <a href="${url}">Reset Password</a>
+              `
+          }, (error: any, info: any) => {
+            if (error) {
+              console.log(error);
+            } else {
+              // console.log(info);
+            }
+          })
+        } else {
+          const url = API + `/confirmation/${emailToken}`
+          transporter.sendMail({
+            to: email,
+            subject: 'Vegan Food Finder confirmation email',
+            html:
+              `<p>Thanks for joining Vegan Food Finder!</p>
               <b>Please click here to confirm your account: </b>
               <a href="${url}">Confirm Account</a>
               `
-          // `<b>Confirmation link: </b><a href="${url}">${url}</a>`
-        }, (error: any, info: any) => {
-          if (error) {
-            console.log(error);
-          } else {
-            // console.log(info);
-          }
-        })
+            // `<b>Confirmation link: </b><a href="${url}">${url}</a>`
+          }, (error: any, info: any) => {
+            if (error) {
+              console.log(error);
+            } else {
+              // console.log(info);
+            }
+          })
+        }
       })
   }
   catch (err) {
@@ -284,7 +303,7 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
               password: hashedPassword
             });
             newUser.save((err, user) => {
-              sendMail(user.id, email)
+              sendMail(user.id, email, false)
               res.send("registered")
             })
           } else {
@@ -298,7 +317,7 @@ app.post('/api/register', async (req: RegisterRequest, res: Response) => {
             password: hashedPassword
           });
           newUser.save((err, user) => {
-            sendMail(user.id, email)
+            sendMail(user.id, email, false)
             res.send("registered")
           })
         }
@@ -313,7 +332,7 @@ app.post('/api/resendconfirmation', (req: RegisterRequest, res) => {
     .exec((err: Error, data: MongoInterface) => {
       if (err) throw err;
       // console.log(data.email, data._id);
-      sendMail(data._id, data.email)
+      sendMail(data._id, data.email, false)
       res.send('email sent')
     })
 })
@@ -406,7 +425,7 @@ async function returnPosts(posts: PostInterface[]) {
     post.pictureKey = ''
     post.picture = picture
     // console.log(post.pictureKey);
-    
+
   }))
   return posts
 }
@@ -509,14 +528,14 @@ app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
 
 // // PUT ROUTES
 app.post("/api/editmeal", upload.single('image'), async (req: any, res: Response) => {
-  const {file, body} = req;
+  const { file, body } = req;
   const { user } = req;
 
   const result = await uploadFile(file)
   unlinkFile(file.path)
   const { _id, restaurant, city, meal, description, orientation } = body;
   console.log(body);
-  
+
   let post: CapitalizeAndTrim = { restaurant, city, meal, description };
   capitalizeAndTrim(post);
 
@@ -527,7 +546,7 @@ app.post("/api/editmeal", upload.single('image'), async (req: any, res: Response
       .exec(function (err, data: PostInterface) {
         if (err) throw err;
         // console.log(data);
-        
+
         const oldKey = data.pictureKey
         deleteFile(oldKey)
       })
@@ -636,5 +655,5 @@ app.get("/*", (req, res) => {
 app.listen(process.env.PORT || 4000, () => {
   console.log("Server Started");
   console.log(API, process.env.NODE_ENV);
-  
+
 })

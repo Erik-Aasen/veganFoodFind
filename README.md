@@ -16,17 +16,15 @@ App hosted on Heroku: https://vegan-food-finder.herokuapp.com
 
 - Types defined with Typescript in front and back end
 
-- Image EXIF data stripped upon upload and users can choose image orientation, edit and delete their posts
+- Custom lazy loading posts feature
 
-- Types defined with Typescript in front and back end
+- Image EXIF data stripped upon upload and users can choose image orientation, edit and delete their posts
 
 - Mobile responsive design utilizing Bootstrap
 
 - Email confirmation for user authorization with nodemailer.js
 
 - Implemented custom admin middleware for content moderation through post approval
-
-- Lazy loading posts feature
 
 ## Technologies used
 

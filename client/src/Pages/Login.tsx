@@ -161,7 +161,7 @@ export default function Login(props) {
             </Form>
             <div className='login-links'>
                 <a href="/register">Register</a>
-                <a href="/resetpassword">Forgot Password?</a>
+                {/* <a href="/resetpassword">Forgot Password?</a> */}
             </div>
         </div>
     )
