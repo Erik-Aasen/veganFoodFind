@@ -52,6 +52,7 @@ const app = express();
 // app.use(express.json());
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
+// console.log(process.env.API, process.env.API_CLIENT);
 app.use(cors({
   origin: process.env.API_CLIENT, // "http://localhost:3000",
   credentials: true
@@ -210,9 +211,10 @@ function looksLikeMail(str: string) {
 }
 
 const sendMail = async (_id: object, email: string, reset: boolean) => {
-  console.log(process.env.NODE_ENV);
-  console.log(API);
+  // console.log(process.env.NODE_ENV);
+  // console.log(API);
 
+  const fromEmail = process.env.MAIL_USER;
 
   try {
     jwt.sign({
@@ -225,39 +227,22 @@ const sendMail = async (_id: object, email: string, reset: boolean) => {
       (err, emailToken) => {
         if (reset) {
           const url = API + `/reset/${emailToken}`
-          transporter.sendMail({
-            to: email,
-            subject: 'Vegan Food Finder Password Reset',
-            html:
-              `<p>Hello from Vegan Food Finder!</p>
-              <b>Please click here to reset your password: </b>
-              <a href="${url}">Reset Password</a>
-              `
-          }, (error: any, info: any) => {
-            if (error) {
-              console.log(error);
-            } else {
-              // console.log(info);
-            }
-          })
+          const subject = 'Vegan Food Finder Password Reset'
+          const html =
+          `<p>Hello from Vegan Food Finder!</p>
+          <b>Please click here to reset your password: </b>
+          <a href="${url}">Reset Password</a>
+          `
+          sendMailTransport(email, fromEmail, subject, html)
         } else {
           const url = API + `/confirmation/${emailToken}`
-          transporter.sendMail({
-            to: email,
-            subject: 'Vegan Food Finder confirmation email',
-            html:
-              `<p>Thanks for joining Vegan Food Finder!</p>
-              <b>Please click here to confirm your account: </b>
-              <a href="${url}">Confirm Account</a>
-              `
-            // `<b>Confirmation link: </b><a href="${url}">${url}</a>`
-          }, (error: any, info: any) => {
-            if (error) {
-              console.log(error);
-            } else {
-              // console.log(info);
-            }
-          })
+          const subject = 'Vegan Food Finder confirmation email'
+          const html = 
+          `<p>Thanks for joining Vegan Food Finder!</p>
+          <b>Please click here to confirm your account: </b>
+          <a href="${url}">Confirm Account</a>
+          `
+          sendMailTransport(email, fromEmail, subject, html)
         }
       })
   }
@@ -265,6 +250,22 @@ const sendMail = async (_id: object, email: string, reset: boolean) => {
     console.log(err)
   }
 }
+
+const sendMailTransport = (email: string, fromEmail: string, subject: string, html: string) => {
+  transporter.sendMail({
+    to: email,
+    from: fromEmail,
+    subject: subject,
+    html: html
+    // `<b>Confirmation link: </b><a href="${url}">${url}</a>`
+  }, (error: any, info: any) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(info);
+    }
+  })
+} 
 
 app.post('/api/register', async (req: RegisterRequest, res: Response) => {
 
@@ -497,32 +498,11 @@ const transporter = nodemailer.createTransport({
   }
 })
 
+// console.log(process.env.MAIL_USER, process.env.MAIL_PASS);
+
 app.post('/email', isAdministratorMiddleware, (req: AuthRequest, res) => {
   const { _id } = req.user;
-  jwt.sign({
-    _id: _id
-  },
-    process.env.EMAIL_SECRET
-    , {
-      expiresIn: '5m'
-    },
-    (err, emailToken) => {
-      const url = process.env.API + `/confirmation/${emailToken}`
-      transporter.sendMail({
-        to: process.env.MAIL_USER2,
-        subject: 'Confirmation email testing',
-        html:
-          `<p>Thanks for joining Vegan Food Finder!</p>
-        <b>Please click here to confirm your account: </b>
-        <a href="${url}">Confirm Account</a>
-        `
-        //   <form style="display: inline" action="${url}">
-        //   <input type="submit" value="Confirm Account" />
-        // </form>    
-        // <input type="button" onClick="location.href='${url}';" value="Confirm Account" />
-      })
-    })
-  res.send('ok')
+  sendMail(_id, process.env.MAIL_USER2, false);
 })
 
 
